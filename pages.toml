@@ -1,0 +1,6 @@
+# ── Cloudflare Pages (Statische App) ─────────────────────────────────────────
+name = "teachsmarter"
+pages_build_output_dir = "."
+
+# Deploy: wrangler pages deploy . --project-name=teachsmarter
+# Oder einfach: wrangler pages deploy

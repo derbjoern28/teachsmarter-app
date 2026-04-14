@@ -1,0 +1,53 @@
+{
+  "name": "teachsmarter",
+  "version": "1.0.0",
+  "description": "TeachSmarter – KI-Lehrerkalender für DACH",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "de.teachsmarter.app",
+    "productName": "TeachSmarter",
+    "copyright": "© 2026 Björn Sydow – TeachSmarter",
+    "files": [
+      "main.js",
+      "TeachSmarter_Dashboard.html",
+      "TeachSmarter_App_Onboarding.html",
+      "ts-style.css",
+      "ts-core.js",
+      "ts-app.js",
+      "ts-kalender.js",
+      "ts-events.js",
+      "ts-ferien.js",
+      "ts-planung.js",
+      "ts-stunde.js",
+      "ts-klassen.js",
+      "ts-tools.js",
+      "ts-icon-192.png",
+      "ts-icon-512.png",
+      "manifest.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "ts-icon-512.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "ts-icon-512.png",
+      "category": "public.app-category.education"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "ts-icon-512.png",
+      "installerHeaderIcon": "ts-icon-512.png"
+    }
+  }
+}

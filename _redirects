@@ -1,0 +1,3 @@
+# Cloudflare Pages — Redirects
+# Root-URL direkt auf das Dashboard
+/   /TeachSmarter_Dashboard.html   302

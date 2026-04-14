@@ -1,0 +1,16 @@
+# ── Cloudflare Worker (API Backend) ──────────────────────────────────────────
+name = "teachsmarter-api"
+main = "worker.js"
+compatibility_date = "2024-09-25"
+
+# Custom Domain: api.teachsmarter.de
+# (einrichten: Cloudflare Dashboard → Workers → teachsmarter-api → Settings → Custom Domains)
+
+[[kv_namespaces]]
+binding = "LICENSES"
+id = "3adbfa9cca2442fca4fb17c9554378b0"
+
+# Secrets via CLI setzen (NICHT hier eintragen):
+#   wrangler secret put STRIPE_SECRET_KEY
+#   wrangler secret put STRIPE_WEBHOOK_SECRET
+#   wrangler secret put ANTHROPIC_API_KEY

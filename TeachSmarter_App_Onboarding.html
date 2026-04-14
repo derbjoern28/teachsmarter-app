@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FAF8F5">
+<title>TeachSmarter Kalender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --ts-navy: #1A3C5E;
+  --ts-navy-light: #2A5280;
+  --ts-teal: #3BA89B;
+  --ts-teal-dark: #2D8A7F;
+  --ts-teal-subtle: #E8F6F4;
+  --ts-bg: #FAF8F5;
+  --ts-bg-warm: #F5F0EA;
+  --ts-bg-card: #FFFFFF;
+  --ts-border: #E8E2DA;
+  --ts-border-light: #F0EBE4;
+  --ts-text: #1A3C5E;
+  --ts-text-secondary: #6B7B8D;
+  --ts-text-muted: #9AABB8;
+  --ts-success: #3BA89B;
+  --ts-warning: #E8A44A;
+  --ts-error: #D4574E;
+  --font-display: 'Source Serif 4', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 999px;
+  --shadow-sm: 0 1px 3px rgba(26,60,94,0.06);
+  --shadow-md: 0 4px 12px rgba(26,60,94,0.08);
+  --shadow-lg: 0 8px 24px rgba(26,60,94,0.10);
+  --touch-min: 48px;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font-body);color:var(--ts-text);background:var(--ts-bg);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100dvh}
+input,select,textarea,button{font-family:var(--font-body);font-size:1rem}
+
+/* ═══════════════════════════════════════════
+   APP SHELL
+   ═══════════════════════════════════════════ */
+.app{max-width:960px;margin:0 auto;min-height:100dvh;position:relative;padding:0 env(safe-area-inset-right,0) 0 env(safe-area-inset-left,0)}
+
+/* Screens */
+.screen{display:none;padding:var(--sp-lg) var(--sp-xl);padding-bottom:120px;animation:fadeUp .4s ease}
+.screen.active{display:block}
+@media (min-width:768px){
+  .screen{padding:var(--sp-xl) var(--sp-2xl)}
+}
+@media (min-width:1100px){
+  .app{max-width:1080px}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════════
+   ONBOARDING
+   ═══════════════════════════════════════════ */
+.onboard-header{text-align:center;padding:var(--sp-2xl) 0 var(--sp-lg)}
+.onboard-header h1{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--ts-navy);letter-spacing:-.02em}
+.onboard-header p{color:var(--ts-text-secondary);margin-top:var(--sp-xs);font-size:.95rem}
+
+/* Progress Bar */
+.progress-bar{display:flex;gap:var(--sp-sm);margin-bottom:var(--sp-xl)}
+.progress-dot{flex:1;height:4px;border-radius:2px;background:var(--ts-border);transition:background .3s}
+.progress-dot.done{background:var(--ts-teal)}
+.progress-dot.current{background:var(--ts-navy)}
+
+/* Step Label */
+.step-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ts-teal-dark);background:var(--ts-teal-subtle);display:inline-block;padding:4px 12px;border-radius:var(--radius-full);margin-bottom:var(--sp-md)}
+
+.step-title{font-family:var(--font-display);font-size:1.35rem;font-weight:600;color:var(--ts-navy);margin-bottom:var(--sp-sm)}
+.step-desc{color:var(--ts-text-secondary);font-size:.9rem;margin-bottom:var(--sp-lg)}
+
+/* Form Elements */
+.form-group{margin-bottom:var(--sp-lg)}
+@media (min-width:600px){
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md)}
+}
+.form-label{display:block;font-size:.82rem;font-weight:600;color:var(--ts-text-secondary);margin-bottom:var(--sp-sm);text-transform:uppercase;letter-spacing:.04em}
+.form-input{width:100%;min-height:var(--touch-min);padding:12px var(--sp-md);font-size:1rem;color:var(--ts-text);background:var(--ts-bg-card);border:1.5px solid var(--ts-border);border-radius:var(--radius-sm);outline:none;transition:border-color .15s,box-shadow .15s}
+.form-input:focus{border-color:var(--ts-teal);box-shadow:0 0 0 3px rgba(59,168,155,.12)}
+.form-input::placeholder{color:var(--ts-text-muted)}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7B8D' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+
+/* Selection Grid (Schulart) */
+.select-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-sm)}
+@media (min-width:600px){.select-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:800px){.select-grid{grid-template-columns:repeat(4,1fr)}}
+.select-card{background:var(--ts-bg-card);border:2px solid var(--ts-border-light);border-radius:var(--radius-md);padding:var(--sp-md);text-align:center;font-weight:500;font-size:.88rem;cursor:pointer;transition:all .15s;min-height:var(--touch-min);display:flex;align-items:center;justify-content:center;user-select:none}
+.select-card:active{transform:scale(.97)}
+.select-card.selected{border-color:var(--ts-teal);background:var(--ts-teal-subtle);color:var(--ts-teal-dark);font-weight:600}
+
+/* Fach Chips */
+.fach-palette{display:flex;flex-wrap:wrap;gap:var(--sp-sm)}
+.fach-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-full);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;border:2px solid transparent;background:var(--ts-bg-warm);user-select:none;min-height:40px}
+.fach-chip:active{transform:scale(.96)}
+.fach-chip.selected{border-color:currentColor;font-weight:600}
+.fach-chip .dot{width:12px;height:12px;border-radius:4px;flex-shrink:0}
+
+/* Klassen-Liste */
+.klasse-card{background:var(--ts-bg-card);border:1px solid var(--ts-border-light);border-radius:var(--radius-md);padding:var(--sp-md) var(--sp-lg);margin-bottom:var(--sp-sm);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+
+/* Tablet: 2-column klasse grid */
+@media (min-width:600px){
+  #klassen-list{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md);align-items:start}
+  .klasse-card{margin-bottom:0}
+}
+.klasse-card-header{display:flex;flex-wrap:wrap;gap:var(--sp-sm);align-items:center;margin-bottom:var(--sp-xs)}
+.klasse-card-header strong{font-size:1.1rem;margin-right:auto}
+.klasse-card-faecher{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--sp-sm);padding-top:var(--sp-sm);border-top:1px solid var(--ts-border-light)}
+.klasse-fach-tag{font-size:.72rem;padding:4px 10px;border-radius:var(--radius-full);font-weight:600;color:#fff;letter-spacing:.01em}
+.btn-remove{background:none;border:none;color:var(--ts-text-muted);font-size:1.2rem;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.btn-remove:hover{background:var(--ts-bg-warm);color:var(--ts-error)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-sm);min-height:var(--touch-min);padding:12px 24px;font-size:.95rem;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;user-select:none;width:100%}
+@media (min-width:600px){.btn{width:auto;min-width:200px}.btn-row .btn{flex:0 1 auto}}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--ts-teal);color:#fff;box-shadow:0 2px 8px rgba(59,168,155,.3)}
+.btn-primary:hover{background:var(--ts-teal-dark)}
+.btn-primary:disabled{background:var(--ts-border);color:var(--ts-text-muted);box-shadow:none;cursor:not-allowed;transform:none}
+.btn-secondary{background:var(--ts-bg-warm);color:var(--ts-navy);border:1.5px solid var(--ts-border)}
+.btn-navy{background:var(--ts-navy);color:#fff}
+.btn-sm{min-height:36px;padding:8px 16px;font-size:.82rem;width:auto}
+.btn-row{display:flex;gap:var(--sp-sm);margin-top:var(--sp-lg)}
+.btn-row .btn{flex:1}
+.btn-ghost{background:none;border:none;color:var(--ts-text-secondary);font-weight:500}
+
+/* ═══════════════════════════════════════════
+   STUNDENPLAN GRID
+   ═══════════════════════════════════════════ */
+.sp-container{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 calc(var(--sp-xl) * -1);padding:0 var(--sp-xl)}
+@media (min-width:600px){.sp-container{margin:0;padding:0;overflow-x:visible}}
+.sp-grid{display:grid;grid-template-columns:56px repeat(5,1fr);gap:3px}
+@media (min-width:600px){.sp-grid{min-width:0;gap:4px}}
+.sp-header{font-size:.75rem;font-weight:600;text-align:center;padding:var(--sp-sm) 2px;color:var(--ts-text-muted);text-transform:uppercase;letter-spacing:.04em}
+.sp-time{font-size:.72rem;color:var(--ts-text-muted);text-align:right;padding:6px 8px 6px 0;display:flex;align-items:center;justify-content:flex-end;font-weight:500}
+.sp-cell{min-height:56px;background:var(--ts-bg-card);border:1.5px solid var(--ts-border-light);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;padding:6px;font-size:.78rem;font-weight:500;text-align:center;line-height:1.2;user-select:none;position:relative;overflow:hidden}
+@media (min-width:600px){.sp-cell{min-height:64px;font-size:.82rem;border-radius:var(--radius-md)}}
+.sp-cell:active{transform:scale(.96)}
+.sp-cell.empty{color:var(--ts-text-muted)}
+.sp-cell.empty::after{content:'+';font-size:1.1rem;color:var(--ts-border)}
+.sp-cell.filled{color:#fff;font-weight:600;border-color:transparent}
+.sp-cell.filled .sp-cell-fach{font-size:.72rem;line-height:1.15}
+.sp-cell.filled .sp-cell-klasse{font-size:.6rem;opacity:.85;margin-top:1px}
+
+/* Zeitraster */
+.zeitraster-compact{display:flex;flex-wrap:wrap;gap:4px}
+.zeitraster-tag{font-size:.7rem;padding:4px 10px;border-radius:var(--radius-full);background:var(--ts-bg-warm);color:var(--ts-text-secondary);font-weight:500;white-space:nowrap}
+.zeitraster-row{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:6px;padding:6px 0}
+.zeitraster-row .zr-label{font-size:.82rem;font-weight:600;color:var(--ts-text);min-width:28px;text-align:right}
+.zeitraster-row .zr-time{width:90px;min-height:38px;padding:6px 10px;font-size:.88rem;color:var(--ts-text);background:var(--ts-bg-card);border:1.5px solid var(--ts-border);border-radius:var(--radius-sm);outline:none;text-align:center;font-family:var(--font-body)}
+.zeitraster-row .zr-time:focus{border-color:var(--ts-teal);box-shadow:0 0 0 3px rgba(59,168,155,.12)}
+.zeitraster-row .zr-sep{color:var(--ts-text-muted);font-size:.82rem}
+.zeitraster-row .zr-pause{font-size:.68rem;color:var(--ts-warning);background:#FFF8EE;padding:2px 8px;border-radius:var(--radius-full);font-weight:500;margin-left:auto}
+
+/* Assign Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,60,94,.35);z-index:100;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
+@media (min-width:768px){.modal-overlay{align-items:center}}
+.modal-overlay.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-sheet{background:var(--ts-bg-card);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:var(--sp-lg);width:100%;max-width:600px;max-height:80dvh;overflow-y:auto;animation:slideUp .3s ease}
+@media (min-width:768px){.modal-sheet{border-radius:var(--radius-lg);margin-bottom:10vh;max-height:70dvh}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--ts-border);border-radius:2px;margin:0 auto var(--sp-md)}
+.modal-title{font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin-bottom:var(--sp-md)}
+
+/* ═══════════════════════════════════════════
+   BACKUP BANNER
+   ═══════════════════════════════════════════ */
+.backup-banner{display:flex;align-items:center;gap:var(--sp-md);background:var(--ts-teal-subtle);border:1.5px solid rgba(59,168,155,.3);border-radius:var(--radius-md);padding:var(--sp-md);margin-bottom:var(--sp-xl)}
+.backup-banner-icon{font-size:1.5rem;flex-shrink:0}
+.backup-banner-body{flex:1;min-width:0}
+.backup-banner-title{font-weight:600;font-size:.9rem;color:var(--ts-teal-dark)}
+.backup-banner-desc{font-size:.8rem;color:var(--ts-text-secondary);margin-top:2px}
+
+/* ═══════════════════════════════════════════
+   FERTIG SCREEN
+   ═══════════════════════════════════════════ */
+.done-screen{text-align:center;padding-top:15vh}
+.done-icon{font-size:3.5rem;margin-bottom:var(--sp-lg)}
+.done-title{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--ts-navy);margin-bottom:var(--sp-sm)}
+.done-desc{color:var(--ts-text-secondary);font-size:.95rem;max-width:320px;margin:0 auto var(--sp-xl)}
+
+/* ═══════════════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════════════ */
+.mt-sm{margin-top:var(--sp-sm)}.mt-md{margin-top:var(--sp-md)}.mt-lg{margin-top:var(--sp-lg)}
+.text-sm{font-size:.82rem}.text-muted{color:var(--ts-text-muted)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 1: ONBOARDING STEP 1 - SCHULE
+     ═══════════════════════════════════════════ -->
+<div class="screen active" id="step1">
+  <div class="onboard-header">
+    <h1>Willkommen bei<br>TeachSmarter</h1>
+    <p>Einmal einrichten, dann läuft's.</p>
+  </div>
+
+  <div class="backup-banner">
+    <div class="backup-banner-icon">📦</div>
+    <div class="backup-banner-body">
+      <div class="backup-banner-title">Schon ein Backup?</div>
+      <div class="backup-banner-desc">Lade deine Sicherungsdatei — alles wird sofort wiederhergestellt.</div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="importBackupOnboarding()" style="white-space:nowrap;flex-shrink:0">↑ Backup laden</button>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-dot current"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <span class="step-label">Schritt 1 von 4</span>
+  <h2 class="step-title">Deine Schule</h2>
+  <p class="step-desc">Damit wir Ferien, Lehrplan und alles andere automatisch für dich einrichten.</p>
+
+  <div class="form-row">
+  <div class="form-group">
+    <label class="form-label">Land</label>
+    <select class="form-input" id="land" onchange="onLandChange()">
+      <option value="">Bitte wählen…</option>
+      <option value="DE" selected>Deutschland</option>
+      <option value="AT">Österreich</option>
+      <option value="CH">Schweiz</option>
+    </select>
+  </div>
+
+  <div class="form-group" id="bl-group">
+    <label class="form-label">Bundesland</label>
+    <select class="form-input" id="bundesland">
+      <option value="">Bitte wählen…</option>
+    </select>
+  </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Schulart</label>
+    <div class="select-grid" id="schulart-grid"></div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Schulname (optional)</label>
+    <input class="form-input" id="schulname" placeholder="z.B. Martin-Wiesend-Schule">
+  </div>
+
+  <button class="btn btn-primary" id="btn-step1" onclick="goStep(2)" disabled>Weiter →</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 2: ONBOARDING STEP 2 - KLASSEN & FÄCHER
+     ═══════════════════════════════════════════ -->
+<div class="screen" id="step2">
+  <div class="progress-bar">
+    <div class="progress-dot done"></div>
+    <div class="progress-dot current"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <span class="step-label">Schritt 2 von 4</span>
+  <h2 class="step-title">Klassen & Fächer</h2>
+  <p class="step-desc">Lege deine Klassen an und weise ihnen die Fächer zu, die du dort unterrichtest.</p>
+
+  <!-- Add Klasse -->
+  <div class="form-group">
+    <label class="form-label">Neue Klasse anlegen</label>
+    <div style="display:flex;gap:var(--sp-sm)">
+      <input class="form-input" id="new-klasse-name" placeholder="z.B. 7a" style="flex:1">
+      <input class="form-input" id="new-klasse-sus" placeholder="SuS" type="number" min="1" max="40" style="width:72px">
+      <button class="btn btn-primary btn-sm" onclick="addKlasse()" style="width:auto;padding:8px 16px">+</button>
+    </div>
+  </div>
+
+  <!-- Klassen Liste -->
+  <div id="klassen-list"></div>
+
+  <!-- Fach-Palette (erscheint wenn Klasse bearbeitet wird) -->
+  <div id="fach-assign-section" class="hidden">
+    <div class="form-group">
+      <label class="form-label" id="fach-assign-label">Fächer für …</label>
+      <div class="fach-palette" id="fach-palette"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Besonderheiten (optional)</label>
+      <input class="form-input" id="klasse-besonderheiten" placeholder="z.B. 3 SuS mit Förderbedarf, 2 DaZ…">
+    </div>
+    <button class="btn btn-sm btn-secondary" onclick="saveFachAssign()" style="width:auto">✓ Fertig</button>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep(1)">← Zurück</button>
+    <button class="btn btn-primary" id="btn-step2" onclick="goStep(3)" disabled>Weiter →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 3: ONBOARDING STEP 3 - PROFIL
+     ═══════════════════════════════════════════ -->
+<div class="screen" id="step3">
+  <div class="progress-bar">
+    <div class="progress-dot done"></div>
+    <div class="progress-dot done"></div>
+    <div class="progress-dot current"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <span class="step-label">Schritt 3 von 4</span>
+  <h2 class="step-title">Dein Profil</h2>
+  <p class="step-desc">Die KI nutzt deinen Vornamen und deine Schwerpunkte, um Ausgaben zu personalisieren.</p>
+
+  <div class="form-group">
+    <label class="form-label">Vorname</label>
+    <input class="form-input" id="vorname" placeholder="Wie soll die KI dich ansprechen?">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Unterrichtsschwerpunkte (optional)</label>
+    <textarea class="form-input" id="schwerpunkte" rows="3" placeholder="z.B. Inklusion, digitale Medien, kooperatives Lernen…" style="resize:vertical;min-height:80px"></textarea>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep(2)">← Zurück</button>
+    <button class="btn btn-primary" id="btn-step3" onclick="goStep(4)">Zum Stundenplan →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 4: STUNDENPLAN SETUP
+     ═══════════════════════════════════════════ -->
+<div class="screen" id="step4">
+  <div class="progress-bar">
+    <div class="progress-dot done"></div>
+    <div class="progress-dot done"></div>
+    <div class="progress-dot done"></div>
+    <div class="progress-dot current"></div>
+  </div>
+
+  <span class="step-label">Schritt 4 von 4</span>
+  <h2 class="step-title">Dein Stundenplan</h2>
+  <p class="step-desc">Passe zuerst dein Zeitraster an, dann tippe auf eine Zelle um Fach + Klasse zuzuweisen. Lange tippen zum Löschen.</p>
+
+  <!-- Zeitraster Editor -->
+  <div class="form-group">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-sm)">
+      <label class="form-label" style="margin:0">Zeitraster</label>
+      <button class="btn btn-sm btn-secondary" onclick="toggleZeitraster()" id="btn-zeitraster" style="width:auto;font-size:.75rem">✏️ Bearbeiten</button>
+    </div>
+    <div id="zeitraster-display" class="zeitraster-compact"></div>
+    <div id="zeitraster-editor" class="hidden">
+      <div class="zeitraster-list" id="zeitraster-list"></div>
+      <div style="display:flex;gap:var(--sp-sm);margin-top:var(--sp-sm)">
+        <button class="btn btn-sm btn-secondary" onclick="addStunde()" style="width:auto">+ Stunde</button>
+        <button class="btn btn-sm btn-secondary" onclick="removeLastStunde()" style="width:auto">− Letzte entfernen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sp-container">
+    <div class="sp-grid" id="sp-grid"></div>
+  </div>
+
+  <div class="btn-row mt-lg">
+    <button class="btn btn-ghost" onclick="goStep(3)">← Zurück</button>
+    <button class="btn btn-navy" onclick="finishSetup()">✓ Fertig – App starten</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 5: FERTIG
+     ═══════════════════════════════════════════ -->
+<div class="screen" id="step5">
+  <div class="done-screen">
+    <div class="done-icon"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M28 8c-8.8 0-16 6.3-16 14.5 0 4.2 2.1 8 5.4 10.6.8.6 1.3 1.6 1.4 2.6l.4 3.3c.2 1.4 1.4 2.5 2.8 2.5h12c1.4 0 2.6-1.1 2.8-2.5l.4-3.3c.1-1 .6-2 1.4-2.6C41.9 30.5 44 26.7 44 22.5 44 14.3 36.8 8 28 8z" stroke="var(--ts-teal)" stroke-width="2.5" fill="var(--ts-teal-subtle)"/><path d="M23 44h10M25 47h6" stroke="var(--ts-teal)" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="20" r="2" fill="var(--ts-teal)"/><circle cx="32" cy="20" r="2" fill="var(--ts-teal)"/><circle cx="28" cy="26" r="2" fill="var(--ts-teal)"/><path d="M24 20v4l4 2m4-6v4l-4 2" stroke="var(--ts-teal)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <h2 class="done-title">Alles eingerichtet!</h2>
+    <p class="done-desc">Dein TeachSmarter Kalender ist startklar. Du wirst gleich weitergeleitet…</p>
+    <a href="TeachSmarter_Dashboard.html" class="btn btn-primary" style="max-width:320px;margin:var(--sp-lg) auto 0;text-decoration:none">→ Zum Dashboard</a>
+    <button class="btn btn-secondary mt-md" onclick="showSummary()" style="max-width:320px;margin:var(--sp-sm) auto 0">Zusammenfassung anzeigen</button>
+    <div id="summary" class="mt-lg" style="text-align:left;display:none"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL: STUNDENPLAN CELL ASSIGN
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="assign-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 class="modal-title" id="modal-title">Stunde zuweisen</h3>
+
+    <div class="form-group">
+      <label class="form-label">Klasse</label>
+      <select class="form-input" id="modal-klasse" onchange="onModalKlasseChange()">
+        <option value="">Wählen…</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Fach</label>
+      <div id="modal-faecher" class="fach-palette"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Abbrechen</button>
+      <button class="btn btn-primary btn-sm" id="modal-save-btn" onclick="saveCell()" disabled>Zuweisen</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════ */
+const BUNDESLAENDER = {
+  DE: [
+    'Baden-Württemberg','Bayern','Berlin','Brandenburg','Bremen','Hamburg',
+    'Hessen','Mecklenburg-Vorpommern','Niedersachsen','Nordrhein-Westfalen',
+    'Rheinland-Pfalz','Saarland','Sachsen','Sachsen-Anhalt','Schleswig-Holstein','Thüringen'
+  ],
+  AT: ['Burgenland','Kärnten','Niederösterreich','Oberösterreich','Salzburg','Steiermark','Tirol','Vorarlberg','Wien'],
+  CH: ['Aargau','Appenzell','Basel','Bern','Freiburg','Genf','Graubünden','Luzern','St. Gallen','Thurgau','Waadt','Zürich']
+};
+
+const SCHULARTEN = [
+  'Grundschule','Mittelschule','Hauptschule','Realschule','Gymnasium',
+  'Gesamtschule','Gemeinschaftsschule','Förderschule','Montessori','Waldorfschule'
+];
+
+const FAECHER = [
+  { id:'mathe', name:'Mathematik', color:'#E8A44A' },
+  { id:'deutsch', name:'Deutsch', color:'#D4574E' },
+  { id:'englisch', name:'Englisch', color:'#5B8EC9' },
+  { id:'nt', name:'NT / NuT', color:'#3BA89B' },
+  { id:'gpg', name:'GPG', color:'#8B6DB5' },
+  { id:'wib', name:'WiB', color:'#C47A5A' },
+  { id:'sport', name:'Sport', color:'#5AAE6B' },
+  { id:'musik', name:'Musik', color:'#D47BA0' },
+  { id:'kunst', name:'Kunst', color:'#E07B4F' },
+  { id:'religion', name:'Religion / Ethik', color:'#7B9EC4' },
+  { id:'informatik', name:'Informatik', color:'#4A8B9E' },
+  { id:'hsb', name:'HsB / Werken', color:'#A0885B' },
+  { id:'franzoesisch', name:'Französisch', color:'#C4A05B' },
+  { id:'physik', name:'Physik', color:'#5BA8C4' },
+  { id:'chemie', name:'Chemie', color:'#6BAA7B' },
+  { id:'biologie', name:'Biologie', color:'#7BBB5A' },
+  { id:'geschichte', name:'Geschichte', color:'#9B7B5A' },
+  { id:'geografie', name:'Geografie', color:'#6B9B5A' },
+];
+
+const TAGE = ['Mo','Di','Mi','Do','Fr'];
+
+/* ═══════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════ */
+let state = {
+  land: 'DE',
+  bundesland: '',
+  schulart: '',
+  schulname: '',
+  vorname: '',
+  schwerpunkte: '',
+  klassen: [], // { id, name, sus, besonderheiten, faecher: [fach-id,...] }
+  stundenplan: {}, // "tag-stunde": { fachId, klasseId }
+  zeitraster: null, // [{ nr, von, bis }] - null = use defaults
+  customFaecher: [] // user-defined subjects
+};
+
+function getAllFaecher(){ return [...FAECHER, ...(state.customFaecher||[])]; }
+
+let editingKlasseId = null;
+let modalCell = null;
+let modalSelectedFach = null;
+
+/* ═══════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  onLandChange();
+  renderSchularten();
+  renderFachPalette();
+
+  // If already completed, skip to done
+  if (state.vorname && state.klassen.length > 0 && Object.keys(state.stundenplan).length > 0) {
+    goStep(5);
+  }
+});
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
+function goStep(n) {
+  // Save current state
+  collectState();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('step' + n);
+  if (target) target.classList.add('active');
+
+  if (n === 2) renderKlassenList();
+  if (n === 4) buildGrid();
+
+  saveState();
+  window.scrollTo(0, 0);
+}
+
+function collectState() {
+  state.land = el('land').value;
+  state.bundesland = el('bundesland').value;
+  state.schulname = el('schulname').value;
+  state.vorname = el('vorname').value;
+  state.schwerpunkte = el('schwerpunkte').value;
+
+  const sel = document.querySelector('.select-card.selected');
+  if (sel) state.schulart = sel.dataset.value;
+}
+
+/* ═══════════════════════════════════════════
+   STEP 1: BUNDESLAND & SCHULART
+   ═══════════════════════════════════════════ */
+function onLandChange() {
+  const land = el('land').value || 'DE';
+  const blSelect = el('bundesland');
+  const list = BUNDESLAENDER[land] || [];
+  blSelect.innerHTML = '<option value="">Bitte wählen…</option>' +
+    list.map(b => `<option value="${b}" ${b === state.bundesland ? 'selected':''}>${b}</option>`).join('');
+
+  // Label
+  const labels = { DE: 'Bundesland', AT: 'Bundesland', CH: 'Kanton' };
+  el('bl-group').querySelector('.form-label').textContent = labels[land] || 'Region';
+
+  blSelect.onchange = validateStep1;
+  validateStep1();
+}
+
+function renderSchularten() {
+  const grid = el('schulart-grid');
+  grid.innerHTML = SCHULARTEN.map(s =>
+    `<div class="select-card ${state.schulart === s ? 'selected':''}" data-value="${s}" onclick="selectSchulart(this)">${s}</div>`
+  ).join('');
+}
+
+function selectSchulart(card) {
+  document.querySelectorAll('#schulart-grid .select-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.schulart = card.dataset.value;
+  validateStep1();
+}
+
+function validateStep1() {
+  const valid = el('bundesland').value && state.schulart;
+  el('btn-step1').disabled = !valid;
+}
+
+/* ═══════════════════════════════════════════
+   STEP 2: KLASSEN & FÄCHER
+   ═══════════════════════════════════════════ */
+function addKlasse() {
+  const name = el('new-klasse-name').value.trim();
+  const sus = parseInt(el('new-klasse-sus').value) || 0;
+  if (!name) return;
+
+  const id = 'k_' + Date.now();
+  state.klassen.push({ id, name, sus, besonderheiten: '', faecher: [] });
+  el('new-klasse-name').value = '';
+  el('new-klasse-sus').value = '';
+  renderKlassenList();
+  editKlasse(id);
+  saveState();
+}
+
+function renderKlassenList() {
+  const list = el('klassen-list');
+  if (state.klassen.length === 0) {
+    list.innerHTML = '<p class="text-sm text-muted" style="text-align:center;padding:var(--sp-lg)">Noch keine Klassen angelegt.</p>';
+  } else {
+    list.innerHTML = state.klassen.map(k => {
+      const hasFaecher = k.faecher.length > 0;
+      const isEditing = editingKlasseId === k.id;
+      const fachTags = k.faecher.map(fid => {
+        const f = getAllFaecher().find(x => x.id === fid);
+        return f ? `<span class="klasse-fach-tag" style="background:${f.color}">${f.name}</span>` : '';
+      }).join('');
+
+      const statusIcon = hasFaecher
+        ? `<span style="color:var(--ts-success);font-size:.82rem;font-weight:600">✓ ${k.faecher.length} Fächer</span>`
+        : `<span style="color:var(--ts-warning);font-size:.82rem;font-weight:500">⚠ Keine Fächer</span>`;
+
+      const btnText = hasFaecher ? 'Fächer bearbeiten' : 'Fächer zuweisen';
+      const editingStyle = isEditing ? 'border-color:var(--ts-teal);box-shadow:0 0 0 3px rgba(59,168,155,.12)' : '';
+
+      return `<div class="klasse-card" id="kc-${k.id}" style="${editingStyle}">
+        <div class="klasse-card-header">
+          <strong>${k.name}</strong>
+          ${statusIcon}
+          <span class="text-sm text-muted">${k.sus ? k.sus + ' SuS' : ''}</span>
+          <button class="btn-remove" onclick="removeKlasse('${k.id}')" title="Löschen">×</button>
+        </div>
+        ${hasFaecher ? `<div class="klasse-card-faecher">${fachTags}</div>` : ''}
+        ${k.besonderheiten ? `<div class="text-sm text-muted mt-sm" style="font-style:italic">📝 ${k.besonderheiten}</div>` : ''}
+        <button class="btn btn-sm ${isEditing ? 'btn-primary' : 'btn-secondary'} mt-sm" onclick="editKlasse('${k.id}')" style="width:auto">${isEditing ? '← Wird bearbeitet' : btnText}</button>
+      </div>`;
+    }).join('');
+  }
+
+  el('btn-step2').disabled = state.klassen.length === 0 || state.klassen.every(k => k.faecher.length === 0);
+}
+
+function removeKlasse(id) {
+  state.klassen = state.klassen.filter(k => k.id !== id);
+  // Remove from stundenplan
+  Object.keys(state.stundenplan).forEach(key => {
+    if (state.stundenplan[key].klasseId === id) delete state.stundenplan[key];
+  });
+  if (editingKlasseId === id) {
+    editingKlasseId = null;
+    el('fach-assign-section').classList.add('hidden');
+  }
+  renderKlassenList();
+  saveState();
+}
+
+function editKlasse(id) {
+  editingKlasseId = id;
+  const k = state.klassen.find(x => x.id === id);
+  if (!k) return;
+
+  // Re-render list to show editing state
+  renderKlassenList();
+
+  el('fach-assign-section').classList.remove('hidden');
+  el('fach-assign-label').textContent = `Fächer für ${k.name}`;
+  el('klasse-besonderheiten').value = k.besonderheiten || '';
+
+  // Update palette selection
+  document.querySelectorAll('#fach-palette .fach-chip').forEach(chip => {
+    chip.classList.toggle('selected', k.faecher.includes(chip.dataset.id));
+  });
+
+  // Scroll to section
+  el('fach-assign-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+const OB_CF_COLORS = ['#E74C3C','#E67E22','#F39C12','#2ECC71','#1ABC9C','#3BA89B','#3498DB','#5B8EC9','#9B59B6','#E91E63','#795548','#607D8B'];
+let _obCfSelectedColor = '#3BA89B';
+
+function renderFachPalette() {
+  const selected = editingKlasseId
+    ? (state.klassen.find(x => x.id === editingKlasseId)?.faecher || [])
+    : [];
+  el('fach-palette').innerHTML =
+    getAllFaecher().map(f =>
+      `<div class="fach-chip${selected.includes(f.id)?' selected':''}" data-id="${f.id}" style="color:${f.color}" onclick="toggleFach(this)">
+        <div class="dot" style="background:${f.color}"></div>${f.name}
+      </div>`
+    ).join('') +
+    `<button class="fach-chip ob-cf-add-btn" type="button" onclick="obShowCfForm()" style="border-style:dashed;color:var(--ts-text-muted)">
+      <div class="dot" style="background:var(--ts-border)"></div>＋ Eigenes Fach
+    </button>`;
+}
+
+function obShowCfForm() {
+  const existing = document.getElementById('ob-cf-form');
+  if (existing) { existing.querySelector('input').focus(); return; }
+  _obCfSelectedColor = '#3BA89B';
+  const form = document.createElement('div');
+  form.id = 'ob-cf-form';
+  form.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--ts-bg-warm);border:1.5px solid var(--ts-border);border-radius:12px;margin-top:4px;width:100%';
+  form.innerHTML = `
+    <div style="font-size:.8rem;font-weight:600;color:var(--ts-text-muted);text-transform:uppercase;letter-spacing:.05em">Eigenes Fach erstellen</div>
+    <input id="ob-cf-name" class="form-input" placeholder="Fachbezeichnung *" autocomplete="off" style="margin:0" onkeydown="if(event.key==='Enter')obSaveCf()">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="font-size:.75rem;color:var(--ts-text-muted)">Farbe:</span>
+      <div id="ob-cf-swatches" style="display:flex;flex-wrap:wrap;gap:4px">
+        ${OB_CF_COLORS.map(c=>`<button type="button" onclick="obSelectCfColor(this,'${c}')" style="width:22px;height:22px;border-radius:50%;background:${c};border:2px solid ${c==='#3BA89B'?'#fff':'transparent'};outline:${c==='#3BA89B'?'2px solid #3BA89B':'none'};cursor:pointer;padding:0"></button>`).join('')}
+      </div>
+      <input type="color" id="ob-cf-hex" value="#3BA89B" style="width:32px;height:32px;border:none;border-radius:6px;cursor:pointer;padding:0;background:none" onchange="obHexChange(this.value)">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm btn-primary" type="button" onclick="obSaveCf()" style="flex:1">Fach anlegen</button>
+      <button class="btn btn-sm btn-secondary" type="button" onclick="obCancelCf()" style="flex:1">Abbrechen</button>
+    </div>`;
+  el('fach-palette').after(form);
+  form.querySelector('input').focus();
+}
+
+function obSelectCfColor(btn, color) {
+  _obCfSelectedColor = color;
+  document.getElementById('ob-cf-hex').value = color;
+  document.querySelectorAll('#ob-cf-swatches button').forEach(b => {
+    b.style.border = b === btn ? '2px solid #fff' : '2px solid transparent';
+    b.style.outline = b === btn ? '2px solid ' + color : 'none';
+  });
+}
+
+function obHexChange(color) {
+  _obCfSelectedColor = color;
+  document.querySelectorAll('#ob-cf-swatches button').forEach(b => {
+    b.style.border = '2px solid transparent';
+    b.style.outline = 'none';
+  });
+}
+
+function obSaveCf() {
+  const name = (document.getElementById('ob-cf-name')?.value || '').trim();
+  if (!name) { document.getElementById('ob-cf-name')?.focus(); return; }
+  const color = _obCfSelectedColor || '#3BA89B';
+  const id = 'cf_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  if (!state.customFaecher) state.customFaecher = [];
+  state.customFaecher.push({ id, name, color });
+  saveState();
+  obCancelCf();
+  renderFachPalette();
+  // auto-select the new fach for the current class
+  setTimeout(() => {
+    const chip = el('fach-palette').querySelector(`.fach-chip[data-id="${id}"]`);
+    if (chip) chip.classList.add('selected');
+  }, 30);
+}
+
+function obCancelCf() {
+  document.getElementById('ob-cf-form')?.remove();
+}
+
+function toggleFach(chip) {
+  chip.classList.toggle('selected');
+}
+
+function saveFachAssign() {
+  if (!editingKlasseId) return;
+  const k = state.klassen.find(x => x.id === editingKlasseId);
+  if (!k) return;
+
+  k.faecher = Array.from(document.querySelectorAll('#fach-palette .fach-chip.selected'))
+    .map(c => c.dataset.id);
+  k.besonderheiten = el('klasse-besonderheiten').value.trim();
+
+  editingKlasseId = null;
+  el('fach-assign-section').classList.add('hidden');
+  renderKlassenList();
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   STEP 4: ZEITRASTER & STUNDENPLAN
+   ═══════════════════════════════════════════ */
+const DEFAULT_ZEITRASTER = [
+  { nr:1, von:'08:00', bis:'08:45' },
+  { nr:2, von:'08:45', bis:'09:30' },
+  { nr:3, von:'09:45', bis:'10:30' },
+  { nr:4, von:'10:30', bis:'11:15' },
+  { nr:5, von:'11:30', bis:'12:15' },
+  { nr:6, von:'12:15', bis:'13:00' },
+  { nr:7, von:'13:45', bis:'14:30' },
+  { nr:8, von:'14:30', bis:'15:15' },
+];
+
+let zeitrasterEditing = false;
+
+function getZeitraster() {
+  return state.zeitraster || DEFAULT_ZEITRASTER;
+}
+
+function renderZeitrasterCompact() {
+  const zr = getZeitraster();
+  el('zeitraster-display').innerHTML = zr.map(s =>
+    `<span class="zeitraster-tag">${s.nr}. ${s.von}–${s.bis}</span>`
+  ).join('');
+}
+
+function renderZeitrasterEditor() {
+  const zr = getZeitraster();
+  const list = el('zeitraster-list');
+
+  list.innerHTML = zr.map((s, i) => {
+    // Calculate pause before this slot
+    let pauseHtml = '';
+    if (i > 0) {
+      const prevEnd = zr[i-1].bis;
+      const curStart = s.von;
+      if (prevEnd !== curStart) {
+        const diff = timeDiff(prevEnd, curStart);
+        if (diff > 0) pauseHtml = `<span class="zr-pause">☕ ${diff} Min. Pause</span>`;
+      }
+    }
+
+    return `<div class="zeitraster-row">
+      <span class="zr-label">${s.nr}.</span>
+      <input type="time" class="zr-time" value="${s.von}" onchange="updateZeitraster(${i},'von',this.value)">
+      <span class="zr-sep">–</span>
+      <input type="time" class="zr-time" value="${s.bis}" onchange="updateZeitraster(${i},'bis',this.value)">
+      ${pauseHtml}
+    </div>`;
+  }).join('');
+}
+
+function toggleZeitraster() {
+  zeitrasterEditing = !zeitrasterEditing;
+  el('zeitraster-editor').classList.toggle('hidden', !zeitrasterEditing);
+  el('zeitraster-display').classList.toggle('hidden', zeitrasterEditing);
+  el('btn-zeitraster').textContent = zeitrasterEditing ? '✓ Fertig' : '✏️ Bearbeiten';
+
+  if (zeitrasterEditing) {
+    // Ensure we have a mutable copy
+    if (!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+    renderZeitrasterEditor();
+  } else {
+    renderZeitrasterCompact();
+    buildGrid();
+    saveState();
+  }
+}
+
+function updateZeitraster(index, field, value) {
+  if (!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+  state.zeitraster[index][field] = value;
+  renderZeitrasterEditor();
+  saveState();
+}
+
+function addStunde() {
+  if (!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+  const last = state.zeitraster[state.zeitraster.length - 1];
+  const newVon = addMinutes(last.bis, 0);
+  const newBis = addMinutes(newVon, 45);
+  state.zeitraster.push({ nr: state.zeitraster.length + 1, von: newVon, bis: newBis });
+  renderZeitrasterEditor();
+  saveState();
+}
+
+function removeLastStunde() {
+  if (!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+  if (state.zeitraster.length <= 1) return;
+  const removed = state.zeitraster.length - 1;
+  state.zeitraster.pop();
+  // Clean stundenplan entries for removed stunde
+  TAGE.forEach((_, d) => { delete state.stundenplan[`${d}-${removed}`]; });
+  renderZeitrasterEditor();
+  saveState();
+}
+
+function timeDiff(a, b) {
+  const [ah, am] = a.split(':').map(Number);
+  const [bh, bm] = b.split(':').map(Number);
+  return (bh * 60 + bm) - (ah * 60 + am);
+}
+
+function addMinutes(timeStr, min) {
+  const [h, m] = timeStr.split(':').map(Number);
+  const total = h * 60 + m + min;
+  return `${String(Math.floor(total / 60) % 24).padStart(2,'0')}:${String(total % 60).padStart(2,'0')}`;
+}
+
+function buildGrid() {
+  const zr = getZeitraster();
+  const grid = el('sp-grid');
+  grid.style.gridTemplateColumns = `56px repeat(5, 1fr)`;
+
+  let html = '<div class="sp-header"></div>';
+  TAGE.forEach(t => { html += `<div class="sp-header">${t}</div>`; });
+
+  zr.forEach((slot, s) => {
+    html += `<div class="sp-time">${slot.nr}.<br><span style="font-size:.58rem">${slot.von}</span></div>`;
+
+    for (let d = 0; d < 5; d++) {
+      const key = `${d}-${s}`;
+      const entry = state.stundenplan[key];
+
+      if (entry) {
+        const fach = getAllFaecher().find(f => f.id === entry.fachId);
+        const klasse = state.klassen.find(k => k.id === entry.klasseId);
+        html += `<div class="sp-cell filled" style="background:${fach ? fach.color : '#999'}" data-key="${key}"
+          onclick="openModal('${key}')" oncontextmenu="event.preventDefault();clearCell('${key}')">
+          <div><div class="sp-cell-fach">${fach ? fach.name : '?'}</div>
+          <div class="sp-cell-klasse">${klasse ? klasse.name : ''}</div></div>
+        </div>`;
+      } else {
+        html += `<div class="sp-cell empty" data-key="${key}"
+          onclick="openModal('${key}')"></div>`;
+      }
+    }
+  });
+
+  grid.innerHTML = html;
+
+  // Long press for mobile delete
+  grid.querySelectorAll('.sp-cell.filled').forEach(cell => {
+    let timer;
+    cell.addEventListener('touchstart', e => {
+      timer = setTimeout(() => { clearCell(cell.dataset.key); e.preventDefault(); }, 600);
+    }, { passive: false });
+    cell.addEventListener('touchend', () => clearTimeout(timer));
+    cell.addEventListener('touchmove', () => clearTimeout(timer));
+  });
+
+  renderZeitrasterCompact();
+}
+
+function openModal(key) {
+  modalCell = key;
+  modalSelectedFach = null;
+
+  const entry = state.stundenplan[key];
+
+  // Populate klassen dropdown
+  const sel = el('modal-klasse');
+  sel.innerHTML = '<option value="">Klasse wählen…</option>' +
+    state.klassen.map(k => `<option value="${k.id}" ${entry && entry.klasseId === k.id ? 'selected':''}>${k.name}</option>`).join('');
+
+  const [d, s] = key.split('-').map(Number);
+  const zr = getZeitraster();
+  const slot = zr[s];
+  el('modal-title').textContent = `${TAGE[d]}, ${slot ? slot.nr + '. Stunde (' + slot.von + '–' + slot.bis + ')' : (s+1) + '. Stunde'}`;
+
+  if (entry) {
+    modalSelectedFach = entry.fachId;
+    sel.value = entry.klasseId;
+  }
+
+  onModalKlasseChange();
+  el('assign-modal').classList.add('open');
+}
+
+function onModalKlasseChange() {
+  const klasseId = el('modal-klasse').value;
+  const k = state.klassen.find(x => x.id === klasseId);
+  const container = el('modal-faecher');
+
+  if (!k || k.faecher.length === 0) {
+    container.innerHTML = '<p class="text-sm text-muted">Wähle erst eine Klasse…</p>';
+    el('modal-save-btn').disabled = true;
+    return;
+  }
+
+  container.innerHTML = k.faecher.map(fid => {
+    const f = getAllFaecher().find(x => x.id === fid);
+    if (!f) return '';
+    const sel = modalSelectedFach === fid ? 'selected' : '';
+    return `<div class="fach-chip ${sel}" data-id="${fid}" style="color:${f.color}" onclick="selectModalFach(this)">
+      <div class="dot" style="background:${f.color}"></div>${f.name}
+    </div>`;
+  }).join('');
+
+  validateModal();
+}
+
+function selectModalFach(chip) {
+  el('modal-faecher').querySelectorAll('.fach-chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  modalSelectedFach = chip.dataset.id;
+  validateModal();
+}
+
+function validateModal() {
+  const valid = el('modal-klasse').value && modalSelectedFach;
+  el('modal-save-btn').disabled = !valid;
+}
+
+function saveCell() {
+  if (!modalCell || !modalSelectedFach || !el('modal-klasse').value) return;
+  state.stundenplan[modalCell] = {
+    fachId: modalSelectedFach,
+    klasseId: el('modal-klasse').value
+  };
+  closeModal();
+  buildGrid();
+  saveState();
+}
+
+function clearCell(key) {
+  delete state.stundenplan[key];
+  buildGrid();
+  saveState();
+}
+
+function closeModal() {
+  el('assign-modal').classList.remove('open');
+  modalCell = null;
+  modalSelectedFach = null;
+}
+
+// Close modal on overlay tap
+el('assign-modal').addEventListener('click', e => {
+  if (e.target === el('assign-modal')) closeModal();
+});
+
+/* ═══════════════════════════════════════════
+   FINISH & SUMMARY
+   ═══════════════════════════════════════════ */
+function finishSetup() {
+  collectState();
+  saveState();
+  goStep(5);
+  // Auto-redirect to dashboard after 3 seconds
+  setTimeout(() => {
+    window.location.href = 'TeachSmarter_Dashboard.html';
+  }, 3000);
+}
+
+function showSummary() {
+  const s = state;
+  const filledSlots = Object.keys(s.stundenplan).length;
+  const fachSet = new Set(Object.values(s.stundenplan).map(v => v.fachId));
+
+  let html = `<div class="card" style="font-size:.9rem">
+    <p><strong>Hallo ${s.vorname || 'Lehrkraft'}!</strong></p>
+    <p class="mt-sm">${s.schulart} · ${s.bundesland} · ${s.land}</p>
+    ${s.schulname ? `<p class="text-muted">${s.schulname}</p>` : ''}
+    <hr style="border:none;border-top:1px solid var(--ts-border-light);margin:var(--sp-md) 0">
+    <p><strong>${s.klassen.length} Klasse${s.klassen.length !== 1 ? 'n':''}:</strong>
+    ${s.klassen.map(k => k.name).join(', ')}</p>
+    <p class="mt-sm"><strong>${fachSet.size} Fächer</strong> im Stundenplan</p>
+    <p><strong>${filledSlots} Stunden</strong> pro Woche belegt (${getZeitraster().length} Slots/Tag)</p>
+    ${s.schwerpunkte ? `<p class="mt-sm text-muted">Schwerpunkte: ${s.schwerpunkte}</p>` : ''}
+    <hr style="border:none;border-top:1px solid var(--ts-border-light);margin:var(--sp-md) 0">
+    <p class="text-muted text-sm">Alle Daten sind lokal gespeichert. Du kannst das Setup jederzeit über die Einstellungen ändern.</p>
+  </div>
+  <button class="btn btn-secondary mt-md" onclick="resetAll()">Setup zurücksetzen</button>`;
+
+  el('summary').innerHTML = html;
+  el('summary').style.display = 'block';
+}
+
+function resetAll() {
+  if (!confirm('Wirklich alle Daten zurücksetzen?')) return;
+  localStorage.removeItem('ts_state');
+  state = { land:'DE', bundesland:'', schulart:'', schulname:'', vorname:'', schwerpunkte:'', klassen:[], stundenplan:{}, zeitraster:null };
+  location.reload();
+}
+
+/* ═══════════════════════════════════════════
+   PERSISTENCE (localStorage for MVP, IndexedDB later)
+   ═══════════════════════════════════════════ */
+function saveState() {
+  try { localStorage.setItem('ts_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('ts_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+    }
+  } catch(e) {}
+
+  // Restore form values
+  el('land').value = state.land || 'DE';
+  el('schulname').value = state.schulname || '';
+  el('vorname').value = state.vorname || '';
+  el('schwerpunkte').value = state.schwerpunkte || '';
+}
+
+/* ═══════════════════════════════════════════
+   BACKUP IMPORT (Onboarding)
+   ═══════════════════════════════════════════ */
+const _idb = (() => {
+  const DB_NAME = 'teachsmarter_v1', STORE = 'kv';
+  let _db = null;
+  function _open() {
+    if (_db) return Promise.resolve(_db);
+    return new Promise((res, rej) => {
+      const r = indexedDB.open(DB_NAME, 1);
+      r.onupgradeneeded = e => {
+        if (!e.target.result.objectStoreNames.contains(STORE))
+          e.target.result.createObjectStore(STORE);
+      };
+      r.onsuccess = e => { _db = e.target.result; res(_db); };
+      r.onerror = e => rej(e.target.error);
+    });
+  }
+  return {
+    setItem: async (key, val) => {
+      const db = await _open();
+      return new Promise((res, rej) => {
+        const r = db.transaction(STORE, 'readwrite').objectStore(STORE).put(val, key);
+        r.onsuccess = () => res();
+        r.onerror = e => rej(e.target.error);
+      });
+    }
+  };
+})();
+
+async function importBackupOnboarding() {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json,application/json';
+  inp.onchange = async () => {
+    const file = inp.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const obj = JSON.parse(text);
+      if (!obj.ts_export_v1 || !obj.data) throw new Error('Keine gültige TeachSmarter-Backup-Datei.');
+      if (!confirm('Das Backup wird geladen.\n\nDanach wirst du zum Dashboard weitergeleitet — dort gibst du deinen bisherigen PIN ein.\n\nFortfahren?')) return;
+      for (const [k, v] of Object.entries(obj.data)) {
+        if (k === 'ts_state') localStorage.setItem(k, v);
+        else await _idb.setItem(k, v);
+      }
+      await _idb.setItem('_ts_idb_migrated', '1');
+      alert('Backup erfolgreich geladen! Du wirst jetzt zum Dashboard weitergeleitet.');
+      window.location.href = 'TeachSmarter_Dashboard.html';
+    } catch (e) {
+      alert('Import fehlgeschlagen: ' + e.message);
+    }
+  };
+  inp.click();
+}
+
+/* ═══════════════════════════════════════════
+   UTIL
+   ═══════════════════════════════════════════ */
+function el(id) { return document.getElementById(id); }
+</script>
+</body>
+</html>

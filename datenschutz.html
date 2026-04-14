@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutzerklärung – TeachSmarter</title>
+<style>
+  :root {
+    --teal: #1AA898;
+    --teal-dark: #138A7C;
+    --navy: #0C1F35;
+    --text: #1a2332;
+    --text-secondary: #556070;
+    --bg: #f7f9fb;
+    --card-bg: #ffffff;
+    --border: #e2e8ef;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  .page-header {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+    padding: 2rem 1.5rem 1.75rem;
+    color: #fff;
+  }
+  .page-header a {
+    display: inline-flex; align-items: center; gap: .4rem;
+    color: rgba(255,255,255,.85); text-decoration: none; font-size: .875rem;
+    margin-bottom: 1rem; transition: color .15s;
+  }
+  .page-header a:hover { color: #fff; }
+  .page-header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
+  .page-header p { opacity: .8; font-size: .9rem; margin-top: .25rem; }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .card {
+    background: var(--card-bg); border-radius: 12px;
+    border: 1px solid var(--border); padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 4px rgba(12,31,53,.05);
+  }
+  .card h2 {
+    font-size: .78rem; font-weight: 700; color: var(--teal-dark);
+    margin-bottom: 1rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .card h3 { font-size: .95rem; font-weight: 600; margin: 1.1rem 0 .4rem; color: var(--navy); }
+  .card p { color: var(--text); margin-bottom: .75rem; }
+  .card p:last-child { margin-bottom: 0; }
+  .card a { color: var(--teal); text-decoration: none; }
+  .card a:hover { text-decoration: underline; }
+  .card ul { padding-left: 1.25rem; margin-bottom: .75rem; }
+  .card li { margin-bottom: .3rem; }
+  .highlight-box {
+    background: #f0faf9; border: 1px solid #b2e4de; border-radius: 8px;
+    padding: 1rem 1.1rem; margin-bottom: .75rem;
+  }
+  .highlight-box strong { color: var(--teal-dark); }
+  .badge {
+    display: inline-block; font-size: .72rem; font-weight: 700;
+    background: var(--teal); color: #fff; border-radius: 4px;
+    padding: 1px 7px; margin-right: .4rem; vertical-align: middle;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; margin-top: .75rem; }
+  th { text-align: left; padding: .5rem .75rem; background: #f0faf9; color: var(--teal-dark); font-weight: 600; border: 1px solid var(--border); }
+  td { padding: .5rem .75rem; border: 1px solid var(--border); vertical-align: top; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-size: .8rem; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="TeachSmarter_Dashboard.html">← Zurück zur App</a>
+  <h1>Datenschutzerklärung</h1>
+  <p>Stand: April 2026 · DSGVO-konform</p>
+</div>
+
+<div class="container">
+
+  <!-- Kurzübersicht -->
+  <div class="card">
+    <h2>Kurzübersicht</h2>
+    <div class="highlight-box">
+      <strong>🔒 Ihre Schülerdaten verlassen Ihr Gerät nicht.</strong><br>
+      Alle personenbezogenen Daten (Schülerinnen und Schüler, Klassen, Notizen, Planungen) werden
+      ausschließlich lokal in Ihrem Browser gespeichert und niemals an unsere Server übertragen.
+      Kein AVV mit TeachSmarter erforderlich.
+    </div>
+    <p>Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung
+    personenbezogener Daten bei der Nutzung der TeachSmarter Web-App.</p>
+  </div>
+
+  <!-- Verantwortlicher -->
+  <div class="card">
+    <h2>Verantwortlicher (Art. 4 Nr. 7 DSGVO)</h2>
+    <p>
+      <strong>Björn Sydow</strong> · TeachSmarter<br>
+      Barschweg 26 · 91325 Adelsdorf · Deutschland<br>
+      E-Mail: <a href="mailto:bjoernsydow@teachsmarter.de">bjoernsydow@teachsmarter.de</a>
+    </p>
+  </div>
+
+  <!-- Lokale Datenspeicherung -->
+  <div class="card">
+    <h2>1 · Lokale Datenspeicherung im Browser</h2>
+    <p>TeachSmarter ist eine <strong>Local-First-Anwendung</strong>. Alle von Ihnen eingegebenen Daten werden
+    ausschließlich auf Ihrem Gerät gespeichert:</p>
+    <ul>
+      <li>Klassen- und Schülerdaten (Namen, Notizen, Noten)</li>
+      <li>Unterrichtsplanungen, Stundenentwürfe, Jahrespläne</li>
+      <li>Erstellte Materialien (Arbeitsblätter, Elternbriefe etc.)</li>
+      <li>App-Einstellungen und Lizenzschlüssel</li>
+    </ul>
+    <p><strong>Speicherort:</strong> IndexedDB des Browsers (AES-256-GCM-verschlüsselt via Web Crypto API)</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie
+    Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an datensparsamem Design)</p>
+    <div class="highlight-box" style="margin-top:.75rem;margin-bottom:0">
+      <strong>Hinweis für Schulen:</strong> Da Schülerdaten ausschließlich lokal auf dem Gerät der Lehrkraft
+      verbleiben und TeachSmarter keinen Zugriff auf diese Daten hat, ist kein Auftragsverarbeitungsvertrag
+      (AVV) mit TeachSmarter erforderlich.
+    </div>
+  </div>
+
+  <!-- KI-Funktionen -->
+  <div class="card">
+    <h2>2 · KI-gestützte Funktionen</h2>
+    <p>Für die KI-Funktionen (Arbeitsblatt-Generator, Stundenvorbereitung, Jahresplanung u. a.)
+    werden Ihre Eingaben an unsere API weitergeleitet und von dort an den KI-Anbieter übermittelt.</p>
+
+    <h3>Was wird übermittelt?</h3>
+    <p>Ausschließlich die von Ihnen eingegebenen <strong>Unterrichtsinhalte</strong>:</p>
+    <ul>
+      <li>Thema, Fach, Jahrgangsstufe</li>
+      <li>Lehrplanbezüge und pädagogische Optionen</li>
+      <li>Freitext-Eingaben im jeweiligen Formular</li>
+    </ul>
+
+    <div class="highlight-box">
+      <strong>Bitte keine personenbezogenen Daten eingeben.</strong> Schülernamen,
+      Geburtsdaten oder andere personenbezogene Daten gehören nicht in die KI-Eingabefelder.
+      Die App ist so gestaltet, dass dies nicht notwendig ist.
+    </div>
+
+    <h3>KI-Auftragsverarbeiter</h3>
+    <table>
+      <tr><th>Anbieter</th><th>Zweck</th><th>Datenschutz</th></tr>
+      <tr>
+        <td><strong>Anthropic, PBC</strong><br><span style="color:#556070;font-size:.82rem">San Francisco, USA</span></td>
+        <td>Verarbeitung der KI-Anfragen (Claude-Modell)</td>
+        <td><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">anthropic.com/legal/privacy</a></td>
+      </tr>
+      <tr>
+        <td><strong>Cloudflare, Inc.</strong><br><span style="color:#556070;font-size:.82rem">San Francisco, USA</span></td>
+        <td>API-Hosting (Cloudflare Workers)</td>
+        <td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">cloudflare.com/privacypolicy</a></td>
+      </tr>
+    </table>
+    <p style="margin-top:.75rem">Die Übermittlung in Drittländer (USA) erfolgt auf Grundlage von
+    Standardvertragsklauseln (Art. 46 DSGVO). Beide Anbieter sind dem EU-U.S. Data Privacy Framework beigetreten.</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)</p>
+  </div>
+
+  <!-- Lizenz & Zahlung -->
+  <div class="card">
+    <h2>3 · Lizenzverarbeitung & Zahlungen</h2>
+    <p>Für den Kauf eines Abonnements oder der Gründeredition wird die Zahlungsabwicklung
+    über <strong>Stripe, Inc.</strong> (USA) durchgeführt.</p>
+    <ul>
+      <li>TeachSmarter speichert <strong>keine</strong> Zahlungsdaten (Kreditkartennummern etc.)</li>
+      <li>Stripe verarbeitet: Name, E-Mail-Adresse, Zahlungsinformationen</li>
+      <li>Wir erhalten von Stripe lediglich eine Bestätigung des Kaufs sowie eine E-Mail-Adresse zur Lizenzzuordnung</li>
+    </ul>
+    <p>Stripe-Datenschutz: <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener">stripe.com/de/privacy</a></p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)</p>
+  </div>
+
+  <!-- Server-Logs -->
+  <div class="card">
+    <h2>4 · Zugriffsdaten & Server-Logs</h2>
+    <p>Beim Aufrufen der App werden vom Hosting-Anbieter automatisch folgende Daten protokolliert:</p>
+    <ul>
+      <li>IP-Adresse (anonymisiert nach 24 Stunden)</li>
+      <li>Browsertyp und -version</li>
+      <li>Datum und Uhrzeit des Zugriffs</li>
+      <li>Aufgerufene Seite</li>
+    </ul>
+    <p>Diese Daten werden ausschließlich zur Sicherstellung des Betriebs und zur Abwehr von Angriffen
+    verwendet und nach spätestens 7 Tagen gelöscht.</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse)</p>
+  </div>
+
+  <!-- Cookies -->
+  <div class="card">
+    <h2>5 · Cookies & Tracking</h2>
+    <div class="highlight-box">
+      <strong>Wir setzen keine Tracking-Cookies und kein Web-Analytics ein.</strong>
+    </div>
+    <p>TeachSmarter verwendet <strong>keine</strong> Google Analytics, Meta Pixel, Hotjar oder
+    vergleichbare Tracking-Dienste. Es werden keine Nutzerprofile erstellt und keine Daten
+    zu Werbezwecken verarbeitet.</p>
+    <p>Technisch notwendige Browserspeicher (IndexedDB, localStorage) dienen ausschließlich der
+    App-Funktionalität und sind keine Cookies im Sinne der ePrivacy-Richtlinie.</p>
+  </div>
+
+  <!-- Betroffenenrechte -->
+  <div class="card">
+    <h2>6 · Ihre Rechte als betroffene Person</h2>
+    <p>Sie haben gemäß DSGVO folgende Rechte:</p>
+    <ul>
+      <li><strong>Auskunft</strong> (Art. 15): Welche Daten wir über Sie verarbeiten</li>
+      <li><strong>Berichtigung</strong> (Art. 16): Korrektur unrichtiger Daten</li>
+      <li><strong>Löschung</strong> (Art. 17): „Recht auf Vergessenwerden"</li>
+      <li><strong>Einschränkung</strong> (Art. 18): Verarbeitung einschränken</li>
+      <li><strong>Datenübertragbarkeit</strong> (Art. 20): Daten in maschinenlesbarem Format</li>
+      <li><strong>Widerspruch</strong> (Art. 21): Verarbeitung auf Basis berechtigten Interesses</li>
+    </ul>
+    <p>Da Ihre Schülerdaten ausschließlich lokal auf Ihrem Gerät liegen, können Sie diese
+    jederzeit selbst über den Browser löschen (App-Einstellungen → Daten löschen).</p>
+    <p>Für Anfragen zu den Daten, die TeachSmarter verarbeitet (E-Mail aus Stripe-Kauf,
+    Lizenzschlüssel): <a href="mailto:bjoernsydow@teachsmarter.de">bjoernsydow@teachsmarter.de</a></p>
+    <p>Sie haben zudem das Recht, sich bei der zuständigen Datenschutz-Aufsichtsbehörde zu
+    beschweren (Bayern: <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">lda.bayern.de</a>).</p>
+  </div>
+
+  <!-- Datensicherheit -->
+  <div class="card">
+    <h2>7 · Datensicherheit</h2>
+    <p>Die App wird über HTTPS ausgeliefert. Alle lokal gespeicherten Daten sind mit
+    AES-256-GCM verschlüsselt (PBKDF2-Schlüsselableitung, 310.000 Iterationen).
+    Der Schlüssel verlässt Ihr Gerät nicht.</p>
+  </div>
+
+  <!-- Änderungen -->
+  <div class="card">
+    <h2>8 · Änderungen dieser Datenschutzerklärung</h2>
+    <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf zu aktualisieren.
+    Die aktuelle Version ist stets unter <a href="https://app.teachsmarter.de/datenschutz.html" target="_blank">app.teachsmarter.de/datenschutz.html</a> abrufbar.
+    Das Datum des letzten Stands ist oben vermerkt.</p>
+  </div>
+
+</div>
+
+<footer>
+  &copy; <span id="yr"></span> TeachSmarter · Björn Sydow ·
+  <a href="impressum.html" style="color:inherit">Impressum</a> ·
+  <a href="support.html" style="color:inherit">Support</a>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>

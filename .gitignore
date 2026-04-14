@@ -1,0 +1,23 @@
+# Backups
+Alt/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Node
+node_modules/
+
+# Electron Build Output
+dist/
+
+# Wrangler Cache
+.wrangler/
+
+# Secrets (niemals committen)
+.env
+*.pem

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self' file: https://date.nager.at https://teachsmarter-api.teachsmarter-api.workers.dev https://api.anthropic.com; worker-src 'self' blob: https://cdnjs.cloudflare.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#3BA89B">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="ts-icon.svg">
+<title>TeachSmarter Kalender</title>
+<link rel="stylesheet" href="ts-style.css">
+<style>
+/* ── Werkzeug-Nav: gesperrt ohne Premium ── */
+.nav-item--locked { opacity: 0.4; pointer-events: none; }
+.nav-item--locked .nav-icon::after { content: '🔒'; font-size:.7rem; position:relative; top:-2px; margin-left:2px; }
+
+/* ── Beta-Badge ── */
+.beta-badge {
+  display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.04em;
+  background:var(--ts-teal); color:#fff; border-radius:4px; padding:1px 5px;
+  vertical-align:middle; margin-left:4px; line-height:1.5;
+}
+
+/* ── Arbeitsblatt-Generator Pill-Buttons ── */
+.ab-pills { display:flex; flex-wrap:wrap; gap:.4rem; }
+.ab-pill {
+  padding:7px 14px; border-radius:20px; cursor:pointer; font-size:.85rem; font-weight:500;
+  border:1.5px solid var(--ts-border-light); background:transparent; color:var(--ts-text);
+  transition:border-color .15s, background .15s, color .15s;
+}
+.ab-pill.active {
+  border-color:var(--ts-teal); background:var(--ts-teal); color:#fff;
+}
+.ab-pill:hover:not(.active) {
+  border-color:var(--ts-teal); color:var(--ts-teal);
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 32 32" fill="none"><path d="M16 4c-5.5 0-10 4-10 9.1 0 2.6 1.3 5 3.4 6.6.5.4.8 1 .9 1.7l.3 2c.1.9.9 1.6 1.8 1.6h7.2c.9 0 1.7-.7 1.8-1.6l.3-2c.1-.7.4-1.3.9-1.7 2.1-1.6 3.4-4 3.4-6.6C26 8 21.5 4 16 4z" stroke="#3BA89B" stroke-width="1.8" fill="#E8F6F4"/><path d="M13 27h6m-5 2h4" stroke="#3BA89B" stroke-width="1.8" stroke-linecap="round"/><circle cx="13.5" cy="12" r="1.3" fill="#3BA89B"/><circle cx="18.5" cy="12" r="1.3" fill="#3BA89B"/><circle cx="16" cy="16" r="1.3" fill="#3BA89B"/><path d="M13.5 12v2.5l2.5 1.5m2.5-4v2.5l-2.5 1.5" stroke="#3BA89B" stroke-width="1" stroke-linecap="round"/></svg>
+      <span>TeachSmarter</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <button class="nav-item active" data-view="heute" onclick="navigate('heute')">
+        <span class="nav-icon">📅</span><span class="nav-label">Heute</span>
+      </button>
+      <button class="nav-item" data-view="woche" onclick="navigate('woche')">
+        <span class="nav-icon">📆</span><span class="nav-label">Woche</span>
+      </button>
+      <button class="nav-item" data-view="monat" onclick="navigate('monat')">
+        <span class="nav-icon">🗓️</span><span class="nav-label">Monat</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Planung</div>
+      <button class="nav-item" data-view="planung" onclick="navigate('planung')">
+        <span class="nav-icon">📋</span><span class="nav-label">Jahres- & Sequenzplanung</span>
+      </button>
+      <button class="nav-item" data-view="ferien-countdown" onclick="navigate('ferien-countdown')">
+        <span class="nav-icon">🏖️</span><span class="nav-label">Ferien-Countdown</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Klassen</div>
+      <div id="klassen-nav"></div>
+    </div>
+
+    <div class="nav-section">
+      <button class="nav-item" data-view="materialdatenbank" onclick="navigate('materialdatenbank')">
+        <span class="nav-icon">📚</span><span class="nav-label">Materialdatenbank</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Werkzeuge <span class="premium-badge">Premium</span></div>
+      <button class="nav-item" data-view="tool-arbeitsblatt" onclick="navigate('tool-arbeitsblatt')">
+        <span class="nav-icon">📄</span><span class="nav-label">Arbeitsblatt-Generator</span>
+      </button>
+      <button class="nav-item" data-view="tool-tafelbild" onclick="navigate('tool-tafelbild')">
+        <span class="nav-icon">📋</span><span class="nav-label">Tafelbild-Planer</span>
+      </button>
+<button class="nav-item" data-view="tool-differenzierung" onclick="navigate('tool-differenzierung')">
+        <span class="nav-icon">📊</span><span class="nav-label">Differenzierungshelfer</span>
+      </button>
+      <button class="nav-item" data-view="tool-interaktiv" onclick="navigate('tool-interaktiv')">
+        <span class="nav-icon">⚡</span><span class="nav-label">Interaktive Arbeitsblätter</span>
+      </button>
+      <button class="nav-item" data-view="tool-appbaukasten" onclick="navigate('tool-appbaukasten')">
+        <span class="nav-icon">🧩</span><span class="nav-label">App-Baukasten</span><span class="beta-badge">Beta</span>
+      </button>
+      <button class="nav-item" data-view="tool-elternbrief" onclick="navigate('tool-elternbrief')">
+        <span class="nav-icon">✉️</span><span class="nav-label">Elternbrief-Assistent</span>
+      </button>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-section">
+      <button class="nav-item" data-view="einstellungen" onclick="navigate('einstellungen')">
+        <span class="nav-icon">⚙️</span><span class="nav-label">Einstellungen</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-dsgvo" title="Alle Schülerdaten bleiben lokal auf deinem Gerät — kein AVV nötig">
+      🔒 DSGVO · Zero-Setup
+    </div>
+    <div class="sidebar-brand">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M10 2.5c-3.4 0-6.2 2.5-6.2 5.6 0 1.6.8 3.1 2.1 4.1.3.3.5.6.5 1l.2 1.3c.1.5.5 1 1.1 1h4.5c.6 0 1-.4 1.1-1l.2-1.3c.1-.4.3-.7.5-1 1.3-1 2.1-2.5 2.1-4.1.1-3.1-2.7-5.6-6.1-5.6z" stroke="#9AABB8" stroke-width="1.2" fill="none"/></svg>
+      TeachSmarter
+    </div>
+    <div class="sidebar-links">
+      <a href="https://teachsmarter.de" target="_blank">Website</a>
+      <a href="https://www.youtube.com/@bjoern_sydow" target="_blank">YouTube</a>
+      <a href="https://instagram.com/teachsmarter" target="_blank">Instagram</a>
+    </div>
+    <div class="sidebar-links" style="margin-top:.3rem">
+      <a href="support.html" target="_blank">Support</a>
+      <a href="impressum.html" target="_blank">Impressum</a>
+      <a href="datenschutz.html" target="_blank">Datenschutz</a>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN AREA ═══ -->
+<div class="main">
+  <header class="header">
+    <button class="header-burger" onclick="toggleSidebar()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="header-title" id="header-title">Heute</div>
+    <div class="header-meta">
+      <span id="header-meta-text"></span>
+      <div class="header-avatar" id="header-avatar"></div>
+    </div>
+  </header>
+
+  <div class="content" id="content">
+
+    <!-- HEUTE -->
+    <div class="view active" id="view-heute">
+      <div class="heute-header">
+        <div class="woche-nav">
+          <button class="woche-nav-btn" onclick="heuteNav(-1)">‹</button>
+          <div>
+            <div class="heute-date" id="heute-date"></div>
+            <div class="heute-sub" id="heute-sub"></div>
+          </div>
+          <button class="woche-nav-btn" onclick="heuteNav(1)">›</button>
+        </div>
+        <div style="display:flex;gap:var(--sp-sm);align-items:center">
+          <button class="woche-today-btn" onclick="heuteToday()">Heute</button>
+          <span class="heute-kw" id="heute-kw"></span>
+        </div>
+      </div>
+      <div class="heute-stats" id="heute-stats"></div>
+      <div id="heute-holiday-banner"></div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- WOCHE -->
+    <div class="view" id="view-woche">
+      <div class="woche-header">
+        <div class="woche-nav">
+          <button class="woche-nav-btn" onclick="wocheNav(-1)">‹</button>
+          <div class="woche-title" id="woche-title"></div>
+          <button class="woche-nav-btn" onclick="wocheNav(1)">›</button>
+        </div>
+        <button class="woche-today-btn" onclick="wocheToday()">Heute</button>
+      </div>
+      <div class="woche-grid" id="woche-grid"></div>
+    </div>
+
+    <!-- MONAT -->
+    <div class="view" id="view-monat">
+      <div class="woche-header">
+        <div class="woche-nav">
+          <button class="woche-nav-btn" onclick="monatNav(-1)">‹</button>
+          <div class="woche-title" id="monat-title"></div>
+          <button class="woche-nav-btn" onclick="monatNav(1)">›</button>
+        </div>
+        <button class="woche-today-btn" onclick="monatToday()">Heute</button>
+      </div>
+      <div class="monat-grid" id="monat-grid"></div>
+      <div id="monat-legend" class="monat-legend"></div>
+    </div>
+
+    <!-- PLANUNG -->
+    <div class="view" id="view-planung">
+      <div class="pl-selector">
+        <select class="pl-select" id="jp-klasse" onchange="jpChanged()"><option value="">Klasse wählen…</option></select>
+        <select class="pl-select" id="jp-fach" onchange="jpChanged()"><option value="">Fach wählen…</option></select>
+        <button class="pl-print-btn" onclick="jpPrint()" title="Jahresplanung drucken">🖨️ Drucken</button>
+      </div>
+      <div id="jp-content">
+        <div class="pl-empty"><div class="pl-empty-icon">📋</div><div style="font-size:.9rem;max-width:400px;margin:0 auto">Wähle eine Klasse und ein Fach, um die Jahresplanung zu starten.</div></div>
+      </div>
+    </div>
+
+    <!-- FERIEN-COUNTDOWN -->
+    <div class="view" id="view-ferien-countdown"></div>
+
+    <!-- KI Panel Overlay (mobile) -->
+    <div class="pl-panel-overlay" id="pl-panel-overlay" onclick="toggleKiPanel()"></div>
+
+    <!-- KI Planung Panel -->
+    <div class="pl-panel hidden" id="pl-panel">
+      <div class="pl-ki-card">
+        <div class="pl-ki-title">📋 Lehrplan-Inhalte</div>
+        <div class="pl-ki-subtitle" id="pl-ki-lehrplan-info">Wähle Klasse + Fach</div>
+        <div id="pl-ki-lernbereiche"></div>
+      </div>
+      <div class="pl-ki-card">
+        <div class="pl-ki-title" style="font-size:.88rem">⚡ Verteilen</div>
+        <button class="pl-ki-btn pl-ki-btn-primary" onclick="autoDistribute()" style="margin-bottom:6px">🪄 Automatisch verteilen</button>
+        <button class="pl-ki-btn pl-ki-btn-secondary" onclick="kiDistribute()" style="margin-bottom:6px">🧠 Mit KI-Hilfe verteilen</button>
+        <button class="pl-ki-btn pl-ki-btn-secondary" onclick="clearAllLBs()" style="opacity:.7">🗑️ Zurücksetzen</button>
+      </div>
+    </div>
+
+    <!-- Week Context Modal -->
+    <div class="pl-modal-overlay" id="pl-week-modal" onclick="if(event.target===this)closeWeekModal()">
+      <div class="pl-modal" style="max-width:560px">
+        <div class="event-modal-handle"></div>
+        <div id="pl-wm-content"></div>
+      </div>
+    </div>
+
+    <!-- STUNDENVORBEREITUNG -->
+    <div class="view" id="view-stundenvorbereitung">
+      <div class="placeholder"><div class="placeholder-icon">📝</div><div class="placeholder-title">Stundenvorbereitung</div><div class="placeholder-desc">Klicke auf eine Unterrichtsstunde in der Heute- oder Wochenansicht, um sie vorzubereiten.</div></div>
+    </div>
+
+    <!-- NOTIZEN -->
+    <div class="view" id="view-notizen">
+      <div class="placeholder"><div class="placeholder-icon">📝</div><div class="placeholder-title">Notizen</div><div class="placeholder-desc">Tages-, Wochen- und Monatsnotizen findest du direkt unter dem jeweiligen Kalender.</div></div>
+    </div>
+
+    <!-- EINSTELLUNGEN -->
+    <div class="view" id="view-einstellungen">
+      <div class="placeholder"><div class="placeholder-icon">⚙️</div><div class="placeholder-title">Einstellungen</div><div class="placeholder-desc">Profil, Stundenplan, KI-Guthaben, Export. Wird in Woche 9 gebaut.</div></div>
+    </div>
+
+    <!-- KLASSE DETAIL -->
+    <div class="view" id="view-klasse-detail">
+      <div class="placeholder"><div class="placeholder-icon">👥</div><div class="placeholder-title" id="klasse-detail-title">Klasse</div><div class="placeholder-desc">Sitzplan, Noten, Klasseninfo. Wird in Woche 6 gebaut.</div></div>
+    </div>
+
+    <!-- WERKZEUGE -->
+    <div class="view" id="view-tool-arbeitsblatt"></div>
+    <div class="view" id="view-tool-tafelbild"></div>
+    <div class="view" id="view-tool-differenzierung"></div>
+    <div class="view" id="view-tool-interaktiv"></div>
+    <div class="view" id="view-tool-elternbrief"></div>
+    <div class="view" id="view-tool-appbaukasten"></div>
+    <div class="view" id="view-materialdatenbank"></div>
+
+  </div>
+</div>
+</div>
+
+<!-- FAB -->
+<button class="fab-add" onclick="addEventFromContext()" title="Termin hinzufügen">+</button>
+
+<!-- Print Button -->
+<button class="print-btn" onclick="printView()">🖨️ PDF / Drucken</button>
+
+<!-- Event Modal -->
+<div class="event-modal-overlay" id="event-modal" onclick="if(event.target===this)closeEventModal()">
+  <div class="event-modal">
+    <div class="event-modal-handle"></div>
+    <h3 id="event-modal-title">Neuer Termin</h3>
+    <div class="evt-form-group"><label>Titel</label><input class="evt-form-input" id="evt-title" placeholder="z.B. Elterngespräch Familie Müller"></div>
+    <div class="evt-form-group">
+      <label>Kategorie</label>
+      <div class="event-types" id="evt-types"></div>
+      <div id="evt-custom-wrap" style="display:none;margin-top:8px">
+        <input class="evt-form-input" id="evt-custom-name" placeholder="Eigene Kategorie eingeben …">
+      </div>
+    </div>
+    <div class="evt-form-row">
+      <div class="evt-form-group"><label>Von</label><input class="evt-form-input ts-datepicker-trigger" id="evt-date" type="text" inputmode="none" readonly placeholder="Datum wählen …" onclick="openDatePicker('evt-date')"></div>
+      <div class="evt-form-group"><label>Bis</label><input class="evt-form-input ts-datepicker-trigger" id="evt-date-end" type="text" inputmode="none" readonly placeholder="Bis (optional)" onclick="openDatePicker('evt-date-end')"></div>
+    </div>
+    <div class="evt-form-group" style="margin-bottom:8px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500">
+        <input type="checkbox" id="evt-ganztag" onchange="evtToggleGanztag()" style="width:16px;height:16px;cursor:pointer">
+        Blockiert Unterricht
+      </label>
+    </div>
+    <div id="evt-slots-wrap" style="display:none;margin-bottom:12px;padding:10px 12px;background:var(--ts-bg-warm);border-radius:var(--radius-sm)">
+      <div style="font-size:.75rem;font-weight:600;color:var(--ts-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Betroffene Stunden</div>
+      <div style="display:flex;gap:16px;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer">
+          <input type="radio" name="evt-scope" value="all" onchange="evtScopeChange()" checked> Gesamter Tag
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer">
+          <input type="radio" name="evt-scope" value="specific" onchange="evtScopeChange()"> Bestimmte Stunden
+        </label>
+      </div>
+      <div id="evt-slot-cbs" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:4px"></div>
+    </div>
+    <div id="evt-time-wrap" class="evt-form-row">
+      <div class="evt-form-group"><label>Von</label><input class="evt-form-input ts-timepicker-trigger" id="evt-time" type="text" inputmode="none" placeholder="08:00" maxlength="5" readonly onclick="openTimePicker('evt-time')"></div>
+      <div class="evt-form-group"><label>Bis</label><input class="evt-form-input ts-timepicker-trigger" id="evt-end-time" type="text" inputmode="none" placeholder="09:30" maxlength="5" readonly onclick="openTimePicker('evt-end-time')"></div>
+    </div>
+    <div class="evt-form-group"><label>Klasse</label><select class="evt-form-input" id="evt-klasse"><option value="">Keine</option></select></div>
+    <div class="evt-form-group"><label>Notizen</label><input class="evt-form-input" id="evt-notes" placeholder="Zusätzliche Infos…"></div>
+    <div class="evt-btn-row">
+      <button class="btn btn-secondary" onclick="closeEventModal()">Abbrechen</button>
+      <button class="btn btn-primary" id="evt-save-btn" onclick="saveEvent()">Speichern</button>
+    </div>
+    <button class="btn btn-sm" id="evt-delete-btn" onclick="deleteEvent()" style="width:auto;margin-top:var(--sp-sm);color:var(--ts-error);background:none;border:none;display:none">Termin löschen</button>
+  </div>
+</div>
+<div id="pin-overlay" style="display:none;position:fixed;inset:0;background:var(--ts-bg);z-index:2000;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+  <svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="22" fill="var(--ts-teal)"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="22" font-family="serif" font-weight="bold">T</text></svg>
+  <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--ts-navy);letter-spacing:-.02em">TeachSmarter</div>
+  <div id="pin-subtitle" style="color:var(--ts-text-secondary);font-size:.88rem;font-family:var(--font-body)"></div>
+  <div id="pin-dots" style="display:flex;gap:16px;margin:4px 0"></div>
+  <div id="pin-error" style="color:var(--ts-error);font-size:.8rem;min-height:1.2rem;font-family:var(--font-body);text-align:center"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:216px">
+    <button onclick="tsPinKey('1')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">1</button>
+    <button onclick="tsPinKey('2')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">2</button>
+    <button onclick="tsPinKey('3')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">3</button>
+    <button onclick="tsPinKey('4')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">4</button>
+    <button onclick="tsPinKey('5')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">5</button>
+    <button onclick="tsPinKey('6')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">6</button>
+    <button onclick="tsPinKey('7')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">7</button>
+    <button onclick="tsPinKey('8')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">8</button>
+    <button onclick="tsPinKey('9')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">9</button>
+    <div></div>
+    <button onclick="tsPinKey('0')" style="height:62px;font-size:1.35rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">0</button>
+    <button onclick="tsPinBack()" style="height:62px;font-size:1.1rem;font-family:var(--font-body);font-weight:500;border:1px solid var(--ts-border);border-radius:var(--radius-md);background:var(--ts-bg-card);color:var(--ts-text-secondary);cursor:pointer" ontouchstart="this.style.background='var(--ts-teal-subtle)'" ontouchend="this.style.background='var(--ts-bg-card)'" onmousedown="this.style.background='var(--ts-teal-subtle)'" onmouseup="this.style.background='var(--ts-bg-card)'">&#x232B;</button>
+  </div>
+</div>
+
+<!-- ── Date Picker ── -->
+<div id="ts-datepicker-overlay" onclick="if(event.target===this)tsDatepickerCancel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:4500;align-items:flex-end;justify-content:center">
+  <div id="ts-datepicker-sheet">
+    <div class="ts-tp-header">
+      <button class="ts-tp-btn-cancel" onclick="tsDatepickerCancel()">Abbrechen</button>
+      <span class="ts-tp-title" id="ts-dp-title">Datum wählen</span>
+      <button class="ts-tp-btn-ok" onclick="tsDatepickerConfirm()">Fertig</button>
+    </div>
+    <div class="ts-dp-nav">
+      <button onclick="tsDatepickerNav(-1)" aria-label="Vorheriger Monat">‹</button>
+      <span id="ts-dp-month-label"></span>
+      <button onclick="tsDatepickerNav(1)" aria-label="Nächster Monat">›</button>
+    </div>
+    <div class="ts-dp-weekdays"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>
+    <div id="ts-dp-grid" class="ts-dp-grid"></div>
+  </div>
+</div>
+
+<!-- ── Time Picker Wheel ── -->
+<div id="ts-timepicker-overlay" onclick="if(event.target===this)tsTimepickerCancel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:4500;align-items:flex-end;justify-content:center">
+  <div id="ts-timepicker-sheet">
+    <div class="ts-tp-header">
+      <button class="ts-tp-btn-cancel" onclick="tsTimepickerCancel()">Abbrechen</button>
+      <span class="ts-tp-title">Uhrzeit</span>
+      <button class="ts-tp-btn-ok" onclick="tsTimepickerConfirm()">Fertig</button>
+    </div>
+    <div class="ts-tp-body">
+      <div class="ts-tp-col" id="ts-tp-hours"></div>
+      <div class="ts-tp-sep">:</div>
+      <div class="ts-tp-col" id="ts-tp-minutes"></div>
+      <div class="ts-tp-selector"></div>
+      <div class="ts-tp-fade ts-tp-fade--top"></div>
+      <div class="ts-tp-fade ts-tp-fade--bot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Externe Module (Load-Reihenfolge ist wichtig) -->
+<script src="ts-core.js"></script>
+<script src="ts-ferien.js"></script>
+<script src="ts-kalender.js"></script>
+<script src="ts-events.js"></script>
+<script src="ts-planung.js"></script>
+<script src="ts-stunde.js"></script>
+<script src="ts-klassen.js"></script>
+<script src="ts-tools.js"></script>
+<script src="ts-app.js"></script>
+</body>
+</html>

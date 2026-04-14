@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support & Kontakt – TeachSmarter</title>
+<style>
+  :root {
+    --teal: #1AA898;
+    --teal-dark: #138A7C;
+    --navy: #0C1F35;
+    --text: #1a2332;
+    --text-secondary: #556070;
+    --bg: #f7f9fb;
+    --card-bg: #ffffff;
+    --border: #e2e8ef;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  .page-header {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+    padding: 2rem 1.5rem 1.75rem;
+    color: #fff;
+  }
+  .page-header a {
+    display: inline-flex; align-items: center; gap: .4rem;
+    color: rgba(255,255,255,.85); text-decoration: none; font-size: .875rem;
+    margin-bottom: 1rem; transition: color .15s;
+  }
+  .page-header a:hover { color: #fff; }
+  .page-header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
+  .page-header p { opacity: .8; font-size: .9rem; margin-top: .25rem; }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* Kontakt-Hero */
+  .contact-hero {
+    background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border);
+    padding: 2rem 1.75rem; margin-bottom: 1.25rem; text-align: center;
+    box-shadow: 0 1px 4px rgba(12,31,53,.05);
+  }
+  .contact-hero .icon {
+    width: 56px; height: 56px; background: #f0faf9; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; margin-bottom: 1rem; border: 1px solid #b2e4de;
+  }
+  .contact-hero h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: .4rem; color: var(--navy); }
+  .contact-hero p { color: var(--text-secondary); font-size: .9rem; margin-bottom: 1.25rem; }
+  .btn-primary {
+    display: inline-block; background: var(--teal); color: #fff;
+    padding: .7rem 1.6rem; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: .95rem; transition: background .15s, transform .1s;
+  }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+  /* Karten */
+  .card {
+    background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border);
+    padding: 1.75rem; margin-bottom: 1.25rem;
+    box-shadow: 0 1px 4px rgba(12,31,53,.05);
+  }
+  .card h2 {
+    font-size: .78rem; font-weight: 700; color: var(--teal-dark);
+    margin-bottom: 1rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .card p { color: var(--text); margin-bottom: .5rem; }
+  .card a { color: var(--teal); text-decoration: none; }
+  .card a:hover { text-decoration: underline; }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); padding: .9rem 0; }
+  .faq-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .faq-q {
+    font-weight: 600; font-size: .93rem; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: .75rem; color: var(--navy);
+  }
+  .faq-q .arrow { color: var(--teal); font-size: .8rem; transition: transform .2s; flex-shrink: 0; }
+  .faq-q.open .arrow { transform: rotate(90deg); }
+  .faq-a {
+    font-size: .88rem; color: var(--text-secondary); max-height: 0;
+    overflow: hidden; transition: max-height .25s ease, padding .2s;
+  }
+  .faq-a.open { max-height: 400px; padding-top: .6rem; }
+
+  /* Links-Grid */
+  .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .75rem; }
+  .link-tile {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .85rem 1rem; background: #f7f9fb; border-radius: 8px;
+    border: 1px solid var(--border); text-decoration: none; color: var(--text);
+    transition: border-color .15s, background .15s;
+  }
+  .link-tile:hover { border-color: var(--teal); background: #f0faf9; }
+  .link-tile .tile-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .link-tile .tile-label { font-size: .86rem; font-weight: 600; }
+  .link-tile .tile-sub { font-size: .76rem; color: var(--text-secondary); }
+
+  footer { text-align: center; padding: 2rem 1.5rem; font-size: .8rem; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="TeachSmarter_Dashboard.html">← Zurück zur App</a>
+  <h1>Support & Kontakt</h1>
+  <p>Wir helfen dir gerne weiter</p>
+</div>
+
+<div class="container">
+
+  <!-- Kontakt-Hero -->
+  <div class="contact-hero">
+    <div class="icon">✉️</div>
+    <h2>Direkt Kontakt aufnehmen</h2>
+    <p>Fragen, Feedback, Bugs oder Wünsche? Björn antwortet persönlich — meist innerhalb von 24 Stunden.</p>
+    <a href="mailto:bjoernsydow@teachsmarter.de?subject=TeachSmarter Support" class="btn-primary">
+      E-Mail schreiben
+    </a>
+    <p style="margin-top:.85rem;font-size:.82rem;color:var(--text-secondary)">
+      <strong>bjoernsydow@teachsmarter.de</strong>
+    </p>
+  </div>
+
+  <!-- Weitere Kanäle -->
+  <div class="card">
+    <h2>Weitere Kanäle</h2>
+    <div class="links-grid">
+      <a href="https://teachsmarter.de" target="_blank" rel="noopener" class="link-tile">
+        <span class="tile-icon">🌐</span>
+        <div><div class="tile-label">Website</div><div class="tile-sub">teachsmarter.de</div></div>
+      </a>
+      <a href="https://www.youtube.com/@bjoern_sydow" target="_blank" rel="noopener" class="link-tile">
+        <span class="tile-icon">▶️</span>
+        <div><div class="tile-label">YouTube</div><div class="tile-sub">Tutorials & Tipps</div></div>
+      </a>
+      <a href="https://instagram.com/teachsmarter" target="_blank" rel="noopener" class="link-tile">
+        <span class="tile-icon">📸</span>
+        <div><div class="tile-label">Instagram</div><div class="tile-sub">@teachsmarter</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <h2>Häufige Fragen</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Wo werden meine Schüler- und Klassendaten gespeichert?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Ausschließlich lokal in deinem Browser (IndexedDB, AES-256-GCM verschlüsselt). Keine Schülerdaten
+        werden an unsere Server übertragen. Du brauchst keinen AVV mit uns.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Ich habe mein Gerät gewechselt – wie komme ich an meine Daten?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Gehe in den App-Einstellungen auf „Daten exportieren" und erstelle ein Backup. Die Backup-Datei
+        kannst du auf dem neuen Gerät unter „Daten importieren" wieder einspielen. Der Lizenzschlüssel
+        muss ggf. erneut eingegeben werden.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Mein Lizenzschlüssel wird nicht erkannt – was tun?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Prüfe zuerst, ob der Schlüssel vollständig kopiert wurde (keine Leerzeichen am Anfang/Ende).
+        Falls du ihn per E-Mail erhalten hast, kopiere ihn direkt aus der E-Mail.
+        Hilft das nicht, schreib uns unter bjoernsydow@teachsmarter.de mit dem Betreff „Lizenz-Problem".
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Die KI gibt einen Fehler zurück – was tun?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Prüfe deine Internet-Verbindung und versuche es erneut. Falls der Fehler anhält,
+        könnte dein Credit-Guthaben aufgebraucht sein – schau in den Einstellungen nach.
+        Bei anhaltenden Problemen: E-Mail an bjoernsydow@teachsmarter.de.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Wie kann ich mein Abo kündigen?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Das Abo läuft monatlich und kann jederzeit gekündigt werden. Schreibe dazu eine E-Mail an
+        bjoernsydow@teachsmarter.de – wir kündigen das Abo umgehend. Eine Selbstverwaltung
+        über das Stripe-Kundenportal folgt in Kürze.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Kann ich die App als Schule / mehrere Lehrkräfte nutzen?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Aktuell ist die App für Einzel-Lehrkräfte ausgelegt – jede Lehrkraft benötigt eine eigene
+        Lizenz. Schullizenzen und Team-Features sind in Planung. Interesse?
+        Meld dich unter bjoernsydow@teachsmarter.de.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Funktioniert die App ohne Internet?
+        <span class="arrow">▶</span>
+      </div>
+      <div class="faq-a">
+        Ja – nach dem ersten Laden ist die App (Kalender, Planung, Klassen, gespeicherte Materialien)
+        vollständig offline nutzbar. Nur die KI-Funktionen und die Lizenzprüfung benötigen eine
+        Internetverbindung.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Anschrift -->
+  <div class="card">
+    <h2>Anschrift</h2>
+    <p>
+      <strong>Björn Sydow · TeachSmarter</strong><br>
+      Barschweg 26<br>
+      91325 Adelsdorf<br>
+      Deutschland
+    </p>
+    <p style="margin-top:.75rem">
+      <a href="impressum.html">Impressum</a> ·
+      <a href="datenschutz.html">Datenschutzerklärung</a>
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  &copy; <span id="yr"></span> TeachSmarter · Björn Sydow ·
+  <a href="impressum.html" style="color:inherit">Impressum</a> ·
+  <a href="datenschutz.html" style="color:inherit">Datenschutz</a>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  function toggleFaq(el) {
+    const a = el.nextElementSibling;
+    const open = a.classList.toggle('open');
+    el.classList.toggle('open', open);
+  }
+</script>
+</body>
+</html>
