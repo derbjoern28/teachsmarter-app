@@ -316,8 +316,8 @@
       <div id="evt-slot-cbs" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:4px"></div>
     </div>
     <div id="evt-time-wrap" class="evt-form-row">
-      <div class="evt-form-group"><label>Von</label><input class="evt-form-input ts-timepicker-trigger" id="evt-time" type="text" inputmode="none" placeholder="08:00" maxlength="5" readonly onclick="openTimePicker('evt-time')"></div>
-      <div class="evt-form-group"><label>Bis</label><input class="evt-form-input ts-timepicker-trigger" id="evt-end-time" type="text" inputmode="none" placeholder="09:30" maxlength="5" readonly onclick="openTimePicker('evt-end-time')"></div>
+      <div class="evt-form-group"><label>Von</label><input class="evt-form-input" id="evt-time" type="text" inputmode="numeric" placeholder="HH:MM" maxlength="5" oninput="_tpFormatInput(this)"></div>
+      <div class="evt-form-group"><label>Bis</label><input class="evt-form-input" id="evt-end-time" type="text" inputmode="numeric" placeholder="HH:MM" maxlength="5" oninput="_tpFormatInput(this)"></div>
     </div>
     <div class="evt-form-group"><label>Klasse</label><select class="evt-form-input" id="evt-klasse"><option value="">Keine</option></select></div>
     <div class="evt-form-group"><label>Notizen</label><input class="evt-form-input" id="evt-notes" placeholder="Zusätzliche Infos…"></div>
@@ -368,24 +368,6 @@
   </div>
 </div>
 
-<!-- ── Time Picker Wheel ── -->
-<div id="ts-timepicker-overlay" onclick="if(event.target===this)tsTimepickerCancel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:4500;align-items:flex-end;justify-content:center">
-  <div id="ts-timepicker-sheet">
-    <div class="ts-tp-header">
-      <button class="ts-tp-btn-cancel" onclick="tsTimepickerCancel()">Abbrechen</button>
-      <span class="ts-tp-title">Uhrzeit</span>
-      <button class="ts-tp-btn-ok" onclick="tsTimepickerConfirm()">Fertig</button>
-    </div>
-    <div class="ts-tp-body">
-      <div class="ts-tp-col" id="ts-tp-hours"></div>
-      <div class="ts-tp-sep">:</div>
-      <div class="ts-tp-col" id="ts-tp-minutes"></div>
-      <div class="ts-tp-selector"></div>
-      <div class="ts-tp-fade ts-tp-fade--top"></div>
-      <div class="ts-tp-fade ts-tp-fade--bot"></div>
-    </div>
-  </div>
-</div>
 
 <!-- Externe Module (Load-Reihenfolge ist wichtig) -->
 <script src="ts-core.js"></script>

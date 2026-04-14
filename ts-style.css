@@ -1307,11 +1307,8 @@ textarea.input{min-height:80px;resize:vertical;line-height:1.5}
 .es-theme-preview--digital{background:linear-gradient(135deg,#000000 50%,#00FF41 50%)}
 
 /* ══════════════════════════════════════════════
-   Time Picker Wheel
+   Date Picker
    ══════════════════════════════════════════════ */
-.ts-timepicker-trigger{cursor:pointer;caret-color:transparent}
-.ts-timepicker-trigger:focus{outline:2px solid var(--ts-teal);outline-offset:1px}
-
 /* ── Date Picker ── */
 .ts-datepicker-trigger{cursor:pointer;caret-color:transparent}
 .ts-datepicker-trigger:focus{outline:2px solid var(--ts-teal);outline-offset:1px}
@@ -1360,15 +1357,6 @@ textarea.input{min-height:80px;resize:vertical;line-height:1.5}
 .ts-dp-cell.ts-dp-disabled{opacity:.28;cursor:default}
 .ts-dp-cell.ts-dp-empty{cursor:default}
 
-#ts-timepicker-sheet{
-  width:100%;max-width:480px;
-  background:var(--ts-bg);
-  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
-  overflow:hidden;
-  padding-bottom:max(8px,env(safe-area-inset-bottom,0px));
-  box-shadow:0 -4px 32px rgba(0,0,0,.18);
-  animation:tpSlideUp .25s cubic-bezier(.16,1,.3,1);
-}
 @keyframes tpSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
 .ts-tp-header{
@@ -1386,69 +1374,3 @@ textarea.input{min-height:80px;resize:vertical;line-height:1.5}
 .ts-tp-btn-cancel:active{background:var(--ts-bg-warm)}
 .ts-tp-btn-ok{color:var(--ts-teal);font-weight:600}
 .ts-tp-btn-ok:active{background:var(--ts-teal-subtle)}
-
-.ts-tp-body{
-  position:relative;
-  display:flex;align-items:center;justify-content:center;
-  gap:0;height:176px;overflow:hidden;
-  padding:0 24px;
-}
-
-.ts-tp-col{
-  height:176px;width:60px;
-  overflow-y:scroll;
-  scroll-snap-type:y mandatory;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-  overscroll-behavior:contain;
-}
-.ts-tp-col::-webkit-scrollbar{display:none}
-
-.ts-tp-item{
-  height:44px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.05rem;font-weight:400;
-  scroll-snap-align:center;
-  color:var(--ts-text-secondary);
-  transition:color .12s,font-weight .12s;
-  user-select:none;
-}
-.ts-tp-item--active{
-  color:var(--ts-text);
-  font-weight:600;
-}
-
-.ts-tp-sep{
-  font-size:1.15rem;font-weight:600;
-  color:var(--ts-text);
-  user-select:none;
-  margin:0 2px;
-  position:relative;z-index:3;
-  line-height:44px;
-}
-
-/* Selector — transparent, just two horizontal lines */
-.ts-tp-selector{
-  position:absolute;
-  top:50%;left:24px;right:24px;
-  transform:translateY(-50%);
-  height:44px;
-  background:transparent;
-  border-top:1.5px solid var(--ts-border);
-  border-bottom:1.5px solid var(--ts-border);
-  pointer-events:none;z-index:3;
-}
-
-/* Gradient fades — iOS drum-roll effect */
-.ts-tp-fade{
-  position:absolute;left:0;right:0;
-  height:66px;pointer-events:none;z-index:2;
-}
-.ts-tp-fade--top{
-  top:0;
-  background:linear-gradient(to bottom,var(--ts-bg) 0%,transparent 100%);
-}
-.ts-tp-fade--bot{
-  bottom:0;
-  background:linear-gradient(to top,var(--ts-bg) 0%,transparent 100%);
-}

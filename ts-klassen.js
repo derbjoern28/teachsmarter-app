@@ -1074,7 +1074,7 @@ function klRenderAnwesenheit() {
         <div id="av-ab-name" style="font-weight:600;margin-bottom:var(--sp-sm)"></div>
         <div class="kl-field-row kl-field-row--label">
           <label class="kl-label">Uhrzeit</label>
-          <input id="av-ab-zeit" class="input ts-timepicker-trigger" type="text" inputmode="none" placeholder="08:00" maxlength="5" readonly onclick="openTimePicker('av-ab-zeit')" style="flex:1">
+          <input id="av-ab-zeit" class="input" type="text" inputmode="numeric" placeholder="HH:MM" maxlength="5" oninput="_tpFormatInput(this)" style="flex:1">
         </div>
         <input id="av-ab-grund" class="input" placeholder="Grund (z. B. Arzttermin, Übelkeit …)" autocomplete="off">
         <input type="hidden" id="av-ab-susid">
