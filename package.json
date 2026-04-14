@@ -10,7 +10,8 @@
   },
   "devDependencies": {
     "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
+    "electron-builder": "^25.0.0",
+    "png-to-ico": "^3.0.1"
   },
   "build": {
     "appId": "de.teachsmarter.app",
@@ -31,23 +32,23 @@
       "ts-klassen.js",
       "ts-tools.js",
       "ts-icon-192.png",
-      "ts-icon-512.png",
+      "ts-icon.ico",
       "manifest.json"
     ],
     "win": {
       "target": "nsis",
-      "icon": "ts-icon-512.png"
+      "icon": "ts-icon.ico"
     },
     "mac": {
       "target": "dmg",
-      "icon": "ts-icon-512.png",
+      "icon": "ts-icon.icns",
       "category": "public.app-category.education"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "ts-icon-512.png",
-      "installerHeaderIcon": "ts-icon-512.png"
+      "installerIcon": "ts-icon.ico",
+      "installerHeaderIcon": "ts-icon.ico"
     }
   }
 }
