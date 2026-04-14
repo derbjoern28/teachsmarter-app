@@ -387,7 +387,7 @@ function openTimePicker(inputId) {
   hCol.innerHTML =
     `<div class="ts-tp-pad" style="height:${TP_PAD}px"></div>` +
     Array.from({length: 24}, (_, i) =>
-      `<div class="ts-tp-item">${String(i).padStart(2,'0')}</div>`
+      `<div class="ts-tp-item" onclick="document.getElementById('ts-tp-hours').scrollTo({top:${i*TP_ITEM_H},behavior:'smooth'})">${String(i).padStart(2,'0')}</div>`
     ).join('') +
     `<div class="ts-tp-pad" style="height:${TP_PAD}px"></div>`;
 
@@ -395,7 +395,7 @@ function openTimePicker(inputId) {
   mCol.innerHTML =
     `<div class="ts-tp-pad" style="height:${TP_PAD}px"></div>` +
     Array.from({length: 12}, (_, i) =>
-      `<div class="ts-tp-item">${String(i * 5).padStart(2,'0')}</div>`
+      `<div class="ts-tp-item" onclick="document.getElementById('ts-tp-minutes').scrollTo({top:${i*TP_ITEM_H},behavior:'smooth'})">${String(i * 5).padStart(2,'0')}</div>`
     ).join('') +
     `<div class="ts-tp-pad" style="height:${TP_PAD}px"></div>`;
 

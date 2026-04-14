@@ -2,6 +2,17 @@
    ts-app.js — App-Einstiegspunkt & Service Worker
    ═══════════════════════════════════════════ */
 
+// Fix: Chromium/Electron scroll-focus bug — prevent overflow:auto containers
+// inside modals from stealing focus when clicking on non-interactive elements.
+// Without this, clicking a chip/label/div in a modal locks all text inputs.
+document.addEventListener('mousedown', function(e) {
+  const scroller = e.target.closest('.event-modal, .ts-modal-scroll');
+  if (!scroller) return;
+  if (!e.target.closest('input,textarea,select,button,a,label,[tabindex],[contenteditable]')) {
+    e.preventDefault();
+  }
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
   await TSStore.migrate();

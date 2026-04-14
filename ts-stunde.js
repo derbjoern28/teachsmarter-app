@@ -622,7 +622,7 @@ function svAddMedia(){
   overlay.style.cssText='position:fixed;inset:0;background:rgba(26,60,94,.45);z-index:3500;display:flex;align-items:center;justify-content:center;padding:var(--sp-md)';
   overlay.onclick=e=>{ if(e.target===overlay) overlay.remove(); };
   overlay.innerHTML=`
-    <div style="background:var(--ts-bg-card);border-radius:var(--radius-lg);padding:var(--sp-xl);width:100%;max-width:460px;box-shadow:var(--shadow-lg);overflow-y:auto;max-height:90dvh">
+    <div class="ts-modal-scroll" style="background:var(--ts-bg-card);border-radius:var(--radius-lg);padding:var(--sp-xl);width:100%;max-width:460px;box-shadow:var(--shadow-lg);overflow-y:auto;max-height:90dvh">
       <h3 style="font-family:var(--font-display);font-size:1.05rem;color:var(--ts-navy);margin-bottom:var(--sp-lg)">Material hinzufügen</h3>
       <div style="display:grid;gap:var(--sp-md)">
 
