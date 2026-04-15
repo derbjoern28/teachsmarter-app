@@ -1,3 +1,7 @@
 # Cloudflare Pages — Redirects
 # Root-URL direkt auf das Dashboard (ohne .html — Pretty URLs aktiv)
 /   /TeachSmarter_Dashboard   302
+
+# Onboarding-Seite existiert nicht mehr → direkt zum Dashboard
+/TeachSmarter_App_Onboarding      /TeachSmarter_Dashboard   302
+/TeachSmarter_App_Onboarding.html /TeachSmarter_Dashboard   302
