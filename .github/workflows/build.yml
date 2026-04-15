@@ -61,10 +61,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Decode & import code-signing certificate
+        if: ${{ secrets.WIN_CSC_BASE64 != '' }}
+        shell: powershell
+        run: |
+          $cert = [Convert]::FromBase64String("${{ secrets.WIN_CSC_BASE64 }}")
+          $certPath = "$env:RUNNER_TEMP\certificate.pfx"
+          [IO.File]::WriteAllBytes($certPath, $cert)
+          echo "WIN_CSC_LINK=$certPath" >> $env:GITHUB_ENV
+
       - name: Build Windows
         run: npm run build:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signing — wird nur aktiv wenn das Secret gesetzt ist
+          CSC_LINK: ${{ env.WIN_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_PASSWORD }}
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
