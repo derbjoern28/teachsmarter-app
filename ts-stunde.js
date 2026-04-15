@@ -338,6 +338,7 @@ function svRenderMediaItems(query){
     <div class="media-item" draggable="true"
          ondragstart="svMediaDragStart(event,'${m.id}')"
          ondragend="this.classList.remove('dragging')"
+         ontouchstart="svMediaTouchStart(event,'${m.id}')"
          onclick="svOpenMedia('${m.id}')">
       <div class="media-type-icon" style="background:${MEDIA_TYPE_BG[typeKey]||'#f0f0f0'}">${MEDIA_TYPE_ICON[typeKey]||'📎'}</div>
       <div class="media-item-info">
@@ -402,7 +403,7 @@ async function svDeleteFromDb(id){
   if(list) list.innerHTML=svRenderMediaItems(query);
 }
 
-/* ── Drag & Drop ── */
+/* ── Drag & Drop (Maus) ── */
 function svMediaDragStart(e, id){
   e.dataTransfer.setData('text/plain',id);
   e.currentTarget.classList.add('dragging');
@@ -417,6 +418,59 @@ function svDropMedia(e){
     if(item){ svAddMaterialToField(item); return; }
   }
   if(e.dataTransfer.files.length) svHandleFiles(e.dataTransfer.files);
+}
+
+/* ── Touch Drag für iOS (Safari/Chrome unterstützt kein HTML5 DnD per Touch) ── */
+let _svTouchDragId = null;
+
+function svMediaTouchStart(e, id) {
+  e.stopPropagation();
+  const touch = e.touches[0];
+  const startX = touch.clientX, startY = touch.clientY;
+  let started = false;
+  let ghost = null;
+
+  function onMove(ev) {
+    const t = ev.touches[0];
+    const dx = t.clientX - startX, dy = t.clientY - startY;
+    if (!started && Math.abs(dx) + Math.abs(dy) < 8) return;
+    ev.preventDefault();
+    if (!started) {
+      started = true;
+      _svTouchDragId = id;
+      ghost = document.createElement('div');
+      ghost.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;padding:6px 14px;border-radius:8px;background:var(--ts-teal);color:#fff;font-size:.78rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:.9;white-space:nowrap;transform:translate(-50%,-50%)';
+      const item = getMediaDb().find(m => m.id === id);
+      ghost.textContent = item ? item.name : '📎';
+      document.body.appendChild(ghost);
+      const dropZone = document.getElementById('sv-material-drop');
+      if (dropZone) dropZone.classList.add('drag-over');
+    }
+    if (ghost) {
+      ghost.style.left = t.clientX + 'px';
+      ghost.style.top  = t.clientY + 'px';
+    }
+  }
+
+  function onEnd(ev) {
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+    if (!started) return;
+    if (ghost) ghost.remove();
+    const dropZone = document.getElementById('sv-material-drop');
+    if (dropZone) dropZone.classList.remove('drag-over');
+    const t = ev.changedTouches[0];
+    const target = document.elementFromPoint(t.clientX, t.clientY);
+    const zone = target ? target.closest('#sv-material-drop') : null;
+    if (zone && _svTouchDragId) {
+      const item = getMediaDb().find(m => m.id === _svTouchDragId);
+      if (item) svAddMaterialToField(item);
+    }
+    _svTouchDragId = null;
+  }
+
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
 }
 
 async function svAddMaterialToField(item){

@@ -222,9 +222,16 @@ function renderProfil(){
             `).join('')}
             ${!(state.klassen||[]).length?'<div class="kl-empty" style="padding:var(--sp-md)">Noch keine Klassen angelegt.</div>':''}
           </div>
-          <div class="es-btn-row" style="margin-top:var(--sp-sm)">
+          <div class="es-btn-row" style="margin-top:var(--sp-sm)" id="es-klassen-btn-row">
             <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esAddKlasse()">+ Klasse hinzufügen</button>
             <span id="es-klassen-saved" class="note-saved">Gespeichert ✓</span>
+          </div>
+          <div id="es-add-klasse-form" style="display:none;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <input type="text" id="es-add-klasse-inp" placeholder="Klassenname (z.B. 7a)" maxlength="20"
+                   class="input" style="flex:1;min-width:140px;font-size:.9rem;min-height:36px"
+                   onkeydown="if(event.key==='Enter')_esAddKlasseConfirm();if(event.key==='Escape')_esAddKlasseCancel()">
+            <button class="btn btn-primary btn-sm" style="width:auto" onclick="_esAddKlasseConfirm()">OK</button>
+            <button class="btn btn-ghost btn-sm" style="width:auto" onclick="_esAddKlasseCancel()">Abbrechen</button>
           </div>
         </div>
       </div>
@@ -711,13 +718,28 @@ function esDeleteKlasse(id){
 }
 
 function esAddKlasse(){
-  const name = prompt('Name der neuen Klasse (z.B. 7a):');
-  if(!name||!name.trim()) return;
+  // prompt() ist in Electron nicht verfügbar → inline Eingabefeld
+  const form = document.getElementById('es-add-klasse-form');
+  const inp  = document.getElementById('es-add-klasse-inp');
+  if(!form) return;
+  form.style.display = 'flex';
+  if(inp){ inp.value = ''; setTimeout(()=>inp.focus(), 50); }
+}
+
+function _esAddKlasseConfirm(){
+  const inp  = document.getElementById('es-add-klasse-inp');
+  const name = inp ? inp.value.trim() : '';
+  if(!name) return;
   if(!state.klassen) state.klassen = [];
-  state.klassen.push({ id:'kl_'+Date.now().toString(36), name:name.trim(), sus:'', faecher:[] });
+  state.klassen.push({ id:'kl_'+Date.now().toString(36), name, sus:'', faecher:[] });
   saveState();
   buildKlassenNav();
-  renderEinstellungen();
+  renderProfil();
+}
+
+function _esAddKlasseCancel(){
+  const form = document.getElementById('es-add-klasse-form');
+  if(form) form.style.display = 'none';
 }
 
 /* ── Stundenplan Quick-Edit ── */
@@ -984,16 +1006,14 @@ async function esFullReset(){
 async function esExportData(){
   try {
     const idbKeys = [
+      'ts_state',
       'ts_pin_verify','ts_crypto_salt',
       'ts_events','ts_jahresplan_v2','ts_notizen',
       'ts_stunden','ts_material_db',
       ...(state.klassen||[]).map(k => 'ts_kl_' + k.id)
     ];
     const blob = {};
-    // ts_state liegt noch in localStorage
-    const tsState = localStorage.getItem('ts_state');
-    if(tsState !== null) blob['ts_state'] = tsState;
-    // Verschlüsselte Daten aus IndexedDB
+    // Alle Daten aus IndexedDB (ts_state wird seit CryptoManager dort gespeichert)
     for(const k of idbKeys){
       const v = await TSStore.getItem(k);
       if(v !== null) blob[k] = v;
@@ -1024,8 +1044,7 @@ async function esImportData(){
       if(!obj.ts_export_v1 || !obj.data) throw new Error('Keine gültige TeachSmarter-Backup-Datei.');
       if(!confirm('Alle aktuellen Daten werden durch das Backup ersetzt.\n\nDu brauchst deinen alten PIN, um danach auf die Daten zugreifen zu können.\n\nFortfahren?')) return;
       for(const [k,v] of Object.entries(obj.data)){
-        if(k === 'ts_state') localStorage.setItem(k, v);
-        else await TSStore.setItem(k, v);
+        await TSStore.setItem(k, v); // ts_state wird wie alle anderen in IndexedDB gespeichert
       }
       await TSStore.setItem('_ts_idb_migrated', '1');
       alert('Backup erfolgreich importiert. Die App wird jetzt neu geladen.');

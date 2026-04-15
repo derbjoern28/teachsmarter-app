@@ -1,6 +1,6 @@
 {
   "name": "teachsmarter",
-  "version": "1.0.0",
+  "version": "1.0.14",
   "description": "TeachSmarter – KI-Lehrerkalender für DACH",
   "main": "main.js",
   "scripts": {

@@ -3,7 +3,7 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v42';
+const CACHE = 'teachsmarter-v43';
 
 const SHELL = [
   '/TeachSmarter_Dashboard.html',
@@ -25,9 +25,9 @@ const SHELL = [
   '/support.html',
 ];
 
-/* Hilfsfunktion: nur cachen wenn ok UND kein Redirect (iOS SW-Einschränkung) */
+/* Hilfsfunktion: nur cachen wenn ok (redirected ist ok für same-origin) */
 function safePut(cache, request, response) {
-  if (response && response.ok && !response.redirected) {
+  if (response && response.ok) {
     cache.put(request, response.clone());
   }
 }
@@ -117,7 +117,7 @@ self.addEventListener('fetch', e => {
 
       /* Kein Cache: Netzwerk abwarten */
       const response = await networkFetch;
-      if (response && !response.redirected) return response;
+      if (response) return response;
 
       /* Fallback: Dashboard aus Cache */
       return (

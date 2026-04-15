@@ -549,7 +549,7 @@ body.is-dragging *{cursor:grabbing!important}
 .pl-seq-ghost{position:fixed;z-index:300;pointer-events:none;padding:5px 12px;border-radius:6px;background:var(--ts-teal);color:#fff;font-size:.76rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);opacity:.9;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
 
 /* KI Panel items with UE adjusters */
-.pl-ki-item{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid var(--ts-border);border-radius:var(--radius-sm);margin-bottom:4px;font-size:.82rem;min-height:44px;background:var(--ts-bg-card);transition:all .12s}
+.pl-ki-item{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid var(--ts-border);border-radius:var(--radius-sm);margin-bottom:4px;font-size:.82rem;min-height:44px;background:var(--ts-bg-card);transition:all .12s;touch-action:none;user-select:none;-webkit-user-select:none}
 .pl-ki-item.in-plan{border-color:var(--ts-teal);background:var(--ts-teal-subtle)}
 .pl-ki-item .pl-ki-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 .pl-ki-item .pl-ki-name{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
