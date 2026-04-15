@@ -1480,15 +1480,53 @@ async function sendEmail(env, { to, subject, html }) {
 }
 
 async function sendLicenseEmail(env, email, key, plan, credits) {
-  const planLabel = plan === 'premium' ? 'Flatrate (unbegrenzt)' :
-                    plan === 'founder' ? "Founder's Edition" :
-                    credits + ' KI-Credits';
+  const isFounder  = plan === 'founder';
+  const isPremium  = plan === 'premium';
+  const planLabel  = isPremium ? 'Flatrate (unbegrenzt)' :
+                     isFounder ? "Founder's Edition (29 KI-Credits)" :
+                     credits + ' KI-Credits';
+
+  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-Setup-1.0.0.exe';
+  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-1.0.0-arm64.dmg';
+  const WEB_URL = 'https://app.teachsmarter.de/TeachSmarter_Dashboard';
+
+  const downloadBlock = (isFounder || isPremium) ? `
+        <p style="color:#555;margin-bottom:12px"><strong>📥 App herunterladen:</strong></p>
+        <table style="width:100%;border-collapse:separate;border-spacing:0 8px;margin-bottom:24px">
+          <tr>
+            <td style="padding:0 4px 0 0">
+              <a href="${WIN_URL}"
+                 style="display:block;background:#0078d4;color:#fff;text-decoration:none;border-radius:8px;padding:12px 16px;text-align:center;font-weight:600;font-size:.9rem">
+                🪟 Windows herunterladen (.exe)
+              </a>
+            </td>
+            <td style="padding:0 0 0 4px">
+              <a href="${MAC_URL}"
+                 style="display:block;background:#1d1d1f;color:#fff;text-decoration:none;border-radius:8px;padding:12px 16px;text-align:center;font-weight:600;font-size:.9rem">
+                🍎 Mac herunterladen (.dmg)
+              </a>
+            </td>
+          </tr>
+        </table>
+        <p style="color:#555;margin-bottom:24px;font-size:.85rem">
+          Oder direkt im Browser (PWA) öffnen:
+          <a href="${WEB_URL}" style="color:#3BA89B">${WEB_URL}</a>
+        </p>
+  ` : '';
+
   await sendEmail(env, {
     to: email,
-    subject: 'Dein TeachSmarter Lizenzschlüssel',
+    subject: isFounder ? "🎉 Deine TeachSmarter Founder's Edition" : 'Dein TeachSmarter Lizenzschlüssel',
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px">
-        <h1 style="font-size:1.5rem;color:#1a1a1a;margin-bottom:8px">Willkommen bei TeachSmarter! 🎉</h1>
+        ${isFounder ? `
+        <div style="background:linear-gradient(135deg,#1A3C5E,#3BA89B);border-radius:12px;padding:24px;text-align:center;margin-bottom:28px">
+          <div style="font-size:2rem;margin-bottom:8px">🏅</div>
+          <h1 style="font-size:1.4rem;color:#fff;margin:0 0 4px">Founder's Edition</h1>
+          <p style="color:rgba(255,255,255,.8);margin:0;font-size:.9rem">Du gehörst zu den ersten TeachSmarter-Nutzern!</p>
+        </div>
+        ` : `<h1 style="font-size:1.5rem;color:#1a1a1a;margin-bottom:8px">Willkommen bei TeachSmarter! 🎉</h1>`}
+
         <p style="color:#555;margin-bottom:24px">Vielen Dank für deinen Kauf. Hier ist dein persönlicher Lizenzschlüssel:</p>
 
         <div style="background:#f4f4f4;border-radius:10px;padding:20px;text-align:center;margin-bottom:24px">
@@ -1496,9 +1534,11 @@ async function sendLicenseEmail(env, email, key, plan, credits) {
           <div style="color:#888;font-size:.85rem;margin-top:6px">Paket: ${planLabel}</div>
         </div>
 
+        ${downloadBlock}
+
         <p style="color:#555;margin-bottom:8px"><strong>So aktivierst du deinen Schlüssel:</strong></p>
         <ol style="color:#555;padding-left:20px;margin-bottom:24px">
-          <li>Öffne die TeachSmarter App</li>
+          <li>Öffne die TeachSmarter App (Download oben oder PWA)</li>
           <li>Gehe zu <strong>Einstellungen → Abo &amp; KI</strong></li>
           <li>Trage den Schlüssel ein und tippe auf <strong>Aktivieren</strong></li>
         </ol>
