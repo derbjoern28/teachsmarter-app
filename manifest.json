@@ -3,7 +3,7 @@
   "short_name": "TeachSmarter",
   "description": "Datenschutzkonformer Lehrerkalender – offline-first, alle Daten lokal",
   "lang": "de",
-  "start_url": "/TeachSmarter_Dashboard.html",
+  "start_url": "/TeachSmarter_Dashboard",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",

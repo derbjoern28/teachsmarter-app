@@ -3,10 +3,12 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v43';
+const CACHE = 'teachsmarter-v44';
 
+/* Cloudflare Pages liefert HTML-Dateien ohne .html-Extension (Pretty URLs).
+   Alle Shell-URLs daher ohne .html — sonst 308-Redirect und Cache-Miss. */
 const SHELL = [
-  '/TeachSmarter_Dashboard.html',
+  '/TeachSmarter_Dashboard',
   '/ts-icon.svg',
   '/manifest.json',
   '/ts-style.css',
@@ -20,9 +22,9 @@ const SHELL = [
   '/ts-app.js',
   '/ts-tools.js',
   '/ts-icon-192.png',
-  '/impressum.html',
-  '/datenschutz.html',
-  '/support.html',
+  '/impressum',
+  '/datenschutz',
+  '/support',
 ];
 
 /* Hilfsfunktion: nur cachen wenn ok (redirected ist ok für same-origin) */
@@ -121,7 +123,7 @@ self.addEventListener('fetch', e => {
 
       /* Fallback: Dashboard aus Cache */
       return (
-        await cache.match('/TeachSmarter_Dashboard.html') ||
+        await cache.match('/TeachSmarter_Dashboard') ||
         new Response(
           '<h2 style="font-family:sans-serif;padding:2rem;color:#3BA89B">TeachSmarter wird geladen…<br><small style="color:#999">Bitte kurz warten und Seite neu laden.</small></h2>',
           { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
