@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write  # Für Azure Trusted Signing OIDC
 
 jobs:
   build-mac:
@@ -52,14 +51,8 @@ jobs:
   build-win:
     runs-on: windows-latest
     env:
-      WIN_CSC_BASE64:        ${{ secrets.WIN_CSC_BASE64 }}
-      WIN_CSC_PASSWORD:      ${{ secrets.WIN_CSC_PASSWORD }}
-      AZURE_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_CLIENT_SECRET:   ${{ secrets.AZURE_CLIENT_SECRET }}
-      ATS_ACCOUNT:           ${{ secrets.ATS_ACCOUNT }}
-      ATS_PROFILE:           ${{ secrets.ATS_PROFILE }}
-      ATS_ENDPOINT:          ${{ secrets.ATS_ENDPOINT }}
+      WIN_CSC_BASE64:   ${{ secrets.WIN_CSC_BASE64 }}
+      WIN_CSC_PASSWORD: ${{ secrets.WIN_CSC_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -71,7 +64,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # ── Fallback: PFX-Zertifikat (falls WIN_CSC_BASE64 gesetzt) ──────────
+      # ── Option A: Eigenes PFX-Zertifikat (falls Secret gesetzt) ────────────
       - name: Decode & import PFX certificate
         if: env.WIN_CSC_BASE64 != ''
         shell: powershell
@@ -81,29 +74,35 @@ jobs:
           [IO.File]::WriteAllBytes($certPath, $cert)
           echo "WIN_CSC_LINK=$certPath" >> $env:GITHUB_ENV
 
+      # ── Option B: Self-signed Zertifikat (kostenlos, läuft immer) ──────────
+      - name: Generate self-signed code signing certificate
+        if: env.WIN_CSC_BASE64 == ''
+        shell: powershell
+        run: |
+          $pass = ConvertTo-SecureString -String "ts-build-cert" -Force -AsPlainText
+          $cert = New-SelfSignedCertificate `
+            -Type CodeSigningCert `
+            -Subject "CN=Bjoern Sydow - TeachSmarter, O=TeachSmarter UG, C=DE" `
+            -FriendlyName "TeachSmarter Code Signing" `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -KeyExportPolicy Exportable `
+            -KeySpec Signature `
+            -KeyLength 2048 `
+            -KeyAlgorithm RSA `
+            -HashAlgorithm SHA256 `
+            -NotAfter (Get-Date).AddYears(3)
+          $certPath = "$env:RUNNER_TEMP\selfsigned.pfx"
+          Export-PfxCertificate -Cert $cert -FilePath $certPath -Password $pass | Out-Null
+          echo "WIN_CSC_LINK=$certPath"        >> $env:GITHUB_ENV
+          echo "WIN_CSC_PASSWORD=ts-build-cert" >> $env:GITHUB_ENV
+          Write-Host "Self-signed cert created: $($cert.Subject)"
+
       - name: Build Windows
         run: npm run build:win
         env:
           GH_TOKEN:         ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK:         ${{ env.WIN_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ env.WIN_CSC_PASSWORD }}
-
-      # ── Azure Trusted Signing (Priorität — gibt sofort SAC-Vertrauen) ─────
-      - name: Sign EXE with Azure Trusted Signing
-        if: env.AZURE_CLIENT_ID != ''
-        uses: azure/trusted-signing-action@v0.5.0
-        with:
-          azure-tenant-id:              ${{ env.AZURE_TENANT_ID }}
-          azure-client-id:              ${{ env.AZURE_CLIENT_ID }}
-          azure-client-secret:          ${{ env.AZURE_CLIENT_SECRET }}
-          endpoint:                     ${{ env.ATS_ENDPOINT }}
-          trusted-signing-account-name: ${{ env.ATS_ACCOUNT }}
-          certificate-profile-name:     ${{ env.ATS_PROFILE }}
-          files-folder:                 dist
-          files-folder-filter:          exe
-          file-digest:                  SHA256
-          timestamp-rfc3161:            http://timestamp.acs.microsoft.com
-          timestamp-digest:             SHA256
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
