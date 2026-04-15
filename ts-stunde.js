@@ -876,7 +876,7 @@ function lessonReplace(dayIndex, slotIdx) {
         <button onclick="document.getElementById('lesson-replace-modal').remove()" class="btn-icon">✕</button>
       </div>
       <div style="max-height:60dvh;overflow-y:auto;padding:var(--sp-sm)">
-        ${rows || '<div style="padding:var(--sp-lg);text-align:center;color:var(--ts-text-muted);font-size:.85rem">Keine Klassen/Fächer im Onboarding angelegt.</div>'}
+        ${rows || '<div style="padding:var(--sp-lg);text-align:center;color:var(--ts-text-muted);font-size:.85rem">Keine Klassen angelegt — bitte unter <strong>Mein Profil</strong> einrichten.</div>'}
       </div>
     </div>`;
   document.body.appendChild(overlay);

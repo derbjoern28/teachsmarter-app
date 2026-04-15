@@ -656,7 +656,7 @@ function klRenderNoten() {
     return;
   }
   if(faecher.length === 0) {
-    pane.innerHTML = '<div class="kl-empty"><div class="kl-empty-icon">📚</div><div class="kl-empty-title">Keine Fächer zugewiesen</div><div class="kl-empty-desc">Bitte im Onboarding Fächer für diese Klasse ergänzen.</div></div>';
+    pane.innerHTML = '<div class="kl-empty"><div class="kl-empty-icon">📚</div><div class="kl-empty-title">Keine Fächer zugewiesen</div><div class="kl-empty-desc">Fächer unter <strong>Mein Profil → Klassen</strong> ergänzen.</div></div>';
     return;
   }
 
