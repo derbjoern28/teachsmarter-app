@@ -595,8 +595,9 @@ body.is-dragging *{cursor:grabbing!important}
 .sv-saved.visible{opacity:1}
 .sv-ki-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--ts-teal),var(--ts-teal-dark));color:#fff;border:none;cursor:pointer;font-family:var(--font-body);font-size:.82rem;font-weight:600;transition:opacity .12s}
 .sv-ki-btn:hover{opacity:.88}
-.sv-layout{display:grid;grid-template-columns:1fr 320px;gap:var(--sp-lg);align-items:start}
+.sv-layout{display:grid;grid-template-columns:1fr;gap:var(--sp-lg);align-items:start}
 .sv-form{min-width:0}
+#view-stundenvorbereitung.sv-panel-open{margin-right:350px}
 .sv-fields{display:grid;gap:var(--sp-md)}
 .sv-field label{display:block;font-size:.78rem;font-weight:600;color:var(--ts-text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
 .sv-field textarea{width:100%;min-height:60px;padding:10px var(--sp-md);font-size:.9rem;color:var(--ts-text);background:var(--ts-bg-card);border:1.5px solid var(--ts-border);border-radius:var(--radius-sm);outline:none;font-family:var(--font-body);resize:none;overflow:hidden;line-height:1.5;box-sizing:border-box}
@@ -633,8 +634,11 @@ body.is-dragging *{cursor:grabbing!important}
 .sv-chip-menu-divider{height:1px;background:var(--ts-border-light);margin:2px 0}
 .sv-upload-label{display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:5px 10px;background:var(--ts-teal-subtle);border-radius:var(--radius-sm);cursor:pointer;font-size:.75rem;color:var(--ts-teal);font-weight:600}
 .sv-upload-label:hover{background:#d4efec}
-/* Media panel */
-.sv-media-panel{background:var(--ts-bg-card);border:1px solid var(--ts-border);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100dvh - 180px);position:sticky;top:0;min-width:0}
+/* Media panel — fixed slide-in (wie pl-panel) */
+.sv-media-panel{position:fixed;right:0;top:var(--header-h);bottom:0;width:340px;z-index:60;background:var(--ts-bg);border-left:1px solid var(--ts-border-light);box-shadow:-4px 0 24px rgba(26,60,94,.1);transform:translateX(100%);transition:transform .3s;overflow:hidden;display:flex;flex-direction:column}
+.sv-media-panel.open{transform:translateX(0)}
+.sv-panel-toggle-btn{min-height:36px;padding:6px 14px;font-size:.82rem;font-family:var(--font-body);font-weight:600;color:#fff;background:var(--ts-teal);border:1.5px solid var(--ts-teal);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;white-space:nowrap}
+.sv-panel-toggle-btn:hover{background:var(--ts-teal-dark);border-color:var(--ts-teal-dark)}
 .sv-media-panel-hd{padding:12px var(--sp-md);border-bottom:1px solid var(--ts-border-light);display:flex;align-items:center;justify-content:space-between}
 .sv-media-panel-hd span{font-size:.88rem;font-weight:600;color:var(--ts-navy)}
 .sv-media-add-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--ts-teal-subtle);color:var(--ts-teal);border:none;cursor:pointer;font-size:1.2rem;line-height:1}
@@ -713,11 +717,8 @@ body.is-dragging *{cursor:grabbing!important}
 .btn-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--radius-sm);background:none;border:none;cursor:pointer;color:var(--ts-text-secondary);transition:background .1s,color .1s;touch-action:manipulation}
 .btn-icon:hover{background:var(--ts-bg-warm);color:var(--ts-navy)}
 .btn-icon:active{background:var(--ts-border-light);color:var(--ts-navy);transform:scale(.9)}
-@media(max-width:900px){
-  .sv-layout{grid-template-columns:1fr}
-  .sv-media-panel{max-height:none;position:static;border-top:2px solid var(--ts-teal);border-radius:0 0 var(--radius-lg) var(--radius-lg);margin-top:var(--sp-lg)}
-  .sv-media-panel::before{content:'📎 Arbeitsmaterial-Datenbank';display:block;padding:10px var(--sp-md);font-size:.82rem;font-weight:700;color:var(--ts-navy);background:var(--ts-teal-subtle);border-bottom:1px solid var(--ts-border-light)}
-  .sv-media-panel .sv-media-panel-hd{display:none}
+@media(max-width:1100px){
+  #view-stundenvorbereitung.sv-panel-open{margin-right:0}
 }
 @media(max-width:600px){.sv-row{grid-template-columns:1fr}}
 

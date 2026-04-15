@@ -57,6 +57,9 @@ async function initApp(){
   if(typeof renderMonat === 'function') renderMonat();
   if(typeof loadHolidays === 'function') loadHolidays();
 
+  // Fokus entfernen bevor Overlay schließt — verhindert iOS-Zoom nach PIN-Eingabe
+  if(document.activeElement) document.activeElement.blur();
+
   const overlay = document.getElementById('pin-overlay');
   if(overlay) overlay.style.display = 'none';
 

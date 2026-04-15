@@ -35,6 +35,7 @@ const MEDIA_TYPE_BG   = {pdf:'#FDECEA',image:'#E8F6F4',link:'#EEF3FB',video:'#FF
 function openStunde(datum, fachId, klasseId, slotIdx){
   svContext = { datum, fachId, klasseId, slotIdx };
   _svFilter  = { fach: fachId||'', klasse:'', type:'' }; // reset for new lesson
+  _svPanelOpen = false; // Panel immer geschlossen beim Öffnen einer neuen Stunde
   svPrevView = currentView;
   navigate('stundenvorbereitung');
   renderStundenvorbereitung();
@@ -68,9 +69,10 @@ function renderStundenvorbereitung(){
         Mit KI vorbereiten
         <span class="premium-badge">Premium</span>
       </button>
+      <button class="sv-panel-toggle-btn" id="sv-panel-toggle-btn" onclick="svTogglePanel()">📚 Material & AB ▶</button>
       <span class="sv-saved" id="sv-saved-badge">Gespeichert ✓</span>
     </div>
-    <div class="sv-layout">
+    <div class="sv-layout" id="sv-layout">
       <div class="sv-form">
         <div class="sv-fields">
           <div class="sv-row sv-row-locked">
@@ -1413,6 +1415,27 @@ async function svRefreshVerlaufPhase(phase){
 function svKiConfigGenerate_fromRefresh(){
   // Re-show the config modal for full regeneration
   svGenerateKI();
+}
+
+/* ── Panel Slide-In Toggle (wie pl-panel in Jahresplanung) ── */
+let _svPanelOpen = false;
+function svTogglePanel(){
+  _svPanelOpen = !_svPanelOpen;
+  const panel   = document.getElementById('sv-media-panel');
+  const view    = document.getElementById('view-stundenvorbereitung');
+  const btn     = document.getElementById('sv-panel-toggle-btn');
+  const overlay = document.getElementById('sv-panel-overlay');
+  if(_svPanelOpen){
+    panel?.classList.add('open');
+    view?.classList.add('sv-panel-open');
+    overlay?.classList.add('open');
+    if(btn) btn.textContent = '📚 Material & AB ◀';
+  } else {
+    panel?.classList.remove('open');
+    view?.classList.remove('sv-panel-open');
+    overlay?.classList.remove('open');
+    if(btn) btn.textContent = '📚 Material & AB ▶';
+  }
 }
 
 /* ── Panel Tab Switch ── */
