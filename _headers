@@ -9,12 +9,12 @@
 /TeachSmarter_Dashboard.html
   Cache-Control: no-cache
 
-# Statische Assets: 1 Stunde Browser-Cache, SW übernimmt den Rest
+# JS/CSS: immer revalidieren (kein veralteter Cloudflare-Edge-Cache)
 /*.js
-  Cache-Control: public, max-age=3600
+  Cache-Control: no-cache
 
 /*.css
-  Cache-Control: public, max-age=3600
+  Cache-Control: no-cache
 
 /*.svg
   Cache-Control: public, max-age=86400
