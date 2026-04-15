@@ -3,7 +3,7 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v40';
+const CACHE = 'teachsmarter-v41';
 
 const SHELL = [
   './TeachSmarter_Dashboard.html',

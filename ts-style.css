@@ -1383,6 +1383,16 @@ textarea.input{min-height:80px;resize:vertical;line-height:1.5}
 .ts-tp-btn-ok:active{background:var(--ts-teal-subtle)}
 
 /* ═══════════════════════════════════════════
+   iOS LANDSCAPE ZOOM FIX
+   ═══════════════════════════════════════════ */
+@media screen and (orientation:landscape) and (max-height:500px){
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  :root{--header-h:44px}
+  .sidebar{width:220px}
+  .content{padding:var(--sp-xs) var(--sp-sm)}
+}
+
+/* ═══════════════════════════════════════════
    MOBILE RESPONSIVE (< 768px)
    ═══════════════════════════════════════════ */
 @media(max-width:768px){
