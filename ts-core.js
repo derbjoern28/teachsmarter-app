@@ -439,8 +439,13 @@ function navigate(viewId){
   closeSidebar();
   document.getElementById('content').scrollTop = 0;
 
-  // Panel auto-show/hide
-  if(viewId === 'planung'){ if(typeof showPanel==='function') showPanel(); if(typeof renderPlanung==='function') renderPlanung(); }
+  // Kalender-Views neu rendern (damit gespeicherte Daten sofort sichtbar sind)
+  if(viewId === 'heute'){ if(typeof renderHeute==='function') renderHeute(); }
+  if(viewId === 'woche'){ if(typeof renderWoche==='function') renderWoche(); }
+  if(viewId === 'monat'){ if(typeof renderMonat==='function') renderMonat(); }
+
+  // Panel auto-show/hide — Panel nicht automatisch öffnen, nur schließen beim Verlassen
+  if(viewId === 'planung'){ if(typeof renderPlanung==='function') renderPlanung(); }
   else { if(typeof hidePanel==='function') hidePanel(); }
   if(viewId === 'einstellungen'){ if(typeof renderEinstellungen==='function') renderEinstellungen(); }
   if(viewId === 'ferien-countdown'){ if(typeof renderFerienCountdown==='function') renderFerienCountdown(); }

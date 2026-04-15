@@ -365,6 +365,8 @@ body{font-family:var(--font-body);color:var(--ts-text);background:var(--ts-bg);l
 .pl-select:focus{border-color:var(--ts-teal);box-shadow:0 0 0 3px rgba(59,168,155,.12)}
 .pl-print-btn{min-height:44px;padding:8px 16px;font-size:.85rem;font-family:var(--font-body);font-weight:600;color:var(--ts-navy);background:var(--ts-bg-card);border:1.5px solid var(--ts-border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;white-space:nowrap;margin-left:auto}
 .pl-print-btn:hover{border-color:var(--ts-teal);color:var(--ts-teal);background:var(--ts-teal-subtle)}
+.pl-panel-toggle-btn{min-height:44px;padding:8px 16px;font-size:.85rem;font-family:var(--font-body);font-weight:600;color:#fff;background:var(--ts-teal);border:1.5px solid var(--ts-teal);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;white-space:nowrap}
+.pl-panel-toggle-btn:hover{background:var(--ts-teal-dark);border-color:var(--ts-teal-dark)}
 /* Prüfung / Klausur / Probe */
 .pl-wk.has-pruef{border-left:3px solid #D4574E}
 .pl-wk.has-pruef .pl-wk-kw{color:#D4574E}
@@ -632,7 +634,7 @@ body.is-dragging *{cursor:grabbing!important}
 .sv-upload-label{display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:5px 10px;background:var(--ts-teal-subtle);border-radius:var(--radius-sm);cursor:pointer;font-size:.75rem;color:var(--ts-teal);font-weight:600}
 .sv-upload-label:hover{background:#d4efec}
 /* Media panel */
-.sv-media-panel{background:var(--ts-bg-card);border:1px solid var(--ts-border);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100dvh - 180px);position:sticky;top:0}
+.sv-media-panel{background:var(--ts-bg-card);border:1px solid var(--ts-border);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100dvh - 180px);position:sticky;top:0;min-width:0}
 .sv-media-panel-hd{padding:12px var(--sp-md);border-bottom:1px solid var(--ts-border-light);display:flex;align-items:center;justify-content:space-between}
 .sv-media-panel-hd span{font-size:.88rem;font-weight:600;color:var(--ts-navy)}
 .sv-media-add-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-sm);background:var(--ts-teal-subtle);color:var(--ts-teal);border:none;cursor:pointer;font-size:1.2rem;line-height:1}
@@ -711,7 +713,12 @@ body.is-dragging *{cursor:grabbing!important}
 .btn-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--radius-sm);background:none;border:none;cursor:pointer;color:var(--ts-text-secondary);transition:background .1s,color .1s;touch-action:manipulation}
 .btn-icon:hover{background:var(--ts-bg-warm);color:var(--ts-navy)}
 .btn-icon:active{background:var(--ts-border-light);color:var(--ts-navy);transform:scale(.9)}
-@media(max-width:900px){.sv-layout{grid-template-columns:1fr}.sv-media-panel{max-height:400px;position:static}}
+@media(max-width:900px){
+  .sv-layout{grid-template-columns:1fr}
+  .sv-media-panel{max-height:none;position:static;border-top:2px solid var(--ts-teal);border-radius:0 0 var(--radius-lg) var(--radius-lg);margin-top:var(--sp-lg)}
+  .sv-media-panel::before{content:'📎 Arbeitsmaterial-Datenbank';display:block;padding:10px var(--sp-md);font-size:.82rem;font-weight:700;color:var(--ts-navy);background:var(--ts-teal-subtle);border-bottom:1px solid var(--ts-border-light)}
+  .sv-media-panel .sv-media-panel-hd{display:none}
+}
 @media(max-width:600px){.sv-row{grid-template-columns:1fr}}
 
 /* ═══════════════════════════════════════════
@@ -1374,3 +1381,69 @@ textarea.input{min-height:80px;resize:vertical;line-height:1.5}
 .ts-tp-btn-cancel:active{background:var(--ts-bg-warm)}
 .ts-tp-btn-ok{color:var(--ts-teal);font-weight:600}
 .ts-tp-btn-ok:active{background:var(--ts-teal-subtle)}
+
+/* ═══════════════════════════════════════════
+   MOBILE RESPONSIVE (< 768px)
+   ═══════════════════════════════════════════ */
+@media(max-width:768px){
+  :root{--header-h:52px}
+
+  /* Header */
+  .header{padding:0 10px}
+  .header-title{font-size:1rem}
+
+  /* Content Padding */
+  .content{padding:var(--sp-sm)}
+
+  /* Kalender-Heute: schmalere Slots */
+  .tl-slot{padding:8px 10px;gap:8px}
+  .tl-time{font-size:.68rem;min-width:44px}
+  .tl-fach{font-size:.8rem}
+  .tl-klasse{font-size:.72rem}
+  .tl-thema,.tl-sv-thema{font-size:.7rem}
+
+  /* Wochenansicht: horizontales Scrollen */
+  .wc-grid{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .wc-col{min-width:120px}
+  .wc-day-hd{font-size:.72rem;padding:6px 4px}
+  .wc-slot{padding:4px 6px;font-size:.72rem}
+  .wc-fach{font-size:.75rem}
+
+  /* Monatsansicht */
+  .mc-day{min-height:52px;padding:4px}
+  .mc-day-num{font-size:.72rem}
+
+  /* SV-Header */
+  .sv-header{flex-wrap:wrap;gap:6px}
+  .sv-ki-btn{font-size:.75rem;padding:6px 10px}
+  .sv-ki-btn .premium-badge{display:none}
+
+  /* Planung-Selektor */
+  .pl-selector{flex-direction:column;align-items:stretch}
+  .pl-select{width:100%;min-width:unset}
+  .pl-print-btn,.pl-panel-toggle-btn{margin-left:0;width:100%}
+
+  /* Stunden-Ansicht Tafelbild */
+  .sv-tafel-columns{flex-direction:column;aspect-ratio:unset;min-height:160px}
+  .sv-tafel-col{min-height:60px}
+  .sv-tafel-divider{width:100%;height:1px;border-left:none;border-top:2px dashed rgba(255,255,255,.22);margin:0 14px}
+
+  /* Modals: Vollbild auf Mobile */
+  .modal-card{width:100%!important;max-width:100%!important;margin:0;border-radius:var(--radius-lg) var(--radius-lg) 0 0;position:fixed;bottom:0;left:0;right:0;top:auto;max-height:90dvh}
+
+  /* Budget-Cards in Planung */
+  .pl-budget{flex-wrap:wrap;gap:6px}
+  .pl-budget-card{flex:1;min-width:70px}
+
+  /* Klassen-Ansicht */
+  .av-table-head,.av-row{grid-template-columns:1fr 80px 48px 48px;font-size:.72rem}
+
+  /* Tools: 1 Spalte */
+  .tool-grid{grid-template-columns:1fr!important}
+
+  /* Einstellungen */
+  .es-theme-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* FAB */
+  .fab-add{bottom:16px;right:16px;width:52px;height:52px;font-size:1.4rem}
+}

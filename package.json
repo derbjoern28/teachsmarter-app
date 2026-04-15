@@ -42,7 +42,7 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "ts-icon.icns",
+      "icon": "ts-icon-512.png",
       "category": "public.app-category.education"
     },
     "nsis": {

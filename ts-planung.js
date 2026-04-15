@@ -268,6 +268,7 @@ function showPanel(){
   panel.classList.add('open');
   panel.classList.remove('hidden');
   if(overlay)overlay.classList.add('open');
+  _updatePanelToggleBtn();
   const view=document.getElementById('view-planung');
   if(view)view.classList.add('panel-open');
   renderKiPanel();
@@ -278,12 +279,19 @@ function hidePanel(){
   panel.classList.remove('open');
   panel.classList.add('hidden');
   if(overlay)overlay.classList.remove('open');
+  _updatePanelToggleBtn();
   const view=document.getElementById('view-planung');
   if(view)view.classList.remove('panel-open');
 }
-function toggleKiPanel(){ // for mobile overlay close
+function toggleKiPanel(){
   const panel=document.getElementById('pl-panel');
   if(panel.classList.contains('open')) hidePanel(); else showPanel();
+}
+function _updatePanelToggleBtn(){
+  const btn=document.getElementById('pl-panel-toggle-btn');
+  if(!btn) return;
+  const isOpen=document.getElementById('pl-panel')?.classList.contains('open');
+  btn.textContent=isOpen?'📋 Lehrplan ◀':'📋 Lehrplan ▶';
 }
 
 // === EMBEDDED LEHRPLAN DATA (Alle Bundeslaender + AT/CH) ===
