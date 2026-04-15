@@ -3,7 +3,7 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v39';
+const CACHE = 'teachsmarter-v40';
 
 const SHELL = [
   './TeachSmarter_Dashboard.html',
@@ -88,17 +88,36 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  /* Gleiche Origin: Stale-While-Revalidate */
+  /* Gleiche Origin: Cache-first für Shell, Stale-While-Revalidate sonst */
   e.respondWith(
     caches.open(CACHE).then(async cache => {
       const cached = await cache.match(e.request);
+
+      // Im Hintergrund revalidieren
       const networkFetch = fetch(e.request)
         .then(r => {
           if(r.ok) cache.put(e.request, r.clone());
           return r;
         })
         .catch(() => null);
-      return cached || await networkFetch;
+
+      // Cache-Treffer: sofort zurückgeben, netzwerk läuft im Hintergrund
+      if (cached) {
+        networkFetch.catch(() => {}); // Fehler im Hintergrund ignorieren
+        return cached;
+      }
+
+      // Kein Cache: Netzwerk abwarten, bei Fehler Offline-Seite
+      const response = await networkFetch;
+      if (response) return response;
+
+      // Fallback: Dashboard aus Cache (falls vorhanden)
+      return (
+        await cache.match('./TeachSmarter_Dashboard.html') ||
+        new Response('<h2 style="font-family:sans-serif;padding:2rem;color:#3BA89B">TeachSmarter wird geladen…<br><small style="color:#999">Bitte kurz warten und Seite neu laden.</small></h2>', {
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        })
+      );
     })
   );
 });
