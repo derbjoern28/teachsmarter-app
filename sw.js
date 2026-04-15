@@ -3,34 +3,47 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v41';
+const CACHE = 'teachsmarter-v42';
 
 const SHELL = [
-  './TeachSmarter_Dashboard.html',
-  './TeachSmarter_App_Onboarding.html',
-  './ts-icon.svg',
-  './manifest.json',
-  './ts-style.css',
-  './ts-core.js',
-  './ts-ferien.js',
-  './ts-kalender.js',
-  './ts-events.js',
-  './ts-planung.js',
-  './ts-stunde.js',
-  './ts-klassen.js',
-  './ts-app.js',
-  './ts-tools.js',
-  './impressum.html',
-  './datenschutz.html',
-  './support.html',
+  '/TeachSmarter_Dashboard.html',
+  '/ts-icon.svg',
+  '/manifest.json',
+  '/ts-style.css',
+  '/ts-core.js',
+  '/ts-ferien.js',
+  '/ts-kalender.js',
+  '/ts-events.js',
+  '/ts-planung.js',
+  '/ts-stunde.js',
+  '/ts-klassen.js',
+  '/ts-app.js',
+  '/ts-tools.js',
+  '/ts-icon-192.png',
+  '/impressum.html',
+  '/datenschutz.html',
+  '/support.html',
 ];
+
+/* Hilfsfunktion: nur cachen wenn ok UND kein Redirect (iOS SW-Einschränkung) */
+function safePut(cache, request, response) {
+  if (response && response.ok && !response.redirected) {
+    cache.put(request, response.clone());
+  }
+}
 
 /* ── Install: App Shell cachen ── */
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll(SHELL))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE).then(cache =>
+      Promise.all(
+        SHELL.map(url =>
+          fetch(url, { redirect: 'follow' })
+            .then(r => safePut(cache, url, r))
+            .catch(() => { /* einzelne Fehler blockieren nicht */ })
+        )
+      )
+    ).then(() => self.skipWaiting())
   );
 });
 
@@ -50,36 +63,31 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
   /* Externe Requests: NUR date.nager.at (Feiertage), Network-first + Cache-Fallback mit 7-Tage-TTL */
-  if(url.origin !== self.location.origin) {
-    if(url.hostname === 'date.nager.at') {
-      const HOLIDAY_TTL = 7 * 24 * 60 * 60 * 1000; // 7 Tage in ms
+  if (url.origin !== self.location.origin) {
+    if (url.hostname === 'date.nager.at') {
+      const HOLIDAY_TTL = 7 * 24 * 60 * 60 * 1000;
       const tsKey = e.request.url + '__ts';
 
       e.respondWith(
         caches.open(CACHE).then(async cache => {
-          // Prüfe Cache-Alter
           const tsResp = await cache.match(tsKey);
           const ts = tsResp ? Number(await tsResp.text()) : 0;
           const stale = !ts || (Date.now() - ts > HOLIDAY_TTL);
 
-          // Wenn Cache frisch: direkt zurückgeben
-          if(!stale) {
+          if (!stale) {
             const cached = await cache.match(e.request);
-            if(cached) return cached;
+            if (cached) return cached;
           }
 
-          // Network-first: frisch laden und cachen
           return fetch(e.request)
             .then(r => {
-              if(r.ok) {
-                cache.put(e.request, r.clone());
-                cache.put(tsKey, new Response(String(Date.now())));
-              }
+              safePut(cache, e.request, r);
+              if (r.ok && !r.redirected) cache.put(tsKey, new Response(String(Date.now())));
               return r;
             })
             .catch(async () => {
-              // Offline-Fallback: veralteten Cache lieber als gar nichts
-              return (await cache.match(e.request)) || new Response(JSON.stringify([]), { headers: {'Content-Type':'application/json'} });
+              return (await cache.match(e.request)) ||
+                new Response(JSON.stringify([]), { headers: { 'Content-Type': 'application/json' } });
             });
         })
       );
@@ -88,35 +96,36 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  /* Gleiche Origin: Cache-first für Shell, Stale-While-Revalidate sonst */
+  /* Gleiche Origin: Cache-first, Stale-While-Revalidate */
   e.respondWith(
     caches.open(CACHE).then(async cache => {
       const cached = await cache.match(e.request);
 
-      // Im Hintergrund revalidieren
-      const networkFetch = fetch(e.request)
+      /* Im Hintergrund revalidieren — nur ok + nicht-redirected cachen */
+      const networkFetch = fetch(e.request, { redirect: 'follow' })
         .then(r => {
-          if(r.ok) cache.put(e.request, r.clone());
+          safePut(cache, e.request, r);
           return r;
         })
         .catch(() => null);
 
-      // Cache-Treffer: sofort zurückgeben, netzwerk läuft im Hintergrund
+      /* Cache-Treffer: sofort zurückgeben */
       if (cached) {
-        networkFetch.catch(() => {}); // Fehler im Hintergrund ignorieren
+        networkFetch.catch(() => {});
         return cached;
       }
 
-      // Kein Cache: Netzwerk abwarten, bei Fehler Offline-Seite
+      /* Kein Cache: Netzwerk abwarten */
       const response = await networkFetch;
-      if (response) return response;
+      if (response && !response.redirected) return response;
 
-      // Fallback: Dashboard aus Cache (falls vorhanden)
+      /* Fallback: Dashboard aus Cache */
       return (
-        await cache.match('./TeachSmarter_Dashboard.html') ||
-        new Response('<h2 style="font-family:sans-serif;padding:2rem;color:#3BA89B">TeachSmarter wird geladen…<br><small style="color:#999">Bitte kurz warten und Seite neu laden.</small></h2>', {
-          headers: { 'Content-Type': 'text/html; charset=utf-8' }
-        })
+        await cache.match('/TeachSmarter_Dashboard.html') ||
+        new Response(
+          '<h2 style="font-family:sans-serif;padding:2rem;color:#3BA89B">TeachSmarter wird geladen…<br><small style="color:#999">Bitte kurz warten und Seite neu laden.</small></h2>',
+          { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+        )
       );
     })
   );
