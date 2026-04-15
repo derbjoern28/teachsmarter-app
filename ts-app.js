@@ -63,9 +63,10 @@ async function initApp(){
   // Neuer Nutzer: Welcome-Popup mit Link zu "Mein Profil"
   if(isNewUser) showWelcomePopup();
 
-  // Verify license in background (updates credit display if key exists)
+  // Lizenz verifizieren — AWAITED damit state.plan vor dem ersten Render gesetzt ist
+  // (PWA auf frischen Geräten hat noch kein state.plan in IndexedDB)
+  if (licenseKey) await verifyLicense();
   updateToolsNavState();
-  if (licenseKey) verifyLicense();
 }
 
 function showWelcomePopup(){
@@ -1126,6 +1127,9 @@ async function activateLicense() {
     const data = await res.json();
     if (data.valid) {
       setLicenseKey(key);
+      // Plan + Credits sofort setzen — verhindert gesperrte Tools beim Erst-Login in PWA
+      if (data.plan) state.plan = data.plan;
+      state.ki_credits = data.isFlatrate ? 999999 : (data.credits || 0);
       document.getElementById('license-gate')?.remove();
       initApp();
     } else {

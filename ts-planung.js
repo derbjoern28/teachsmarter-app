@@ -6937,6 +6937,12 @@ async function kiDistribute(){
   const weeks  = getSchoolWeeks(klasseId, fachId);
   const totalUE = weeks.reduce((s, w) => s + (w.ue || 0), 0);
 
+  // Stundenplan-Check: ohne konfigurierte UE kann nichts platziert werden
+  if (totalUE === 0) {
+    _showToast('Bitte erst den Stundenplan unter Mein Profil einrichten (UE pro Woche für dieses Fach).', 'error');
+    return;
+  }
+
   // Show loading on button
   const btn = document.querySelector('[onclick="kiDistribute()"]');
   if (btn) { btn.textContent = '⏳ KI denkt...'; btn.disabled = true; }
