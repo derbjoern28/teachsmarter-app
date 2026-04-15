@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initApp(){
+  // ── License Gate ─────────────────────────────────────────────────────
+  if (!licenseKey) {
+    showLicenseGate();
+    return;
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
   await loadState(); // liest verschlüsselt aus IndexedDB (DSGVO)
 
   if(!state.vorname || !(state.klassen||[]).length){
@@ -997,5 +1004,69 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js', { scope: './' })
       .catch(e => console.warn('SW registration failed (kein HTTPS?):', e.message));
   });
+}
+
+/* ══════════════════════════════════════════════
+   LICENSE GATE
+   ══════════════════════════════════════════════ */
+function showLicenseGate(errorMsg) {
+  const existing = document.getElementById('license-gate');
+  if (existing) existing.remove();
+
+  const gate = document.createElement('div');
+  gate.id = 'license-gate';
+  gate.style.cssText = 'position:fixed;inset:0;background:var(--ts-bg);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;font-family:var(--font-body)';
+  gate.innerHTML = `
+    <div style="max-width:420px;width:100%;text-align:center">
+      <div style="width:72px;height:72px;background:var(--ts-teal);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:2rem">💡</div>
+      <h1 style="font-family:var(--font-display);font-size:1.7rem;color:var(--ts-text);margin:0 0 .5rem">TeachSmarter</h1>
+      <p style="color:var(--ts-text-secondary);margin:0 0 2rem;line-height:1.6;font-size:.95rem">Gib deinen Lizenzschlüssel ein.<br>Du erhältst ihn per E-Mail nach dem Kauf.</p>
+      <div style="background:var(--ts-bg-card);border-radius:16px;padding:1.5rem;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:left">
+        <label style="font-size:.8rem;font-weight:600;color:var(--ts-text-secondary);letter-spacing:.04em;text-transform:uppercase">Lizenzschlüssel</label>
+        <input id="license-input" type="text" placeholder="TS-F-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false"
+          style="width:100%;margin-top:.4rem;padding:12px 14px;border:1.5px solid ${errorMsg ? '#e04' : 'var(--ts-border)'};border-radius:10px;font-size:1rem;font-family:monospace;background:var(--ts-bg);color:var(--ts-text);box-sizing:border-box;text-transform:uppercase;letter-spacing:.07em;outline:none;margin-bottom:${errorMsg ? '.5rem' : '1rem'}">
+        ${errorMsg ? `<div style="color:#e04;font-size:.83rem;margin-bottom:.85rem">⚠ ${errorMsg}</div>` : ''}
+        <button id="license-btn" onclick="activateLicense()"
+          style="width:100%;padding:13px;background:var(--ts-teal);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:opacity .15s">
+          Aktivieren →
+        </button>
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--ts-border-light);font-size:.85rem;color:var(--ts-text-secondary);text-align:center">
+          Noch kein Schlüssel? <a href="${TS_STRIPE_FOUNDER}" target="_blank" style="color:var(--ts-teal);font-weight:600;text-decoration:none">Founder's Edition kaufen →</a>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(gate);
+  const input = document.getElementById('license-input');
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') activateLicense(); });
+  setTimeout(() => input.focus(), 50);
+}
+
+async function activateLicense() {
+  const input = document.getElementById('license-input');
+  const btn   = document.getElementById('license-btn');
+  const key   = (input?.value || '').trim().toUpperCase();
+  if (!key) { input?.focus(); return; }
+
+  btn.textContent = 'Wird geprüft …';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch(TS_API + '/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TS_API_TOKEN },
+      body: JSON.stringify({ key })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      setLicenseKey(key);
+      document.getElementById('license-gate')?.remove();
+      initApp();
+    } else {
+      showLicenseGate('Ungültiger Lizenzschlüssel. Bitte prüfe die Eingabe.');
+    }
+  } catch(e) {
+    showLicenseGate('Keine Verbindung. Bitte überprüfe deine Internetverbindung.');
+  }
 }
 
