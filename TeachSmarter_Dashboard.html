@@ -112,6 +112,9 @@
     <div class="nav-divider"></div>
 
     <div class="nav-section">
+      <button class="nav-item" data-view="profil" onclick="navigate('profil')">
+        <span class="nav-icon">👤</span><span class="nav-label">Mein Profil</span>
+      </button>
       <button class="nav-item" data-view="einstellungen" onclick="navigate('einstellungen')">
         <span class="nav-icon">⚙️</span><span class="nav-label">Einstellungen</span>
       </button>
@@ -256,6 +259,9 @@
     <div class="view" id="view-notizen">
       <div class="placeholder"><div class="placeholder-icon">📝</div><div class="placeholder-title">Notizen</div><div class="placeholder-desc">Tages-, Wochen- und Monatsnotizen findest du direkt unter dem jeweiligen Kalender.</div></div>
     </div>
+
+    <!-- MEIN PROFIL -->
+    <div class="view" id="view-profil"></div>
 
     <!-- EINSTELLUNGEN -->
     <div class="view" id="view-einstellungen">

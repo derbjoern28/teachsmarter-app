@@ -427,7 +427,8 @@ function navigate(viewId){
   const titles = {
     heute:'Heute', woche:'Woche', monat:'Monatsansicht', planung:'Jahres- & Sequenzplanung',
     'ferien-countdown':'Ferien-Countdown',
-    stundenvorbereitung:'Stundenvorbereitung', notizen:'Notizen', einstellungen:'Einstellungen',
+    stundenvorbereitung:'Stundenvorbereitung', notizen:'Notizen',
+    profil:'Mein Profil', einstellungen:'Einstellungen',
     'tool-arbeitsblatt':'Arbeitsblatt-Generator','tool-tafelbild':'Tafelbild-Planer',
     'tool-elternbrief':'Elternbrief-Assistent','tool-differenzierung':'Differenzierungshelfer',
     'tool-interaktiv':'Interaktive Arbeitsblätter (HTML5)',
@@ -447,6 +448,7 @@ function navigate(viewId){
   // Panel auto-show/hide — Panel nicht automatisch öffnen, nur schließen beim Verlassen
   if(viewId === 'planung'){ if(typeof renderPlanung==='function') renderPlanung(); }
   else { if(typeof hidePanel==='function') hidePanel(); }
+  if(viewId === 'profil'){ if(typeof renderProfil==='function') renderProfil(); }
   if(viewId === 'einstellungen'){ if(typeof renderEinstellungen==='function') renderEinstellungen(); }
   if(viewId === 'ferien-countdown'){ if(typeof renderFerienCountdown==='function') renderFerienCountdown(); }
   if(viewId === 'tool-arbeitsblatt'){ if(typeof renderToolArbeitsblatt==='function') renderToolArbeitsblatt(); }

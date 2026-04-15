@@ -35,10 +35,7 @@ async function initApp(){
 
   await loadState(); // liest verschlüsselt aus IndexedDB (DSGVO)
 
-  if(!state.vorname || !(state.klassen||[]).length){
-    document.body.innerHTML = '<div style="text-align:center;padding:20vh 2rem;font-family:var(--font-body);color:var(--ts-text)"><h2 style="font-family:var(--font-display);margin-bottom:1rem">Onboarding nicht abgeschlossen</h2><p style="color:var(--ts-text-secondary);margin-bottom:2rem">Bitte richte zuerst deinen Kalender ein.</p><a href="TeachSmarter_App_Onboarding.html" style="background:var(--ts-teal);color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Zum Onboarding →</a></div>';
-    return;
-  }
+  const isNewUser = !state.vorname || !(state.klassen||[]).length;
 
   await loadEvents();
   await loadJpData();
@@ -63,9 +60,33 @@ async function initApp(){
   const overlay = document.getElementById('pin-overlay');
   if(overlay) overlay.style.display = 'none';
 
+  // Neuer Nutzer: Welcome-Popup mit Link zu "Mein Profil"
+  if(isNewUser) showWelcomePopup();
+
   // Verify license in background (updates credit display if key exists)
   updateToolsNavState();
   if (licenseKey) verifyLicense();
+}
+
+function showWelcomePopup(){
+  const el = document.createElement('div');
+  el.id = 'welcome-popup';
+  el.style.cssText = 'position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(26,60,94,.45);backdrop-filter:blur(6px)';
+  el.innerHTML = `
+    <div style="background:var(--ts-bg-card);border-radius:20px;padding:2rem;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.18);text-align:center;font-family:var(--font-body)">
+      <div style="font-size:2.8rem;margin-bottom:.75rem">👋</div>
+      <h2 style="font-family:var(--font-display);font-size:1.4rem;color:var(--ts-navy);margin:0 0 .5rem">Willkommen bei TeachSmarter!</h2>
+      <p style="color:var(--ts-text-secondary);font-size:.92rem;line-height:1.6;margin:0 0 1.5rem">Richte jetzt dein Profil ein — Vorname, Schule, Klassen und Stundenplan. Das dauert nur 2 Minuten.</p>
+      <button onclick="document.getElementById('welcome-popup').remove();navigate('profil')"
+        style="width:100%;padding:13px;background:var(--ts-teal);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:var(--font-body);margin-bottom:.75rem">
+        Jetzt einrichten → Mein Profil
+      </button>
+      <button onclick="document.getElementById('welcome-popup').remove()"
+        style="background:none;border:none;color:var(--ts-text-muted);font-size:.85rem;cursor:pointer;font-family:var(--font-body)">
+        Später einrichten
+      </button>
+    </div>`;
+  document.body.appendChild(el);
 }
 
 
@@ -107,18 +128,14 @@ function esToggleDark(btn){
 /* ══════════════════════════════════════════════
    EINSTELLUNGEN
    ══════════════════════════════════════════════ */
-function renderEinstellungen(){
-  const plan   = state.plan || 'free';
-  const credits = state.ki_credits || 0;
-  const planLabel = { free:'Kostenlos', starter:'Starter', pro:'Pro ✦' };
-  const planCls   = { free:'free', starter:'starter', pro:'pro' };
-
-  document.getElementById('view-einstellungen').innerHTML = `
+/* ══ MEIN PROFIL ══════════════════════════════════════════════════════════ */
+function renderProfil(){
+  document.getElementById('view-profil').innerHTML = `
     <div class="es-page">
 
       <!-- ── Profil ── -->
       <div class="es-section">
-        <div class="es-section-title">Profil bearbeiten</div>
+        <div class="es-section-title">Mein Profil</div>
         <div class="es-card">
           <div class="es-field">
             <label class="es-label">Vorname / Name</label>
@@ -153,53 +170,6 @@ function renderEinstellungen(){
           <div class="es-btn-row">
             <button class="btn btn-primary btn-sm" style="width:auto" onclick="esSaveProfile()">Speichern</button>
             <span id="es-profile-saved" class="note-saved">Gespeichert ✓</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── PIN ── -->
-      <div class="es-section">
-        <div class="es-section-title">PIN ändern</div>
-        <div class="es-card">
-          <div class="es-field">
-            <label class="es-label">Aktueller PIN</label>
-            <input id="es-pin-old" class="input" type="password" inputmode="numeric"
-                   maxlength="8" placeholder="••••" autocomplete="current-password">
-          </div>
-          <div class="es-field-row">
-            <div class="es-field" style="flex:1">
-              <label class="es-label">Neuer PIN</label>
-              <input id="es-pin-new" class="input" type="password" inputmode="numeric"
-                     maxlength="8" placeholder="••••" autocomplete="new-password">
-            </div>
-            <div class="es-field" style="flex:1">
-              <label class="es-label">Bestätigen</label>
-              <input id="es-pin-confirm" class="input" type="password" inputmode="numeric"
-                     maxlength="8" placeholder="••••" autocomplete="new-password">
-            </div>
-          </div>
-          <div id="es-pin-msg" class="es-msg" style="display:none"></div>
-          <div class="es-btn-row">
-            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esChangePin()">PIN ändern</button>
-            <button class="btn btn-ghost btn-sm" style="width:auto" onclick="esLockSession()">🔒 Sitzung sperren</button>
-          </div>
-          <div class="es-hint">Der PIN schützt deine Daten. Beim Ändern werden alle gespeicherten Daten mit dem neuen PIN neu verschlüsselt. „Sitzung sperren" schließt die aktuelle Sitzung sofort — der PIN wird beim nächsten Öffnen wieder abgefragt.</div>
-        </div>
-      </div>
-
-      <!-- ── Erscheinungsbild ── -->
-      <div class="es-section">
-        <div class="es-section-title">Erscheinungsbild</div>
-        <div class="es-card" style="gap:var(--sp-sm)">
-          <div class="es-toggle-desc">Wähle deinen persönlichen Look — die Änderung gilt sofort.</div>
-          <div class="es-theme-grid">
-            ${THEMES.map(t => {
-              const active = (localStorage.getItem('ts_theme') || 'light') === t.id;
-              return `<button class="es-theme-card${active?' active':''}" data-theme="${t.id}" onclick="setTheme('${t.id}')" title="${t.desc}">
-                <div class="es-theme-preview es-theme-preview--${t.id}"></div>
-                <div class="es-theme-label">${t.emoji} ${t.label}</div>
-              </button>`;
-            }).join('')}
           </div>
         </div>
       </div>
@@ -256,11 +226,10 @@ function renderEinstellungen(){
             <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esAddKlasse()">+ Klasse hinzufügen</button>
             <span id="es-klassen-saved" class="note-saved">Gespeichert ✓</span>
           </div>
-          <div class="es-hint">Für detaillierte Einstellungen (Fächer, Stundenplan pro Klasse) bitte im Onboarding konfigurieren.</div>
         </div>
       </div>
 
-      <!-- ── Stundenplan Quick-Edit ── -->
+      <!-- ── Stundenplan ── -->
       <div class="es-section">
         <div class="es-section-title">Stundenplan</div>
         <div class="es-card">
@@ -274,6 +243,92 @@ function renderEinstellungen(){
           <div id="es-sp-editor" style="display:none;margin-top:var(--sp-md)">
             <div class="es-sp-grid-wrap" id="es-sp-grid"></div>
             <div class="es-hint">Zelle antippen → Fach und Klasse auswählen. Änderungen werden sofort gespeichert.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Stundenplan-Import ── -->
+      <div class="es-section">
+        <div class="es-section-title">Stundenplan-Import</div>
+        <div class="es-card">
+          <div class="es-toggle-label" style="margin-bottom:4px">WebUntis / Untis iCal</div>
+          <div class="es-toggle-desc" style="margin-bottom:var(--sp-md)">Trage deinen persönlichen Untis-Kalenderabo-Link ein. Der Stundenplan wird lokal verarbeitet — keine Daten verlassen das Gerät.</div>
+          <div class="es-field">
+            <label class="es-label">iCal-URL (WebUntis Kalenderabo)</label>
+            <input id="es-ical-url" class="input" type="url"
+                   placeholder="https://mope.webuntis.com/WebUntis/Ical?..."
+                   value="${state.ical_url||''}">
+          </div>
+          <div id="es-ical-msg" class="es-msg" style="display:none"></div>
+          <div class="es-btn-row">
+            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esImportICal()">↓ Importieren</button>
+          </div>
+          <div class="es-hint">Der Import überschreibt den manuell eingetragenen Stundenplan. Tipp: Unter WebUntis → Kalender → Kalender-Abonnement findest du deine persönliche iCal-URL.</div>
+        </div>
+      </div>
+
+    </div>`;
+}
+
+/* ══ EINSTELLUNGEN ════════════════════════════════════════════════════════ */
+function renderEinstellungen(){
+  const plan   = state.plan || 'free';
+  const credits = state.ki_credits || 0;
+  const planLabel = { free:'Kostenlos', starter:'Starter', pro:'Pro ✦' };
+  const planCls   = { free:'free', starter:'starter', pro:'pro' };
+
+  document.getElementById('view-einstellungen').innerHTML = `
+    <div class="es-page">
+
+      <!-- ── Profil-Hinweis ── -->
+      <div style="background:var(--ts-teal-subtle);border:1.5px solid var(--ts-teal);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:var(--sp-md);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.88rem;color:var(--ts-teal-dark);font-family:var(--font-body)">
+        <span>👤 Profil, Klassen und Stundenplan findest du unter <strong>Mein Profil</strong>.</span>
+        <button onclick="navigate('profil')" style="background:var(--ts-teal);color:#fff;border:none;border-radius:var(--radius-sm);padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font-body)">→ Zum Profil</button>
+      </div>
+
+      <!-- ── PIN ── -->
+      <div class="es-section">
+        <div class="es-section-title">PIN ändern</div>
+        <div class="es-card">
+          <div class="es-field">
+            <label class="es-label">Aktueller PIN</label>
+            <input id="es-pin-old" class="input" type="password" inputmode="numeric"
+                   maxlength="8" placeholder="••••" autocomplete="current-password">
+          </div>
+          <div class="es-field-row">
+            <div class="es-field" style="flex:1">
+              <label class="es-label">Neuer PIN</label>
+              <input id="es-pin-new" class="input" type="password" inputmode="numeric"
+                     maxlength="8" placeholder="••••" autocomplete="new-password">
+            </div>
+            <div class="es-field" style="flex:1">
+              <label class="es-label">Bestätigen</label>
+              <input id="es-pin-confirm" class="input" type="password" inputmode="numeric"
+                     maxlength="8" placeholder="••••" autocomplete="new-password">
+            </div>
+          </div>
+          <div id="es-pin-msg" class="es-msg" style="display:none"></div>
+          <div class="es-btn-row">
+            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esChangePin()">PIN ändern</button>
+            <button class="btn btn-ghost btn-sm" style="width:auto" onclick="esLockSession()">🔒 Sitzung sperren</button>
+          </div>
+          <div class="es-hint">Der PIN schützt deine Daten. Beim Ändern werden alle gespeicherten Daten mit dem neuen PIN neu verschlüsselt. „Sitzung sperren" schließt die aktuelle Sitzung sofort — der PIN wird beim nächsten Öffnen wieder abgefragt.</div>
+        </div>
+      </div>
+
+      <!-- ── Erscheinungsbild ── -->
+      <div class="es-section">
+        <div class="es-section-title">Erscheinungsbild</div>
+        <div class="es-card" style="gap:var(--sp-sm)">
+          <div class="es-toggle-desc">Wähle deinen persönlichen Look — die Änderung gilt sofort.</div>
+          <div class="es-theme-grid">
+            ${THEMES.map(t => {
+              const active = (localStorage.getItem('ts_theme') || 'light') === t.id;
+              return `<button class="es-theme-card${active?' active':''}" data-theme="${t.id}" onclick="setTheme('${t.id}')" title="${t.desc}">
+                <div class="es-theme-preview es-theme-preview--${t.id}"></div>
+                <div class="es-theme-label">${t.emoji} ${t.label}</div>
+              </button>`;
+            }).join('')}
           </div>
         </div>
       </div>
@@ -316,25 +371,6 @@ function renderEinstellungen(){
         </div>
       </div>
 
-      <!-- ── Stundenplan Import ── -->
-      <div class="es-section">
-        <div class="es-section-title">Stundenplan-Import</div>
-        <div class="es-card">
-          <div class="es-toggle-label" style="margin-bottom:4px">WebUntis / Untis iCal</div>
-          <div class="es-toggle-desc" style="margin-bottom:var(--sp-md)">Trage deinen persönlichen Untis-Kalenderabo-Link ein. Der Stundenplan wird lokal verarbeitet — keine Daten verlassen das Gerät.</div>
-          <div class="es-field">
-            <label class="es-label">iCal-URL (WebUntis Kalenderabo)</label>
-            <input id="es-ical-url" class="input" type="url"
-                   placeholder="https://mope.webuntis.com/WebUntis/Ical?..."
-                   value="${state.ical_url||''}">
-          </div>
-          <div id="es-ical-msg" class="es-msg" style="display:none"></div>
-          <div class="es-btn-row">
-            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esImportICal()">↓ Importieren</button>
-          </div>
-          <div class="es-hint">Der Import überschreibt den manuell eingetragenen Stundenplan. Du kannst ihn danach noch anpassen. Tipp: Unter WebUntis → Kalender → Kalender-Abonnement findest du deine persönliche iCal-URL.</div>
-        </div>
-      </div>
 
       <!-- ── Datensicherung ── -->
       <div class="es-section">
@@ -1018,7 +1054,7 @@ function showLicenseGate(errorMsg) {
 
   const gate = document.createElement('div');
   gate.id = 'license-gate';
-  gate.style.cssText = 'position:fixed;inset:0;background:var(--ts-bg);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;font-family:var(--font-body)';
+  gate.style.cssText = 'position:fixed;inset:0;background:rgba(250,248,245,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;font-family:var(--font-body)';
   gate.innerHTML = `
     <div style="max-width:420px;width:100%;text-align:center">
       <div style="width:72px;height:72px;background:var(--ts-teal);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:2rem">💡</div>
