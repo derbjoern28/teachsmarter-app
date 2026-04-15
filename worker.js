@@ -1392,7 +1392,7 @@ function generateKey(productId) {
 }
 
 function getCreditsForProduct(productId) {
-  if (productId.includes('founder'))      return 15;   // Gründeredition 12,99 € — 15 Starter-Credits
+  if (productId.includes('founder'))      return 29;   // Gründeredition 12,99 € — 29 KI-Credits
   if (productId.includes('credits_15'))   return 15;   // Schnuppern 1,99 €
   if (productId.includes('credits_45'))   return 45;   // Standard 5,49 €
   if (productId.includes('credits_99'))   return 99;   // Profi 10,99 €
