@@ -3,7 +3,7 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v45';
+const CACHE = 'teachsmarter-v46';
 
 /* Cloudflare Pages liefert HTML-Dateien ohne .html-Extension (Pretty URLs).
    Alle Shell-URLs daher ohne .html — sonst 308-Redirect und Cache-Miss. */
@@ -63,6 +63,13 @@ self.addEventListener('activate', e => {
 /* ── Fetch: Strict Scope ── */
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
+
+  /* .html-URLs → Canonical ohne Extension (verhindert ERR_FAILED bei Cloudflare Pretty-URL-Redirect) */
+  if (url.origin === self.location.origin && url.pathname.endsWith('.html')) {
+    const canonical = url.pathname.slice(0, -5) || '/';
+    e.respondWith(Response.redirect(canonical, 302));
+    return;
+  }
 
   /* Externe Requests: NUR date.nager.at (Feiertage), Network-first + Cache-Fallback mit 7-Tage-TTL */
   if (url.origin !== self.location.origin) {
