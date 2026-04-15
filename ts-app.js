@@ -1058,9 +1058,17 @@ async function esImportData(){
 
 /* ── Service Worker Registration ── */
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .catch(e => console.warn('SW registration failed (kein HTTPS?):', e.message));
+  window.addEventListener('load', async () => {
+    // Alte SWs (registriert unter ./sw.js ohne Version) deregistrieren —
+    // verhindert festgefrorene kaputte SWs nach Deployment-Wechseln
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for(const reg of regs){
+      if(reg.active?.scriptURL?.includes('sw.js') && !reg.active.scriptURL.includes('?v=')){
+        await reg.unregister();
+      }
+    }
+    navigator.serviceWorker.register('./sw.js?v=47', { scope: './' })
+      .catch(e => console.warn('SW registration failed:', e.message));
   });
 }
 
