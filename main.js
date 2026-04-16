@@ -79,6 +79,13 @@ ipcMain.handle('ts-confirm-backup', (event, json) => {
   if (win && !win.isDestroyed()) win.destroy();
 });
 
+ipcMain.handle('ts-clear-backup', () => {
+  const p = backupPath();
+  try { if (fs.existsSync(p)) fs.unlinkSync(p); } catch (e) {
+    console.error('Auto-Backup löschen fehlgeschlagen:', e);
+  }
+});
+
 // ── App-Lifecycle ────────────────────────────────────────────────────────────
 
 app.whenReady().then(() => {

@@ -7,4 +7,6 @@ contextBridge.exposeInMainWorld('tsElectron', {
   confirmBackup: (json) => ipcRenderer.invoke('ts-confirm-backup', json),
   // Main-Process meldet: "App schließt gleich, bitte Backup liefern"
   onRequestBackup: (cb) => ipcRenderer.on('ts-request-backup', () => cb()),
+  // Bei vollständigem Reset: Backup-Datei vom Dateisystem löschen
+  clearBackup: () => ipcRenderer.invoke('ts-clear-backup'),
 });

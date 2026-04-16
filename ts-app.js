@@ -24,8 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Electron: Auto-Restore falls IndexedDB leer ist aber Backup existiert
   if (window.tsElectron) {
-    const restored = await _electronTryRestore();
-    if (restored) { location.reload(); return; }
+    await _electronTryRestore(); // bei Restore direkt weiter — kein Reload nötig
     // Backup bei App-Schließen anfordern
     window.tsElectron.onRequestBackup(async () => {
       try {
@@ -1021,6 +1020,12 @@ async function esFullReset(){
 
   // Clear localStorage fallback keys
   try { localStorage.clear(); } catch(e){}
+  // Crypto-Session-Key entfernen (sonst wird alter Key nach Reload weiter genutzt)
+  try { sessionStorage.clear(); } catch(e){}
+  // Backup-Datei löschen — verhindert dass Auto-Restore den Reset sofort rückgängig macht
+  if (window.tsElectron) {
+    try { await window.tsElectron.clearBackup(); } catch(e){}
+  }
 
   // Reload → PIN setup screen
   location.reload();
@@ -1115,7 +1120,7 @@ if('serviceWorker' in navigator){
         await reg.unregister();
       }
     }
-    navigator.serviceWorker.register('./sw.js?v=50', { scope: './' })
+    navigator.serviceWorker.register('./sw.js?v=51', { scope: './' })
       .catch(e => console.warn('SW registration failed:', e.message));
   });
 }
