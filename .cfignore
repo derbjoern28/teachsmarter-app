@@ -1,0 +1,17 @@
+dist/
+node_modules/
+.wrangler/
+.github/
+Alt/
+*.pem
+.env
+Landingpage_Werbetext.txt
+PWA Datenschutz.html
+generate-ico.js
+generate-icons.html
+package.json
+package-lock.json
+main.js
+preload.js
+wrangler.toml
+pages.toml
