@@ -1,3 +1,0 @@
-Planungsfenster -> Fenster Lehrplanzuordnung und Sequenz locken, edit Button, der einen zur Jahres und Sequenzplanung zurückleitet!
-Monatsansicht -> Keine Informationen aus Jahres und Sequenzplanung mehr anzeigen, nur für Termine! Wenn ich auf Tag klicke komm ich in die jeweilige Tagesansicht!
-Anordnung Werkzeuge - Hefteintrag kann weg, dafür unter Tafelbild-Planer "Präsentations-Wizard" - Elternbriefe nach ganz unten in der Werkzeugliste

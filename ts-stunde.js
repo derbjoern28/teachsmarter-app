@@ -383,12 +383,20 @@ function svDbItemMenu(e, id){
     <button onclick="svOpenMedia('${id}');document.getElementById('sv-dbitem-menu-overlay').remove()">
       <span>↗</span> Öffnen
     </button>
+    <button onclick="svAddMaterialToFieldById('${id}');document.getElementById('sv-dbitem-menu-overlay').remove()">
+      <span>➕</span> Der Stunde hinzufügen
+    </button>
     <div class="sv-chip-menu-divider"></div>
     <button class="danger" onclick="svDeleteFromDb('${id}');document.getElementById('sv-dbitem-menu-overlay').remove()">
       <span>🗑</span> Aus Datenbank löschen
     </button>`;
   overlay.appendChild(menu);
   document.body.appendChild(overlay);
+}
+
+function svAddMaterialToFieldById(id){
+  const item = getMediaDb().find(m => m.id === id);
+  if(item) svAddMaterialToField(item);
 }
 
 /* Delete an item from the media database entirely */
@@ -1996,6 +2004,16 @@ function tsShowPinScreen(isFirstTime){
   _pinStep = isFirstTime ? 'setup-first' : 'enter';
   const overlay = document.getElementById('pin-overlay');
   if(overlay){ overlay.style.display='flex'; tsUpdatePinUI(); }
+  // Tastatur + Numblock
+  if(!tsShowPinScreen._kbHandler){
+    tsShowPinScreen._kbHandler = function(e){
+      if(document.getElementById('pin-overlay')?.style.display === 'none') return;
+      if(/^[0-9]$/.test(e.key) || (e.code && e.code.startsWith('Numpad') && /^[0-9]$/.test(e.key))){
+        e.preventDefault(); tsPinKey(e.key);
+      } else if(e.key === 'Backspace'){ e.preventDefault(); tsPinBack(); }
+    };
+    document.addEventListener('keydown', tsShowPinScreen._kbHandler);
+  }
 }
 
 function tsUpdatePinUI(){

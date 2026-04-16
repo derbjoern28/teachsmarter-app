@@ -1,134 +1,128 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Impressum – TeachSmarter</title>
-<style>
-  :root {
-    --teal: #1AA898;
-    --teal-dark: #138A7C;
-    --navy: #0C1F35;
-    --text: #1a2332;
-    --text-secondary: #556070;
-    --bg: #f7f9fb;
-    --card-bg: #ffffff;
-    --border: #e2e8ef;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.7;
-    min-height: 100vh;
-  }
-  .page-header {
-    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
-    padding: 2rem 1.5rem 1.75rem;
-    color: #fff;
-  }
-  .page-header a {
-    display: inline-flex; align-items: center; gap: .4rem;
-    color: rgba(255,255,255,.85); text-decoration: none; font-size: .875rem;
-    margin-bottom: 1rem; transition: color .15s;
-  }
-  .page-header a:hover { color: #fff; }
-  .page-header h1 {
-    font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em;
-  }
-  .page-header p {
-    opacity: .8; font-size: .9rem; margin-top: .25rem;
-  }
-  .container {
-    max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
-  }
-  .card {
-    background: var(--card-bg); border-radius: 12px;
-    border: 1px solid var(--border); padding: 1.75rem;
-    margin-bottom: 1.25rem;
-    box-shadow: 0 1px 4px rgba(12,31,53,.05);
-  }
-  .card h2 {
-    font-size: 1rem; font-weight: 700; color: var(--teal-dark);
-    margin-bottom: 1rem; padding-bottom: .5rem;
-    border-bottom: 1px solid var(--border);
-    text-transform: uppercase; letter-spacing: .06em; font-size: .78rem;
-  }
-  .card p, .card address { font-style: normal; line-height: 1.8; color: var(--text); }
-  .card a { color: var(--teal); text-decoration: none; }
-  .card a:hover { text-decoration: underline; }
-  .note {
-    background: #f0faf9; border: 1px solid #b2e4de; border-radius: 8px;
-    padding: .85rem 1rem; font-size: .875rem; color: var(--text-secondary);
-    margin-top: 1rem;
-  }
-  .note strong { color: var(--teal-dark); }
-  footer {
-    text-align: center; padding: 2rem 1.5rem; font-size: .8rem; color: var(--text-secondary);
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impressum | TeachSmarter</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1A3C5E;
+            --navy-dark: #0B1C2D;
+            --teal: #3BA89B;
+            --teal-light: #52C4B7;
+            --text-light: #EBF1F6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--navy-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        header {
+            padding: 1.5rem 5%;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 3rem;
+            background: var(--navy-dark);
+        }
+        .logo {
+            font-family: 'Source Serif 4', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFF;
+            text-decoration: none;
+        }
+        .logo span { color: var(--teal); }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 5% 5rem;
+        }
+        h1 {
+            font-family: 'Source Serif 4', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+        h2 {
+            font-size: 1.4rem;
+            color: var(--teal-light);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+        a { color: var(--teal-light); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="kischulplaner.html" class="logo" style="display:flex; align-items:center; gap: 0.5rem; text-decoration: none;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 8px rgba(82, 196, 183, 0.4));">
+                <path d="M9 21h6"></path>
+                <path d="M10 18h4"></path>
+                <path d="M12 15a6 6 0 0 1-6-6c0-3.3 2.7-6 6-6s6 2.7 6 6a6 6 0 0 1-6 6z"></path>
+                <path d="M9 8l3 3 3-3"></path>
+                <circle cx="9" cy="8" r="1.5" fill="var(--teal-light)"></circle>
+                <circle cx="15" cy="8" r="1.5" fill="var(--teal-light)"></circle>
+                <circle cx="12" cy="11" r="1.5" fill="var(--teal-light)"></circle>
+            </svg>
+            <span style="font-family: 'Source Serif 4', serif; font-size: 1.8rem; font-weight: 700; color: #FFF; letter-spacing: -0.5px;">TeachSmarter</span>
+        </a>
+    </header>
+    <div class="container">
+        <h1>Impressum</h1>
+        <p>
+            Björn Sydow<br>
+            TeachSmarter<br>
+            Barschweg 26<br>
+            91325 Adelsdorf<br>
+            Deutschland
+        </p>
 
-<div class="page-header">
-  <a href="TeachSmarter_Dashboard.html">← Zurück zur App</a>
-  <h1>Impressum</h1>
-  <p>Angaben gemäß § 5 TMG</p>
-</div>
+        <p style="margin-top:2rem;">
+            <strong>Kontakt</strong><br>
+            Tel.: <a href="tel:+4915203118778">015203118778</a><br>
+            E-Mail: <a href="mailto:bjoernsydow@gmx.de">bjoernsydow@gmx.de</a>
+        </p>
 
-<div class="container">
+        <p style="margin-top:2rem;">
+            <strong>Umsatzsteuer-Identifikationsnummer:</strong><br>
+            DE364061653
+        </p>
 
-  <div class="card">
-    <h2>Anbieter</h2>
-    <address>
-      <strong>Björn Sydow</strong><br>
-      TeachSmarter<br>
-      Barschweg 26<br>
-      91325 Adelsdorf<br>
-      Deutschland
-    </address>
-  </div>
+        <p style="margin-top:2rem;">
+            <strong>Verantwortliche/r i.S.d. § 18 Abs. 2 MStV:</strong><br>
+            Björn Sydow, Barschweg 26, 91325 Adelsdorf
+        </p>
 
-  <div class="card">
-    <h2>Kontakt</h2>
-    <p>E-Mail: <a href="mailto:bjoernsydow@teachsmarter.de">bjoernsydow@teachsmarter.de</a></p>
-    <p style="margin-top:.5rem">Website: <a href="https://teachsmarter.de" target="_blank">teachsmarter.de</a></p>
-  </div>
+        <p style="margin-top:2rem;">
+            <strong>Zuständige Aufsichtsbehörde für das Angebot audiovisueller Mediendienste:</strong><br>
+            Bayerische Landeszentrale für neue Medien (BLM)<br>
+            Heinrich-Lübke-Straße 27<br>
+            81737 München<br>
+            Deutschland
+        </p>
 
-  <div class="card">
-    <h2>Umsatzsteuer-Identifikationsnummer</h2>
-    <p>Gemäß § 27a Umsatzsteuergesetz:<br>
-    <strong>USt-IdNr.: DE364061653</strong></p>
-  </div>
+        <p style="margin-top:3rem; padding: 1.5rem; border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px;">
+            Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle nicht verpflichtet, hierzu jedoch bereit.
+        </p>
+    </div>
 
-  <div class="card">
-    <h2>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</h2>
-    <address>
-      Björn Sydow<br>
-      Barschweg 26<br>
-      91325 Adelsdorf
-    </address>
-  </div>
+    <footer style="text-align: center; padding: 4rem 5% 3rem; background: var(--navy-dark); border-top: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); font-size: 0.95rem; font-family: 'DM Sans', sans-serif;">
+        &copy; <span id="current-year"></span> TeachSmarter &middot; Björn Sydow &middot; <a href="impressum.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Impressum</a> &middot; <a href="agb.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">AGB</a> &middot; <a href="datenschutz.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Datenschutzerklärung</a> &middot; <a href="widerruf.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Widerrufsrecht</a>
+    </footer>
 
-  <div class="card">
-    <h2>Streitschlichtung</h2>
-    <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-    <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>.</p>
-    <p style="margin-top:.75rem">Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
-  </div>
-
-  <div class="note">
-    <strong>Hinweis zur Haftung:</strong> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
-  </div>
-
-</div>
-
-<footer>
-  &copy; <span id="yr"></span> TeachSmarter · Björn Sydow ·
-  <a href="datenschutz.html" style="color:inherit">Datenschutz</a> ·
-  <a href="support.html" style="color:inherit">Support</a>
-</footer>
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+    </script>
+    <script src="cookie-banner.js"></script>
 </body>
 </html>

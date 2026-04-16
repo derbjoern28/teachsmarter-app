@@ -1,4 +1,4 @@
-name: Build Electron App
+name: Build & Release Electron App
 
 on:
   push:
@@ -37,16 +37,10 @@ jobs:
           cp ts-icon-app.png build/icon.iconset/icon_512x512.png
           iconutil -c icns build/icon.iconset -o ts-icon.icns
 
-      - name: Build macOS
+      - name: Build & publish macOS
         run: npm run build:mac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload .dmg
-        uses: actions/upload-artifact@v4
-        with:
-          name: TeachSmarter-mac
-          path: dist/*.dmg
 
   build-win:
     runs-on: windows-latest
@@ -82,7 +76,7 @@ jobs:
           $pass = ConvertTo-SecureString -String "ts-build-cert" -Force -AsPlainText
           $cert = New-SelfSignedCertificate `
             -Type CodeSigningCert `
-            -Subject "CN=Bjoern Sydow - TeachSmarter, O=TeachSmarter UG, C=DE" `
+            -Subject "CN=Björn Sydow - TeachSmarter, O=TeachSmarter, L=Germany, C=DE" `
             -FriendlyName "TeachSmarter Code Signing" `
             -CertStoreLocation "Cert:\CurrentUser\My" `
             -KeyExportPolicy Exportable `
@@ -93,19 +87,13 @@ jobs:
             -NotAfter (Get-Date).AddYears(3)
           $certPath = "$env:RUNNER_TEMP\selfsigned.pfx"
           Export-PfxCertificate -Cert $cert -FilePath $certPath -Password $pass | Out-Null
-          echo "WIN_CSC_LINK=$certPath"        >> $env:GITHUB_ENV
+          echo "WIN_CSC_LINK=$certPath"         >> $env:GITHUB_ENV
           echo "WIN_CSC_PASSWORD=ts-build-cert" >> $env:GITHUB_ENV
           Write-Host "Self-signed cert created: $($cert.Subject)"
 
-      - name: Build Windows
+      - name: Build & publish Windows
         run: npm run build:win
         env:
           GH_TOKEN:         ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK:         ${{ env.WIN_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ env.WIN_CSC_PASSWORD }}
-
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: TeachSmarter-win
-          path: dist/*.exe

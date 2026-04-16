@@ -74,7 +74,8 @@ function getSchoolWeeks(klasseId, fachId){
         ue, isFerien: allHoliday,
         slotsPerDay: [...slotsPerDay],
         ferienName: allHoliday ? ferienName : '',
-        partialHoliday: !allHoliday && ue < slotsPerDay.reduce((a,b)=>a+b,0) && hasFeiertag
+        partialHoliday: !allHoliday && ue < slotsPerDay.reduce((a,b)=>a+b,0) && hasFeiertag,
+        klasseId
       });
     }
     d.setDate(d.getDate()+7);
@@ -104,6 +105,8 @@ function getBlockingEventsForWeek(w) {
   const friStr = dateStr(w.friday);
   return (typeof events !== 'undefined' ? events : []).filter(e => {
     if (!e.ganztag && !e.blocksDay) return false;
+    // schulweite Events (kein klasseId) oder nur die betroffene Klasse
+    if (e.klasseId && e.klasseId !== w.klasseId) return false;
     const end = (e.dateEnd && e.dateEnd >= e.date) ? e.dateEnd : e.date;
     return e.date <= friStr && end >= monStr;
   });

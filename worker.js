@@ -48,7 +48,7 @@ export default {
         }
       }
 
-      if (path === '/verify' && request.method === 'POST') {
+if (path === '/verify' && request.method === 'POST') {
         return await handleVerify(request, env, corsHeaders);
       }
 
@@ -142,8 +142,13 @@ async function handleStripeWebhook(request, env, cors) {
           sessionId: session.id
         });
         await env.LICENSES.put(existingKey, JSON.stringify(license));
-        // Send top-up confirmation
-        if (license.email) await sendTopUpEmail(env, license.email, existingKey, creditsToAdd, license.credits);
+        // Send top-up confirmation; if plan upgraded to founder/premium → also send license email with download links
+        if (license.email) {
+          await sendTopUpEmail(env, license.email, existingKey, creditsToAdd, license.credits);
+          if (newPlan === 'founder' || newPlan === 'premium') {
+            await sendLicenseEmail(env, license.email, existingKey, license.plan, license.credits);
+          }
+        }
       }
     } else {
       // ── Check if email already has a key → top-up instead of new key ──
@@ -170,6 +175,9 @@ async function handleStripeWebhook(request, env, cors) {
           });
           await env.LICENSES.put(existingEmailKeys[0], JSON.stringify(existingLicense));
           await sendTopUpEmail(env, email, existingEmailKeys[0], creditsToAdd, existingLicense.credits);
+          if (newPlan === 'founder' || newPlan === 'premium') {
+            await sendLicenseEmail(env, email, existingEmailKeys[0], existingLicense.plan, existingLicense.credits);
+          }
           return json({ received: true }, 200, cors);
         }
       }
@@ -1486,8 +1494,8 @@ async function sendLicenseEmail(env, email, key, plan, credits) {
                      isFounder ? "Founder's Edition (29 KI-Credits)" :
                      credits + ' KI-Credits';
 
-  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-Setup-1.0.0.exe';
-  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-1.0.0-arm64.dmg';
+  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-Setup.exe';
+  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-mac-arm64.dmg';
   const WEB_URL = 'https://app.teachsmarter.de/TeachSmarter_Dashboard';
 
   const downloadBlock = (isFounder || isPremium) ? `

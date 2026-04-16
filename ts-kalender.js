@@ -62,14 +62,19 @@ function renderHeute() {
   const untimedEvents = dayEvents.filter(e => !e.blocksDay && !e.ganztag && !e.time);
 
   // ── Ganztag-Block Helper ──
-  function isSlotBlocked(slotIdx) {
-    return ganztag.some(e => !e.affectedSlots || e.affectedSlots === 'all' || (Array.isArray(e.affectedSlots) && e.affectedSlots.includes(slotIdx)));
+  // klasseId: wenn gesetzt, nur Events ohne klasseId (schulweit) oder mit passender klasseId blocken
+  function isSlotBlocked(slotIdx, lessonKlasseId) {
+    return ganztag.some(e => {
+      if (e.klasseId && e.klasseId !== lessonKlasseId) return false;
+      return !e.affectedSlots || e.affectedSlots === 'all' || (Array.isArray(e.affectedSlots) && e.affectedSlots.includes(slotIdx));
+    });
   }
-  const blockedAll = ganztag.length > 0 && ganztag.some(e => !e.affectedSlots || e.affectedSlots === 'all');
+  // blockedAll nur für schulweite Events (kein klasseId-Filter)
+  const blockedAll = ganztag.length > 0 && ganztag.some(e => !e.klasseId && (!e.affectedSlots || e.affectedSlots === 'all'));
 
   // ── Ganztag-Block Banner(s) ──
   if (ganztag.length > 0) {
-    const blockedCount = todayLessons.filter((_,i) => isSlotBlocked(i) && todayLessons[i].entry).length;
+    const blockedCount = todayLessons.filter(l => l.entry && isSlotBlocked(l.index, l.entry.klasseId)).length;
     document.getElementById('heute-stats').innerHTML = `
       <div class="stat-card"><div class="stat-value" style="color:var(--ts-warning)">${blockedCount}</div><div class="stat-label">UEs entfallen</div></div>
       <div class="stat-card"><div class="stat-value">${todayLessons.filter(l=>l.entry).length - blockedCount}</div><div class="stat-label">Stunden</div></div>`;
@@ -151,7 +156,7 @@ function renderHeute() {
       const isNow = isActualToday && currentMinutes >= slotStart && currentMinutes < slotEnd;
       const isPast = heuteOffset < 0 || (isActualToday && currentMinutes >= slotEnd);
       const timeClass = isNow ? 'now' : isPast ? 'past' : '';
-      const blocked = ganztag.length > 0 && isSlotBlocked(lesson.index);
+      const blocked = ganztag.length > 0 && isSlotBlocked(lesson.index, lesson.entry?.klasseId);
       if (lesson.entry) {
         const fach = getFach(lesson.entry.fachId);
         const klasse = getKlasse(lesson.entry.klasseId);
@@ -159,8 +164,10 @@ function renderHeute() {
         const _svk = `${viewDateStr}_${lesson.entry.fachId}_${lesson.entry.klasseId}_${lesson.index}`;
         const _thema = (typeof stundenCache!=='undefined'&&stundenCache[_svk])?stundenCache[_svk].thema:'';
         if (blocked) {
-          // Show the blocking event IN this slot
-          const blockEvt = ganztag.find(e => Array.isArray(e.affectedSlots) && e.affectedSlots.includes(lesson.index)) || ganztag[0];
+          // Show the blocking event IN this slot (class-specific or school-wide)
+          const blockEvt = ganztag.find(e => (!e.klasseId || e.klasseId === lesson.entry.klasseId) && Array.isArray(e.affectedSlots) && e.affectedSlots.includes(lesson.index))
+            || ganztag.find(e => !e.klasseId || e.klasseId === lesson.entry.klasseId)
+            || ganztag[0];
           const t = blockEvt ? getEventType(blockEvt.type) : null;
           html += `<div class="tl-item">
             <div class="tl-time">${lesson.slot.von}<br>${lesson.slot.bis}</div>
@@ -361,7 +368,11 @@ function renderWoche() {
 
         const dayEvts = getEventsForDate(dayDate);
         const dayGanztag = dayEvts.filter(e => e.blocksDay || e.ganztag);
-        const wIsBlocked = dayGanztag.some(e => !e.affectedSlots || e.affectedSlots === 'all' || (Array.isArray(e.affectedSlots) && e.affectedSlots.includes(s)));
+        const entryKlasseId = entry?.klasseId;
+        const wIsBlocked = dayGanztag.some(e =>
+          (!e.klasseId || e.klasseId === entryKlasseId) &&
+          (!e.affectedSlots || e.affectedSlots === 'all' || (Array.isArray(e.affectedSlots) && e.affectedSlots.includes(s)))
+        );
 
         const timedSlotEvts = dayEvts.filter(e => !e.ganztag && !e.blocksDay && e.time && getSlotIndexForTime(e.time, zr) === s);
         const evtChipsHtml = timedSlotEvts.map(evt => {
@@ -370,7 +381,10 @@ function renderWoche() {
         }).join('');
 
         if (wIsBlocked) {
-          const blockEvt = dayGanztag.find(e => !e.affectedSlots || e.affectedSlots === 'all' || (Array.isArray(e.affectedSlots) && e.affectedSlots.includes(s)));
+          const blockEvt = dayGanztag.find(e =>
+            (!e.klasseId || e.klasseId === entryKlasseId) &&
+            (!e.affectedSlots || e.affectedSlots === 'all' || (Array.isArray(e.affectedSlots) && e.affectedSlots.includes(s)))
+          );
           const t = blockEvt ? getEventType(blockEvt.type) : null;
           html += `<div class="woche-cell filled${todayClass}" style="background:${t?t.color+'33':'#eee'};border-left:3px solid ${t?t.color:'#ccc'};opacity:.7;cursor:pointer" onclick="openEventModal(null,'${blockEvt?.id}')">
             <div class="wc-fach" style="font-size:.65rem">${t?getEventIcon(blockEvt):''} entfällt</div>

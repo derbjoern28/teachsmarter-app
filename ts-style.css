@@ -1458,3 +1458,10 @@ textarea.input{min-height:80px;resize:vertical;line-height:1.5}
   /* FAB */
   .fab-add{bottom:16px;right:16px;width:52px;height:52px;font-size:1.4rem}
 }
+
+/* PIN-Overlay: kein Chrome-Zoom beim Tippen auf Buttons */
+#pin-overlay button {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}

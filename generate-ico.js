@@ -10,7 +10,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const SRC = path.join(__dirname, 'ts-icon-512.png');
+const SRC = path.join(__dirname, 'ts-icon-app.png');
 const ICO_OUT = path.join(__dirname, 'ts-icon.ico');
 const SIZES = [16, 24, 32, 48, 64, 128, 256];
 const TMP = os.tmpdir();

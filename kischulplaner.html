@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeachSmarter | Der KI-gestützte Lehrerkalender</title>
+    <meta name="description" content="Sichere dir das Early Adopter Paket von TeachSmarter: Der iPad-Lehrerkalender, der dein Schuljahr dank KI in Minuten plant. Inklusive 89 KI-Token.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy: #1A3C5E;
+            --navy-dark: #0B1C2D;
+            --navy-light: #2A5A8A;
+            --teal: #3BA89B;
+            --teal-light: #52C4B7;
+            --teal-glow: rgba(59, 168, 155, 0.4);
+            --bg-color: #FAF8F5;
+            --text-light: #EBF1F6;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--navy-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Nav */
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Source Serif 4', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #FFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo span {
+            color: var(--teal);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--teal-light);
+        }
+
+        .nav-cta {
+            display: none;
+        }
+
+        @media(min-width: 768px) {
+            .nav-cta {
+                display: block;
+                padding: 0.6rem 1.5rem;
+                border-radius: 50px;
+                background: rgba(255,255,255,0.1);
+                color: #fff;
+                text-decoration: none;
+                font-weight: 600;
+                border: 1px solid rgba(255,255,255,0.2);
+                transition: all 0.3s;
+                backdrop-filter: blur(10px);
+            }
+            .nav-cta:hover {
+                background: rgba(255,255,255,0.15);
+                border-color: rgba(255,255,255,0.3);
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 5% 5rem;
+            background: radial-gradient(circle at 70% 30%, var(--navy) 0%, var(--navy-dark) 60%);
+            overflow: hidden;
+        }
+
+        /* Background Design Elements */
+        .ambient-glow-1 {
+            position: absolute;
+            top: 10%;
+            right: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--teal-glow) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(26, 60, 94, 0.8) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        /* Hero Content */
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeInBody 1s ease-out;
+        }
+
+        @keyframes fadeInBody {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge-wrap {
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, rgba(59, 168, 155, 0.2), rgba(59, 168, 155, 0.05));
+            border: 1px solid var(--teal);
+            color: var(--teal-light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 0 20px var(--teal-glow);
+        }
+
+        h1 {
+            font-family: 'Source Serif 4', serif;
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 0;
+        }
+
+        h1 span {
+            background: linear-gradient(to right, #ffffff, var(--teal-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subhead {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 550px;
+        }
+
+        /* Glassmorphism Pricing Box */
+        .glass-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--teal), transparent);
+        }
+
+        .price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--teal-light);
+            transform: translateY(-0.5rem);
+        }
+
+        .amount {
+            font-size: 4.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #ffffff;
+            font-family: 'Source Serif 4', serif;
+        }
+
+        .price-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label strong {
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.2rem;
+            background: var(--teal);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .features-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.875rem;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .features-list li .highlight {
+            color: var(--teal-light);
+            font-weight: 700;
+        }
+
+        .check-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(59, 168, 155, 0.2);
+            color: var(--teal-light);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.125rem 2rem;
+            border-radius: 50px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--teal);
+            color: #ffffff;
+            box-shadow: 0 8px 25px rgba(59, 168, 155, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: var(--teal-light);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(59, 168, 155, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: #fff;
+        }
+
+        .urgency-notice {
+            margin-top: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .urgency-notice strong {
+            color: #fff;
+            background: rgba(255, 176, 32, 0.2);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+            perspective: 1200px;
+            animation: floatUp 1.2s ease-out;
+        }
+
+        @keyframes floatUp {
+            from { opacity: 0; transform: translateY(40px) rotateX(10deg); }
+            to { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+
+        .mockup-container {
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(-6deg) rotateX(3deg) scale(1.05);
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .mockup-container:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.08); /* Dreht sich zum Betrachter beim Hovern */
+        }
+
+        .mockup-img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 30px 40px 70px rgba(0,0,0,0.7),
+                        0 0 50px rgba(59, 168, 155, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #fff; /* Falls der Screenshot Transparenzen hat */
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(11, 28, 45, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            animation: float 6s ease-in-out infinite;
+            z-index: 20;
+        }
+
+        .float-1 {
+            top: 10%;
+            left: -15%;
+            animation-delay: 0s;
+        }
+
+        .float-2 {
+            bottom: 15%;
+            right: -5%;
+            animation-delay: 2s;
+        }
+
+        .floating-icon {
+            font-size: 1.5rem;
+            background: rgba(59, 168, 155, 0.2);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: var(--teal-light);
+        }
+
+        .floating-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .floating-text strong {
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .floating-text span {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Responsive Design */
+        @media(max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-content {
+                align-items: center;
+            }
+
+            .subhead {
+                margin: 0 auto;
+            }
+
+            .glass-box {
+                text-align: left;
+                width: 100%;
+                max-width: 500px;
+                margin: 2rem auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .mockup-container {
+                transform: none;
+            }
+            .mockup-container:hover {
+                transform: none;
+            }
+            
+            .float-1 {
+                left: 5%;
+                top: 5%;
+            }
+            
+            .float-2 {
+                right: 5%;
+                bottom: 5%;
+            }
+        }
+
+        @media(max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .amount {
+                font-size: 3.5rem;
+            }
+            .btn {
+                width: 100%;
+            }
+            .hero {
+                padding-top: 6rem;
+            }
+            .floating-element {
+                display: none;
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 5%;
+            position: relative;
+            background: #081420; /* Slightly darker to create depth separation */
+            z-index: 10;
+        }
+
+        .features-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 168, 155, 0.3), transparent);
+        }
+
+        .features-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+            position: relative;
+        }
+
+        .features-header h2 {
+            font-family: 'Source Serif 4', serif;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-header h2 span {
+            color: var(--teal-light);
+            background: linear-gradient(to right, #ffffff, var(--teal-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-header p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-top: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(59, 168, 155, 0.5) inset;
+            border-color: rgba(59, 168, 155, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Hover Glow Effect */
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: radial-gradient(circle at top right, rgba(59, 168, 155, 0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(59, 168, 155, 0.2), rgba(26, 60, 94, 0.5));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(59, 168, 155, 0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-ki .feature-icon {
+            background: linear-gradient(135deg, rgba(168, 59, 212, 0.2), rgba(26, 60, 94, 0.5));
+            border-color: rgba(168, 59, 212, 0.2);
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.5;
+        }
+
+        .feature-list li .check {
+            color: var(--teal-light);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transform: translateY(-1px);
+        }
+
+        /* Specific card span layout for 5 cards */
+        .card-1 { grid-column: 1 / 2; }
+        .card-2 { grid-column: 2 / 4; } /* KI Werkzeuge needs more space */
+        .card-3 { grid-column: 1 / 2; }
+        .card-4 { grid-column: 2 / 3; }
+        .card-5 { grid-column: 3 / 4; }
+
+        .card-2 .feature-list {
+            column-count: 2;
+            column-gap: 2rem;
+            display: block; /* override flex */
+        }
+        
+        .card-2 .feature-list li {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            display: flex; /* keep flex for bullets */
+        }
+
+        @media(max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card-1, .card-3, .card-4, .card-5 {
+                grid-column: span 1;
+            }
+            .card-2 {
+                grid-column: 1 / -1; /* KI spans full width on medium */
+            }
+        }
+
+        @media(max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .features {
+                padding: 5rem 5%;
+            }
+            .card-2 .feature-list {
+                column-count: 1;
+            }
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 8rem 5%;
+            position: relative;
+            background: var(--navy);
+            z-index: 10;
+        }
+
+        .pricing-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+            position: relative;
+        }
+
+        .pricing-header h2 {
+            font-family: 'Source Serif 4', serif;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pricing-header h2 span {
+            color: var(--teal-light);
+            background: linear-gradient(to right, #ffffff, var(--teal-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-header p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .pricing-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .pricing-card.standard {
+            opacity: 0.85;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transform: scale(0.95);
+        }
+
+        .pricing-card.highlight {
+            background: rgba(59, 168, 155, 0.08);
+            border-color: rgba(59, 168, 155, 0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(59,168,155,0.15) inset;
+            transform: scale(1.05);
+            z-index: 2;
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--teal), var(--teal-light));
+            color: #fff;
+            padding: 0.4rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(59, 168, 155, 0.4);
+            white-space: nowrap;
+        }
+        
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            min-height: 45px;
+        }
+
+        .price-area {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-tag {
+            font-family: 'Source Serif 4', serif;
+            font-size: 4rem;
+            color: #fff;
+            font-weight: 700;
+            line-height: 1;
+            display: flex;
+            align-items: baseline;
+            gap: 0.2rem;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            color: var(--teal-light);
+            font-family: 'DM Sans', sans-serif;
+            transform: translateY(-1.5rem);
+        }
+
+        .price-period {
+            font-size: 1rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.5);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .pricing-card.standard .price-currency {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .pricing-card .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+            flex-grow: 1;
+        }
+
+        .pricing-card .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+
+        .pricing-card .feature-list li .check {
+            color: var(--teal-light);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transform: translateY(-2px);
+        }
+        
+        .pricing-card.standard .feature-list li .check {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .pricing-card .feature-list li.disabled {
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: line-through;
+        }
+
+        .pricing-card .feature-list li.disabled .check {
+            color: transparent;
+            position: relative;
+        }
+        .pricing-card .feature-list li.disabled .check::after {
+            content: '✕';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 1rem;
+        }
+
+        .btn-block {
+            width: 100%;
+            text-align: center;
+        }
+
+        .countdown-wrapper {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .countdown-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(59, 168, 155, 0.3);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            min-width: 100px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(59, 168, 155, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-family: 'Source Serif 4', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 0 15px rgba(59, 168, 155, 0.5);
+        }
+
+        .countdown-unit {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--teal-light);
+            font-weight: 600;
+        }
+
+        @media(max-width: 768px) {
+            .pricing-card.highlight, .pricing-card.standard {
+                transform: none;
+                max-width: 100%;
+            }
+            .pricing-grid {
+                gap: 3rem;
+            }
+            .pricing-desc {
+                min-height: auto;
+            }
+            .countdown {
+                gap: 0.75rem;
+            }
+            .countdown-box {
+                padding: 0.8rem 1rem;
+                min-width: 75px;
+            }
+            .countdown-value {
+                font-size: 1.8rem;
+            }
+            .countdown-unit {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 8rem 5%;
+            position: relative;
+            background: #081420; /* Same as features for depth consistency */
+            z-index: 10;
+        }
+
+        .faq::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 168, 155, 0.3), transparent);
+        }
+
+        .faq-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .faq-header h2 {
+            font-family: 'Source Serif 4', serif;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header h2 span {
+            color: var(--teal-light);
+            background: linear-gradient(to right, #ffffff, var(--teal-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        details.faq-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s;
+        }
+
+        details.faq-item:hover {
+            border-color: rgba(59, 168, 155, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        details.faq-item[open] {
+            border-color: var(--teal);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        summary.faq-question {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none; /* remove default arrow */
+        }
+
+        summary.faq-question::-webkit-details-marker {
+            display: none;
+        }
+
+        summary.faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--teal-light);
+            transition: transform 0.3s ease;
+        }
+
+        details.faq-item[open] summary.faq-question::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 2rem 1.5rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            animation: fadeInFaq 0.4s ease-in-out;
+        }
+
+        @keyframes fadeInFaq {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 768px) {
+            summary.faq-question {
+                padding: 1.25rem 1.5rem;
+                font-size: 1.1rem;
+            }
+            .faq-answer {
+                padding: 0 1.5rem 1.25rem;
+            }
+        }
+
+        /* FAQ Credit Cards */
+        .credits-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .credit-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .credit-card.credit-popular {
+            background: var(--teal);
+            border-color: var(--teal-light);
+            color: #fff;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(59, 168, 155, 0.3);
+        }
+
+        .credit-tier {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: inherit;
+            opacity: 0.8;
+        }
+
+        .credit-price {
+            font-size: 1.15rem;
+            font-weight: 400;
+        }
+
+        .credit-price strong {
+            font-weight: 700;
+        }
+
+        .credit-desc {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        @media(min-width: 600px) {
+            .credits-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Sticky CTA */
+        .sticky-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(8, 20, 32, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(59, 168, 155, 0.4);
+            padding: 1rem 5%;
+            z-index: 1000;
+            transform: translateY(100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.4);
+        }
+
+        .sticky-cta.visible {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sticky-cta-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sticky-cta-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sticky-cta-text strong {
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Source Serif 4', serif;
+        }
+
+        .sticky-cta-text span {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .sticky-cta-action {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .sticky-cta-price {
+            font-family: 'Source Serif 4', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .sticky-cta .btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        @media(max-width: 768px) {
+            .sticky-cta-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            .sticky-cta-text strong {
+                font-size: 1rem;
+            }
+            .sticky-cta-text span {
+                font-size: 0.8rem;
+            }
+            .sticky-cta-action {
+                width: 100%;
+                justify-content: center;
+                gap: 1.5rem;
+            }
+            .sticky-cta-price {
+                font-size: 1.3rem;
+            }
+            .sticky-cta .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        /* Founder Section */
+        .founder {
+            padding: 8rem 5%;
+            background-color: var(--navy-dark);
+            position: relative;
+            z-index: 10;
+        }
+        .founder-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            gap: 4rem;
+            align-items: center;
+        }
+        @media(min-width: 900px) {
+            .founder-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .founder-img {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: block;
+            filter: drop-shadow(0 20px 40px rgba(59, 168, 155, 0.15));
+        }
+        .founder-content h2 {
+            font-family: 'Source Serif 4', serif;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+        }
+        .founder-content p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1.5rem;
+        }
+        .founder-quote {
+            font-family: 'Source Serif 4', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--teal-light);
+            border-left: 4px solid var(--teal);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo" style="display:flex; align-items:center; gap: 0.5rem; text-decoration: none;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 8px rgba(82, 196, 183, 0.4));">
+                <path d="M9 21h6"></path>
+                <path d="M10 18h4"></path>
+                <path d="M12 15a6 6 0 0 1-6-6c0-3.3 2.7-6 6-6s6 2.7 6 6a6 6 0 0 1-6 6z"></path>
+                <path d="M9 8l3 3 3-3"></path>
+                <circle cx="9" cy="8" r="1.5" fill="var(--teal-light)"></circle>
+                <circle cx="15" cy="8" r="1.5" fill="var(--teal-light)"></circle>
+                <circle cx="12" cy="11" r="1.5" fill="var(--teal-light)"></circle>
+            </svg>
+            <span style="font-family: 'Source Serif 4', serif; font-size: 1.8rem; font-weight: 700; color: #FFF; letter-spacing: -0.5px;">TeachSmarter</span>
+        </a>
+        <nav class="nav-links">
+            <a href="#features">Funktionen</a>
+            <a href="#preise">Preise</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="ambient-glow-1"></div>
+            <div class="ambient-glow-2"></div>
+            
+            <div class="container">
+                <!-- Text Inhalt -->
+                <div class="hero-content">
+                    <div class="badge-wrap">
+                        <div class="badge">
+                            ✨ Begrenztes Angebot
+                        </div>
+                    </div>
+                    
+                    <h1>Unterrichtsplanung,<br>die sich <span>selbst erledigt.</span></h1>
+                    
+                    <p class="subhead">Der erste DSGVO-konforme iPad-Lehrerkalender mit integrierter KI. Plane dein Schuljahr in Minuten statt Stunden — komplett offline nutzbar.</p>
+                    
+                    <div class="glass-box">
+                        <div class="price-row">
+                            <span class="currency">€</span>
+                            <span class="amount">12,99</span>
+                            <div class="price-label">
+                                <strong>Early Adopter Paket</strong>
+                                <span>Einmaliger Einführungspreis</span>
+                            </div>
+                        </div>
+                        
+                        <ul class="features-list">
+                            <li>
+                                <div class="check-icon">✓</div>
+                                <div><span class="highlight">89 KI-Token inklusive</span></div>
+                            </li>
+                            <li>
+                                <div class="check-icon">✓</div>
+                                <div>Das reicht für die <span class="highlight">komplette Jahresplanung von 9 Fächern!</span></div>
+                            </li>
+                            <li>
+                                <div class="check-icon">✓</div>
+                                <div>Dauerhafter Offline-Zugang zur App</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="https://buy.stripe.com/5kQ9AS59vdVS1mvdfv0ZW08" class="btn btn-primary">Jetzt Early Adopter Paket sichern</a>
+                        <a href="#demo" class="btn btn-secondary">Video Ansehen</a>
+                    </div>
+                    
+                    <div class="urgency-notice">
+                        <span>⏳</span> Angebot limitiert: Nur buchbar bis zum <strong>10.08.2026</strong>
+                    </div>
+                </div>
+
+                <!-- Visual Inhalt -->
+                <div class="hero-visual">
+                    <div class="mockup-container">
+                        <img src="assets/hero_mockup.png" alt="TeachSmarter App Mockup - Lehrerkalender" class="mockup-img">
+                        
+                        <!-- Floating Elements zur Auflockerung -->
+                        <div class="floating-element float-1">
+                            <div class="floating-icon">🎯</div>
+                            <div class="floating-text">
+                                <strong>Zeit gespart</strong>
+                                <span>15 Stunden pro Monat</span>
+                            </div>
+                        </div>
+
+                        <div class="floating-element float-2">
+                            <div class="floating-icon">🚀</div>
+                            <div class="floating-text">
+                                <strong>KI Sequenzplaner</strong>
+                                <span>1 Klick für 6 Wochen Material</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="features-background"></div>
+            
+            <div class="container" style="display: block;">
+                <div class="features-header">
+                    <div class="badge-wrap">
+                        <div class="badge">
+                            ✨ Alle Funktionen inkludiert
+                        </div>
+                    </div>
+                    <h2>Weniger Papierkram.<br><span>Mehr Unterricht.</span></h2>
+                    <p>Alles, was Lehrerinnen und Lehrer täglich brauchen — in einer App. Sicher, schnell, DSGVO-konform.</p>
+                </div>
+
+                <div class="features-grid">
+                    <!-- Card 1 -->
+                    <div class="feature-card card-1">
+                        <div class="feature-icon">📅</div>
+                        <h3>Kompletter Lehreralltag</h3>
+                        <ul class="feature-list">
+                            <li><span class="check">✦</span> Kalender (Tag, Woche, Monat) mit Stundenplan-Integration</li>
+                            <li><span class="check">✦</span> Terminverwaltung mit Kategorien (Elterngespräche, Konferenzen…)</li>
+                            <li><span class="check">✦</span> Jahres- und Sequenzplanung — strukturiert, nicht im Kopf</li>
+                            <li><span class="check">✦</span> Stundenvorbereitung direkt im Tool, verknüpft mit Klasse und Fach</li>
+                            <li><span class="check">✦</span> Klassenübersicht mit Schülerlisten, Noten und Abwesenheiten</li>
+                            <li><span class="check">✦</span> Ferien und Feiertage automatisch eingeblendet (D, AT, CH)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="feature-card card-2 card-ki">
+                        <div class="feature-icon">🤖</div>
+                        <h3>KI-Werkzeuge, die Arbeit abnehmen</h3>
+                        <ul class="feature-list">
+                            <li><span class="check">✦</span> Arbeitsblatt-Generator — differenzierte Übungen in Sekunden</li>
+                            <li><span class="check">✦</span> Tafelbild-Planer — strukturierte Visualisierungen inkl. Diagrammen</li>
+                            <li><span class="check">✦</span> Interaktive Arbeitsblätter — Quiz, Lückentext, Memory, Zuordnung</li>
+                            <li><span class="check">✦</span> App-Baukasten — eigene mini-interaktive Lern-Apps erstellen</li>
+                            <li><span class="check">✦</span> Differenzierungshelfer — Aufgaben für Leistungsniveaus</li>
+                            <li><span class="check">✦</span> Exit-Ticket-Generator — schnelle Lernstandsabfragen</li>
+                            <li><span class="check">✦</span> Elternbrief-Assistent — professionell und DSGVO-konform</li>
+                            <li><span class="check">✦</span> Präsentations-Wizard — Unterrichtsfolien schnell strukturieren</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="feature-card card-3">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Echter Datenschutz</h3>
+                        <ul class="feature-list">
+                            <li><span class="check">✦</span> Daten bleiben lokal — nichts geht an einen Server</li>
+                            <li><span class="check">✦</span> AES-256 Verschlüsselung — militärische Sicherheit</li>
+                            <li><span class="check">✦</span> Keine Schülerdaten werden jemals an die KI weitergegeben</li>
+                            <li><span class="check">✦</span> Kein Account erforderlich — keine Cloud, kein Tracking</li>
+                            <li><span class="check">✦</span> Desktop-App: Daten verlassen das Gerät physisch niemals</li>
+                            <li><span class="check">✦</span> Problemlos prüfbar für Schul-IT und Datenschutzbeauftragte</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="feature-card card-4">
+                        <div class="feature-icon">📱</div>
+                        <h3>Für Tablets & Desktops</h3>
+                        <ul class="feature-list">
+                            <li><span class="check">✦</span> Optimiert für iPad — Touch-First, große Bedienelemente</li>
+                            <li><span class="check">✦</span> Läuft als PWA im Browser oder als native Desktop-App</li>
+                            <li><span class="check">✦</span> Offline-fähig — funktioniert überall auch komplett ohne WLAN</li>
+                            <li><span class="check">✦</span> Extrem schnell und reaktionsschnell, kein Laden, kein Warten</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="feature-card card-5">
+                        <div class="feature-icon">🇪🇺</div>
+                        <h3>Für alle Schularten</h3>
+                        <ul class="feature-list">
+                            <li><span class="check">✦</span> Alle Bundesländer in Deutschland, Österreich & Schweiz</li>
+                            <li><span class="check">✦</span> Fächer, Klassenstufen und Stundenplan individuell anpassbar</li>
+                            <li><span class="check">✦</span> Keine starren Vorgaben — passend für jede persönliche Struktur</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="preise" class="pricing">
+            <div class="container" style="display: block;">
+                <div class="pricing-header">
+                    <h2>Wähle deinen <span>Tarif</span></h2>
+                    <p>Sichere dir jetzt alle KI-Funktionen dauerhaft in der Founders Edition – bevor wir auf ein Abo-Modell umstellen.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    
+                    <!-- Card 1: Highlighted (Early Adopter) -->
+                    <div class="pricing-card highlight">
+                        <div class="pricing-badge">✨ Deal läuft bis 10.08.2026</div>
+                        <h3>Early Adopter Edition</h3>
+                        <p class="pricing-desc">Für Pioniere: Die Founders Edition mit allen Features. Weitere KI-Credits sind als In-App-Käufe verfügbar.</p>
+                        
+                        <div class="price-area">
+                            <div class="price-tag">
+                                <span class="price-currency">€</span>
+                                12,99
+                                <span class="price-period">/ einmalig</span>
+                            </div>
+                        </div>
+
+                        <ul class="feature-list">
+                            <li><span class="check">✓</span> <strong>Lifetime Access:</strong> Voller Zugriff auf alle KI-Features (später nur mit Abo)</li>
+                            <li><span class="check">✓</span> <strong>89 KI Credits inklusive</strong> zum Testen aller Features</li>
+                            <li><span class="check">✓</span> Alle Kalender & Planungsfunktionen</li>
+                            <li><span class="check">✓</span> Dauerhaft offline nutzbar</li>
+                        </ul>
+
+                        <a href="https://buy.stripe.com/5kQ9AS59vdVS1mvdfv0ZW08" class="btn btn-primary btn-block">Jetzt für 12,99 € sichern</a>
+                    </div>
+                    
+                    <!-- Card 2: Standard (Future Price) -->
+                    <div class="pricing-card standard">
+                        <h3>Reguläre Version</h3>
+                        <p class="pricing-desc">Regulärer Preis ab dem Schuljahr 2026/2027.</p>
+                        
+                        <div class="price-area">
+                            <div class="price-tag">
+                                <span class="price-currency">€</span>
+                                19,99
+                                <span class="price-period">/ einmalig</span>
+                            </div>
+                        </div>
+
+                        <ul class="feature-list">
+                            <li><span class="check">✓</span> Alle Kalender & Planungsfunktionen</li>
+                            <li><span class="check">✓</span> Dauerhaft offline nutzbar</li>
+                            <li class="disabled"><span class="check"></span> Lifetime KI-Zugang (nur mit extra Abo)</li>
+                            <li class="disabled"><span class="check"></span> Gratis KI Credits inklusive</li>
+                        </ul>
+
+                        <a href="#" class="btn btn-secondary btn-block" style="pointer-events: none; opacity: 0.5;">Noch nicht verfügbar</a>
+                    </div>
+
+                </div>
+
+                <div class="countdown-wrapper">
+                    <div class="countdown-label">Das Early Adopter Angebot endet in:</div>
+                    <div class="countdown" id="countdown-timer">
+                        <div class="countdown-box">
+                            <span class="countdown-value" id="cd-days">00</span>
+                            <span class="countdown-unit">Tage</span>
+                        </div>
+                        <div class="countdown-box">
+                            <span class="countdown-value" id="cd-hours">00</span>
+                            <span class="countdown-unit">Std</span>
+                        </div>
+                        <div class="countdown-box">
+                            <span class="countdown-value" id="cd-minutes">00</span>
+                            <span class="countdown-unit">Min</span>
+                        </div>
+                        <div class="countdown-box">
+                            <span class="countdown-value" id="cd-seconds">00</span>
+                            <span class="countdown-unit">Sek</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <!-- Founder Section -->
+        <section id="founder" class="founder">
+            <div class="container founder-container" style="display: grid;">
+                <!-- Image Left -->
+                <div>
+                    <img src="bjoern.png" alt="Björn Sydow - Gründer von TeachSmarter" class="founder-img">
+                </div>
+                <!-- Content Right -->
+                <div class="founder-content">
+                    <h2>Über TeachSmarter</h2>
+                    <p>Ich bin Björn Sydow, Mittelschullehrer und arbeite zudem seit 5 Jahren an einer Förderschule im Bereich der 7. bis 9. Klasse. Gleichzeitig bin ich der Gründer von TeachSmarter.</p>
+                    <p>Aus meiner eigenen Erfahrung im tagtäglichen Schulwahnsinn weiß ich genau, wie viel Zeit für Planung, Korrekturen und Organisation draufgeht. Deshalb habe ich TeachSmarter entwickelt.</p>
+                    
+                    <div class="founder-quote">
+                        „Mein Ziel: Mehr Zeit fürs Wesentliche – deine Schüler.“
+                    </div>
+
+                    <p>Auf meinem YouTube-Kanal zeige ich dir regelmäßig, wie du mit Künstlicher Intelligenz deine Unterrichtsvorbereitung, Korrekturen und dein Feedback in Rekordzeit meisterst.</p>
+
+                    <a href="https://www.youtube.com/@bjoern_sydow" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                        YouTube-Kanal besuchen
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq">
+            <div class="container" style="display: block;">
+                <div class="faq-header">
+                    <h2>Häufig gestellte <span>Fragen</span></h2>
+                    <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.15rem;">Alles, was du über TeachSmarter wissen musst.</p>
+                </div>
+
+                <div class="faq-list">
+                    
+                    <details class="faq-item">
+                        <summary class="faq-question">Was passiert mit meinen sensiblen Schülerdaten?</summary>
+                        <div class="faq-answer">
+                            Da wir selbst aus der Praxis kommen, hat Datenschutz für uns höchste Priorität. Deine Datenbank wird lokal auf deinem Gerät erstellt und AES-256-verschlüsselt (militärischer Standard). Wir haben serverseitig <strong>keinen Zugriff</strong> auf deine Schülerlisten, Noten oder Entwicklungsberichte. Sie verlassen dein Gerät physisch niemals.
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Sendet die App Schülerdaten an die KI?</summary>
+                        <div class="faq-answer">
+                            <strong>Niemals.</strong> Unsere Architektur trennt die KI-Umgebung streng von den personenbezogenen Daten. Die KI wird ausschließlich als kreativer Assistent für Arbeitsblätter, Sachanalysen, Differenzierungen und allgemeine Formulierungen verwendet. Schülerdaten werden an keiner Stelle in KI-Prompts gesendet.
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was passiert, wenn mein Klassenraum kein WLAN hat?</summary>
+                        <div class="faq-answer">
+                            TeachSmarter ist eine <strong>Offline-First</strong>-App. Sobald du die App einmal geladen oder als Desktop-Version installiert hast, funktioniert sie zu 100% ohne Internetverbindung. Erst wenn du ein spezielles KI-Tool wie den Arbeitsblatt-Generator anstößt, wird für wenige Sekunden eine verschlüsselte Verbindung benötigt.
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Ist mein Bundesland oder meine Schulform integriert?</summary>
+                        <div class="faq-answer">
+                            Ja! Alle Ferien- und Feiertagstermine für Deutschland, Österreich und die Schweiz sind integriert. Da TeachSmarter keine starren Strukturen erzwingt, kannst du das Raster deines Stundenplans, deine Fächer sowie deine Klassen frei so definieren, wie sie an deiner spezifischen Schulart gebraucht werden.
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Auf welchen Geräten kann ich TeachSmarter nutzen?</summary>
+                        <div class="faq-answer">
+                            Die App ist touch-first für das iPad optimiert, funktioniert aber über deinen Browser auf absolut jedem System. Dank PWA-Technologie kannst du sie wie eine native App auf Windows, Mac oder Android installieren.
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Wofür sind die "KI-Credits" in der Edition?</summary>
+                        <div class="faq-answer">
+                            Mit den inkludierten 89 KI-Credits in der Founders Edition kannst du unzählige Tokens von der KI generieren lassen. Aus unserer Testerfahrung reicht dieses Guthaben im Schnitt für ein komplettes Schuljahr bei 9 Fächern (inkl. Arbeitsblättern). Solltest du sie aufbrauchen, kannst du völlig flexibel weitere Credits als In-App-Käufe aufladen.
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Was kosten zusätzliche KI-Credits?</summary>
+                        <div class="faq-answer">
+                            <p>Deine KI-Credits verfallen nicht. Wenn du dein Startguthaben aufgebraucht hast, kannst du jederzeit flexibel Pakete nachbuchen – ganz ohne Abo-Zwang:</p>
+                            
+                            <div class="credits-grid">
+                                <div class="credit-card">
+                                    <div class="credit-tier">Schnuppern</div>
+                                    <div class="credit-price"><strong>15 Credits</strong> — 1,99 €</div>
+                                    <div class="credit-desc">≈ 5–7 Ideen</div>
+                                </div>
+                                <div class="credit-card credit-popular">
+                                    <div class="credit-tier">Standard · Beliebt</div>
+                                    <div class="credit-price"><strong>45 Credits</strong> — 5,49 €</div>
+                                    <div class="credit-desc">≈ 15 Arbeitsblätter</div>
+                                </div>
+                                <div class="credit-card">
+                                    <div class="credit-tier">Profi</div>
+                                    <div class="credit-price"><strong>99 Credits</strong> — 10,99 €</div>
+                                    <div class="credit-desc">≈ 33 Arbeitsblätter</div>
+                                </div>
+                                <div class="credit-card">
+                                    <div class="credit-tier">Abo · Features inklusive</div>
+                                    <div class="credit-price"><strong>29 Credits/Monat</strong> — 4,99 €</div>
+                                    <div class="credit-desc">+ Rollover bis 58</div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Funktioniert TeachSmarter auch auf dem Smartphone?</summary>
+                        <div class="faq-answer">
+                            TeachSmarter ist eine PWA, die aktuell primär für Tablets wie das iPad sowie Desktops optimiert ist. Auf einem Smartphone funktioniert die Anwendung zwar auch, doch kann es dort aufgrund der geringeren Bildschirmgröße zu Einschränkungen von einzelnen Funktionen kommen. Ein gezielt für Smartphones optimierter Planer ist aber bereits in Arbeit!
+                        </div>
+                    </details>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Sticky CTA -->
+        <div id="sticky-cta" class="sticky-cta">
+            <div class="sticky-cta-content">
+                <div class="sticky-cta-text">
+                    <strong>Early Adopter Paket sichern</strong>
+                    <span>Komplette App + 89 KI Credits inkludiert</span>
+                </div>
+                <div class="sticky-cta-action">
+                    <span class="sticky-cta-price">12,99 €</span>
+                    <a href="https://buy.stripe.com/5kQ9AS59vdVS1mvdfv0ZW08" class="btn btn-primary">Jetzt sichern</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer style="text-align: center; padding: 4rem 5% 3rem; background: var(--navy-dark); border-top: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); font-size: 0.95rem; font-family: 'DM Sans', sans-serif;">
+        &copy; <span id="current-year"></span> TeachSmarter &middot; Björn Sydow &middot; <a href="impressum.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Impressum</a> &middot; <a href="agb.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">AGB</a> &middot; <a href="datenschutz.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Datenschutzerklärung</a> &middot; <a href="widerruf.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Widerrufsrecht</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            // Enddatum setzen: 10.08.2026, 23:59:59 Uhr
+            const countDownDate = new Date("Aug 10, 2026 23:59:59").getTime();
+
+            const x = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown-timer").innerHTML = "<div class='countdown-label' style='color: var(--teal-light); font-weight: bold;'>Das Angebot ist abgelaufen!</div>";
+                    return;
+                }
+
+                // Kalkulationen
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Werte updaten, mit null davor falls einstellig
+                document.getElementById("cd-days").innerText = days < 10 ? "0" + days : days;
+                document.getElementById("cd-hours").innerText = hours < 10 ? "0" + hours : hours;
+                document.getElementById("cd-minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+                document.getElementById("cd-seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+            }, 1000);
+
+            // Sticky CTA Logic
+            const stickyCta = document.getElementById('sticky-cta');
+            const featuresSec = document.getElementById('features');
+            const preiseSec = document.getElementById('preise');
+            const faqSec = document.getElementById('faq');
+
+            window.addEventListener('scroll', () => {
+                if(!stickyCta || !featuresSec || !preiseSec || !faqSec) return;
+                
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                const featuresTop = featuresSec.offsetTop;
+                const preiseTop = preiseSec.offsetTop;
+                const faqTop = faqSec.offsetTop;
+                const founderSec = document.getElementById('founder');
+                const founderTop = founderSec ? founderSec.offsetTop : faqTop;
+
+                // Show in features (hide before clicking pricing)
+                const inFeatures = scrollY > (featuresTop - windowHeight / 2) && scrollY < (preiseTop - windowHeight / 1.5);
+                // Show in FAQ and Founder section
+                const inFaqOrFounder = scrollY > (founderTop - windowHeight / 1.5);
+
+                // Hide at the very bottom so it doesn't cover footer links
+                const isAtBottom = (windowHeight + scrollY) >= document.body.offsetHeight - 150;
+
+                if ((inFeatures || inFaqOrFounder) && !isAtBottom) {
+                    stickyCta.classList.add('visible');
+                } else {
+                    stickyCta.classList.remove('visible');
+                }
+            });
+
+            // Meta Pixel Checkout Tracking
+            const buyButtons = document.querySelectorAll('a[href*="buy.stripe.com"]');
+            buyButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (typeof fbq === 'function') {
+                        fbq('track', 'InitiateCheckout', {
+                            content_name: 'TeachSmarter Early Adopter',
+                            currency: 'EUR',
+                            value: 12.99
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="cookie-banner.js"></script>
+</body>
+</html>

@@ -1,12 +1,19 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
+
+let win;
+let quitting = false;
+
+function backupPath() {
+  return path.join(app.getPath('userData'), 'ts-auto-backup.json');
+}
 
 function createWindow() {
   const iconFile = process.platform === 'win32' ? 'ts-icon.ico'
-    : process.platform === 'darwin' ? 'ts-icon-512.png'
-    : 'ts-icon-512.png';
+    : 'ts-icon-app.png';
 
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1280,
     height: 900,
     minWidth: 768,
@@ -17,6 +24,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       webSecurity: true,
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
@@ -38,6 +46,39 @@ function createWindow() {
     }
   });
 }
+
+// ── Auto-Backup IPC ──────────────────────────────────────────────────────────
+
+// Renderer fragt: "Gibt es ein gespeichertes Backup?"
+ipcMain.handle('ts-load-backup', () => {
+  const p = backupPath();
+  return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
+});
+
+// Renderer liefert Backup-JSON nach Aufforderung → speichern, dann quit
+ipcMain.handle('ts-confirm-backup', (event, json) => {
+  try {
+    fs.writeFileSync(backupPath(), json, 'utf8');
+  } catch (e) {
+    console.error('Auto-Backup schreiben fehlgeschlagen:', e);
+  }
+  if (quitting) app.exit(0);
+});
+
+// ── Quit-Flow: erst Backup anfordern, dann beenden ──────────────────────────
+
+app.on('before-quit', (e) => {
+  if (quitting) return; // zweiter Aufruf nach app.exit → durchlassen
+  e.preventDefault();
+  quitting = true;
+  if (win) {
+    win.webContents.send('ts-request-backup');
+    // Sicherheits-Timeout: nach 4s erzwingen falls Renderer nicht antwortet
+    setTimeout(() => app.exit(0), 4000);
+  } else {
+    app.exit(0);
+  }
+});
 
 app.whenReady().then(() => {
   createWindow();

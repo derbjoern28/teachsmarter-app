@@ -16,6 +16,28 @@ document.addEventListener('mousedown', function(e) {
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
   await TSStore.migrate();
+
+  // PWA: persistenten Speicher anfordern — verhindert automatisches Leeren durch Browser
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().catch(() => {});
+  }
+
+  // Electron: Auto-Restore falls IndexedDB leer ist aber Backup existiert
+  if (window.tsElectron) {
+    const restored = await _electronTryRestore();
+    if (restored) { location.reload(); return; }
+    // Backup bei App-Schließen anfordern
+    window.tsElectron.onRequestBackup(async () => {
+      try {
+        const json = await _buildBackupJson();
+        await window.tsElectron.confirmBackup(json);
+      } catch(e) {
+        console.error('Auto-Backup fehlgeschlagen:', e);
+        await window.tsElectron.confirmBackup('');
+      }
+    });
+  }
+
   if(!window.crypto || !window.crypto.subtle){ initApp(); return; }
 
   // Session-Key aus sessionStorage wiederherstellen — kein PIN-Dialog bei Page-Reload
@@ -1004,22 +1026,47 @@ async function esFullReset(){
   location.reload();
 }
 
+// Alle IndexedDB-Daten als JSON-String zusammenbauen (geteilt von Export + Auto-Backup)
+async function _buildBackupJson() {
+  const idbKeys = [
+    'ts_state',
+    'ts_pin_verify','ts_crypto_salt',
+    'ts_events','ts_jahresplan_v2','ts_notizen',
+    'ts_stunden','ts_material_db',
+    ...(state.klassen||[]).map(k => 'ts_kl_' + k.id)
+  ];
+  const blob = {};
+  for(const k of idbKeys){
+    const v = await TSStore.getItem(k);
+    if(v !== null) blob[k] = v;
+  }
+  return JSON.stringify({ ts_export_v1: true, ts: Date.now(), data: blob });
+}
+
+// Electron: Auto-Restore — spielt Backup ein falls IndexedDB leer ist
+async function _electronTryRestore() {
+  if (!window.tsElectron) return false;
+  const hasData = await TSStore.getItem('ts_pin_verify');
+  if (hasData) return false; // Daten vorhanden, kein Restore nötig
+  const json = await window.tsElectron.loadBackup();
+  if (!json) return false;
+  try {
+    const obj = JSON.parse(json);
+    if (!obj.ts_export_v1 || !obj.data) return false;
+    for (const [k, v] of Object.entries(obj.data)) {
+      await TSStore.setItem(k, v);
+    }
+    await TSStore.setItem('_ts_idb_migrated', '1');
+    return true;
+  } catch(e) {
+    console.error('Auto-Restore fehlgeschlagen:', e);
+    return false;
+  }
+}
+
 async function esExportData(){
   try {
-    const idbKeys = [
-      'ts_state',
-      'ts_pin_verify','ts_crypto_salt',
-      'ts_events','ts_jahresplan_v2','ts_notizen',
-      'ts_stunden','ts_material_db',
-      ...(state.klassen||[]).map(k => 'ts_kl_' + k.id)
-    ];
-    const blob = {};
-    // Alle Daten aus IndexedDB (ts_state wird seit CryptoManager dort gespeichert)
-    for(const k of idbKeys){
-      const v = await TSStore.getItem(k);
-      if(v !== null) blob[k] = v;
-    }
-    const json = JSON.stringify({ ts_export_v1: true, ts: Date.now(), data: blob });
+    const json = await _buildBackupJson();
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     a.download = 'TeachSmarter_Backup_' + new Date().toISOString().slice(0,10) + '.json';

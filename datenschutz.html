@@ -1,255 +1,202 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Datenschutzerklärung – TeachSmarter</title>
-<style>
-  :root {
-    --teal: #1AA898;
-    --teal-dark: #138A7C;
-    --navy: #0C1F35;
-    --text: #1a2332;
-    --text-secondary: #556070;
-    --bg: #f7f9fb;
-    --card-bg: #ffffff;
-    --border: #e2e8ef;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.7;
-    min-height: 100vh;
-  }
-  .page-header {
-    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
-    padding: 2rem 1.5rem 1.75rem;
-    color: #fff;
-  }
-  .page-header a {
-    display: inline-flex; align-items: center; gap: .4rem;
-    color: rgba(255,255,255,.85); text-decoration: none; font-size: .875rem;
-    margin-bottom: 1rem; transition: color .15s;
-  }
-  .page-header a:hover { color: #fff; }
-  .page-header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
-  .page-header p { opacity: .8; font-size: .9rem; margin-top: .25rem; }
-  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
-  .card {
-    background: var(--card-bg); border-radius: 12px;
-    border: 1px solid var(--border); padding: 1.75rem;
-    margin-bottom: 1.25rem;
-    box-shadow: 0 1px 4px rgba(12,31,53,.05);
-  }
-  .card h2 {
-    font-size: .78rem; font-weight: 700; color: var(--teal-dark);
-    margin-bottom: 1rem; padding-bottom: .5rem;
-    border-bottom: 1px solid var(--border);
-    text-transform: uppercase; letter-spacing: .06em;
-  }
-  .card h3 { font-size: .95rem; font-weight: 600; margin: 1.1rem 0 .4rem; color: var(--navy); }
-  .card p { color: var(--text); margin-bottom: .75rem; }
-  .card p:last-child { margin-bottom: 0; }
-  .card a { color: var(--teal); text-decoration: none; }
-  .card a:hover { text-decoration: underline; }
-  .card ul { padding-left: 1.25rem; margin-bottom: .75rem; }
-  .card li { margin-bottom: .3rem; }
-  .highlight-box {
-    background: #f0faf9; border: 1px solid #b2e4de; border-radius: 8px;
-    padding: 1rem 1.1rem; margin-bottom: .75rem;
-  }
-  .highlight-box strong { color: var(--teal-dark); }
-  .badge {
-    display: inline-block; font-size: .72rem; font-weight: 700;
-    background: var(--teal); color: #fff; border-radius: 4px;
-    padding: 1px 7px; margin-right: .4rem; vertical-align: middle;
-  }
-  table { width: 100%; border-collapse: collapse; font-size: .875rem; margin-top: .75rem; }
-  th { text-align: left; padding: .5rem .75rem; background: #f0faf9; color: var(--teal-dark); font-weight: 600; border: 1px solid var(--border); }
-  td { padding: .5rem .75rem; border: 1px solid var(--border); vertical-align: top; }
-  footer { text-align: center; padding: 2rem 1.5rem; font-size: .8rem; color: var(--text-secondary); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenschutzerklärung | TeachSmarter</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1A3C5E;
+            --navy-dark: #0B1C2D;
+            --teal: #3BA89B;
+            --teal-light: #52C4B7;
+            --text-light: #EBF1F6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--navy-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        header {
+            padding: 1.5rem 5%;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 3rem;
+            background: var(--navy-dark);
+        }
+        .logo {
+            font-family: 'Source Serif 4', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFF;
+            text-decoration: none;
+        }
+        .logo span { color: var(--teal); }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 5% 5rem;
+        }
+        h1 {
+            font-family: 'Source Serif 4', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+        h2 {
+            font-size: 1.4rem;
+            color: var(--teal-light);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        p, ul, h3 {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+        h3 { color: #fff; margin-top: 1.5rem;}
+        ul {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        a { color: var(--teal-light); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="kischulplaner.html" class="logo" style="display:flex; align-items:center; gap: 0.5rem; text-decoration: none;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 8px rgba(82, 196, 183, 0.4));">
+                <path d="M9 21h6"></path>
+                <path d="M10 18h4"></path>
+                <path d="M12 15a6 6 0 0 1-6-6c0-3.3 2.7-6 6-6s6 2.7 6 6a6 6 0 0 1-6 6z"></path>
+                <path d="M9 8l3 3 3-3"></path>
+                <circle cx="9" cy="8" r="1.5" fill="var(--teal-light)"></circle>
+                <circle cx="15" cy="8" r="1.5" fill="var(--teal-light)"></circle>
+                <circle cx="12" cy="11" r="1.5" fill="var(--teal-light)"></circle>
+            </svg>
+            <span style="font-family: 'Source Serif 4', serif; font-size: 1.8rem; font-weight: 700; color: #FFF; letter-spacing: -0.5px;">TeachSmarter</span>
+        </a>
+    </header>
+    <div class="container">
+        <h1>Datenschutzerklärung</h1>
 
-<div class="page-header">
-  <a href="TeachSmarter_Dashboard.html">← Zurück zur App</a>
-  <h1>Datenschutzerklärung</h1>
-  <p>Stand: April 2026 · DSGVO-konform</p>
-</div>
+        <h2>1) Einleitung und Kontaktdaten des Verantwortlichen</h2>
+        <p>1.1 Wir freuen uns, dass Sie unsere Website besuchen, und bedanken uns für Ihr Interesse. Im Folgenden informieren wir Sie über den Umgang mit Ihren personenbezogenen Daten bei der Nutzung unserer Website. Personenbezogene Daten sind hierbei alle Daten, mit denen Sie persönlich identifiziert werden können.</p>
+        <p>1.2 Verantwortlicher für die Datenverarbeitung auf dieser Website im Sinne der Datenschutz-Grundverordnung (DSGVO) ist Björn Sydow, TeachSmarter, Barschweg 26, 91325 Adelsdorf, Deutschland, Tel.: 015203118778, E-Mail: bjoernsydow@gmx.de. Der für die Verarbeitung von personenbezogenen Daten Verantwortliche ist diejenige natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten entscheidet.</p>
 
-<div class="container">
+        <h2>2) Datenerfassung beim Besuch unserer Website</h2>
+        <p>2.1 Bei der bloß informatorischen Nutzung unserer Website, also wenn Sie sich nicht registrieren oder uns anderweitig Informationen übermitteln, erheben wir nur solche Daten, die Ihr Browser an den Seitenserver übermittelt (sog. „Server-Logfiles“). Wenn Sie unsere Website aufrufen, erheben wir die folgenden Daten, die für uns technisch erforderlich sind, um Ihnen die Website anzuzeigen:</p>
+        <ul>
+            <li>Unsere besuchte Website</li>
+            <li>Datum und Uhrzeit zum Zeitpunkt des Zugriffes</li>
+            <li>Menge der gesendeten Daten in Byte</li>
+            <li>Quelle/Verweis, von welchem Sie auf die Seite gelangten</li>
+            <li>Verwendeter Browser</li>
+            <li>Verwendetes Betriebssystem</li>
+            <li>Verwendete IP-Adresse (ggf.: in anonymisierter Form)</li>
+        </ul>
+        <p>Die Verarbeitung erfolgt gemäß Art. 6 Abs. 1 lit. f DSGVO auf Basis unseres berechtigten Interesses an der Verbesserung der Stabilität und Funktionalität unserer Website. Eine Weitergabe oder anderweitige Verwendung der Daten findet nicht statt. Wir behalten uns allerdings vor, die Server-Logfiles nachträglich zu überprüfen, sollten konkrete Anhaltspunkte auf eine rechtswidrige Nutzung hinweisen.</p>
+        <p>2.2 Diese Website nutzt aus Sicherheitsgründen und zum Schutz der Übertragung personenbezogener Daten und anderer vertraulicher Inhalte (z.B. Bestellungen oder Anfragen an den Verantwortlichen) eine SSL-bzw. TLS-Verschlüsselung. Sie können eine verschlüsselte Verbindung an der Zeichenfolge „https://“ und dem Schloss-Symbol in Ihrer Browserzeile erkennen.</p>
 
-  <!-- Kurzübersicht -->
-  <div class="card">
-    <h2>Kurzübersicht</h2>
-    <div class="highlight-box">
-      <strong>🔒 Ihre Schülerdaten verlassen Ihr Gerät nicht.</strong><br>
-      Alle personenbezogenen Daten (Schülerinnen und Schüler, Klassen, Notizen, Planungen) werden
-      ausschließlich lokal in Ihrem Browser gespeichert und niemals an unsere Server übertragen.
-      Kein AVV mit TeachSmarter erforderlich.
+        <h2>3) Hosting & Content-Delivery-Network</h2>
+        <p>Für das Hosting unserer Website und die Darstellung der Seiteninhalte nutzen wir einen Anbieter, der seine Leistungen selbst oder durch ausgewählte Sub-Unternehmer ausschließlich auf Servern innerhalb der Europäischen Union erbringt.</p>
+        <p>Sämtliche auf unserer Website erhobenen Daten werden auf diesen Servern verarbeitet.</p>
+        <p>Wir haben mit dem Anbieter einen Auftragsverarbeitungsvertrag geschlossen, der den Schutz der Daten unserer Seitenbesucher sicherstellt und eine unberechtigte Weitergabe an Dritte untersagt.</p>
+
+        <h2>4) Cookies</h2>
+        <p>Um den Besuch unserer Website attraktiv zu gestalten und die Nutzung bestimmter Funktionen zu ermöglichen, verwenden wir Cookies, also kleine Textdateien, die auf Ihrem Endgerät abgelegt werden. Teilweise werden diese Cookies nach Schließen des Browsers automatisch wieder gelöscht (sog. „Session-Cookies“), teilweise verbleiben diese Cookies länger auf Ihrem Endgerät und ermöglichen das Speichern von Seiteneinstellungen (sog. „persistente Cookies“). Im letzteren Fall können Sie die Speicherdauer der Übersicht zu den Cookie-Einstellungen Ihres Webbrowsers entnehmen.</p>
+        <p>Sofern durch einzelne von uns eingesetzte Cookies auch personenbezogene Daten verarbeitet werden, erfolgt die Verarbeitung gemäß Art. 6 Abs. 1 lit. b DSGVO entweder zur Durchführung des Vertrages, gemäß Art. 6 Abs. 1 lit. a DSGVO im Falle einer erteilten Einwilligung oder gemäß Art. 6 Abs. 1 lit. f DSGVO zur Wahrung unserer berechtigten Interessen an der bestmöglichen Funktionalität der Website sowie einer kundenfreundlichen und effektiven Ausgestaltung des Seitenbesuchs.</p>
+        <p>Sie können Ihren Browser so einstellen, dass Sie über das Setzen von Cookies informiert werden und einzeln über deren Annahme entscheiden oder die Annahme von Cookies für bestimmte Fälle oder generell ausschließen können.</p>
+        <p>Bitte beachten Sie, dass bei Nichtannahme von Cookies die Funktionalität unserer Website eingeschränkt sein kann.</p>
+
+        <h2>5) Kontaktaufnahme</h2>
+        <p><strong>5.1 WhatsApp-Business</strong><br>
+        Sie haben die Möglichkeit, mit uns über den Nachrichtendienst WhatsApp der WhatsApp Ireland Limited, 4 Grand Canal Square, Grand Canal Harbour, Dublin 2, Irland, in Kontakt zu treten. Hierfür verwenden wir die sog. „Business-Version“ von WhatsApp.</p>
+        <p>Sofern Sie uns anlässlich eines konkreten Geschäfts (beispielsweise einer getätigten Bestellung) per WhatsApp kontaktieren, speichern und verwenden wir die von Ihnen bei WhatsApp genutzte Mobilfunknummer sowie – falls bereitgestellt – Ihren Vor- und Nachnamen gemäß Art. 6 Abs. 1 lit. b. DSGVO zur Bearbeitung und Beantwortung Ihres Anliegens. Auf Basis derselben Rechtsgrundlage werden wir Sie per WhatsApp gegebenenfalls um die Bereitstellung weiterer Daten (Bestellnummer, Kundennummer, Anschrift oder E-Mailadresse) bitten, um Ihre Anfrage einem bestimmten Vorgang zuordnen zu können.</p>
+        <p>Nutzen Sie unseren WhatsApp-Kontakt für allgemeine Anfragen (etwa zum Leistungsspektrum, zu Verfügbarkeiten oder zu unserem Internetauftritt) speichern und verwenden wir die von Ihnen bei WhatsApp genutzte Mobilfunknummer sowie – falls bereitgestellt – Ihren Vor- und Nachnamen gemäß Art. 6 Abs. 1 lit. f DSGVO auf Basis unseres berechtigten Interesses an der effizienten und zeitnahen Bereitstellung der gewünschten Informationen.</p>
+        <p>Ihre Daten werden stets nur zur Beantwortung Ihres Anliegens per WhatsApp verwendet. Eine Weitergabe an Dritte findet nicht statt.</p>
+        <p>Bitte beachten Sie, dass WhatsApp Business Zugriff auf das Adressbuch des von uns hierfür verwendeten mobilen Endgeräts erhält und im Adressbuch gespeicherte Telefonnummern automatisch an einen Server des Mutterkonzerns Meta Platforms Inc. in den USA überträgt. Für den Betrieb unseres WhatsApp-Business-Kontos verwenden wir ein mobiles Endgerät, in dessen Adressbuch ausschließlich die WhatsApp-Kontaktdaten solcher Nutzer gespeichert werden, die mit uns per WhatsApp auch in Kontakt getreten sind.</p>
+        <p>Hierdurch wird sichergestellt, dass jede Person, deren WhatsApp- Kontaktdaten in unserem Adressbuch gespeichert sind, bereits bei erstmaliger Nutzung der App auf seinem Gerät durch Akzeptanz der WhatsApp-Nutzungsbedingungen in die Übermittlung seiner WhatsApp-Telefonnummer aus den Adressbüchern seiner Chat-Kontakte gemäß Art. 6 Abs. 1 lit. a DSGVO eingewilligt hat. Eine Übermittlung von Daten solcher Nutzer, die WhatsApp nicht verwenden und/oder uns nicht über WhatsApp kontaktiert haben, wird insofern ausgeschlossen.</p>
+        <p>Zweck und Umfang der Datenerhebung und die weitere Verarbeitung und Nutzung der Daten durch WhatsApp sowie Ihre diesbezüglichen Rechte und Einstellungsmöglichkeiten zum Schutz Ihrer Privatsphäre entnehmen Sie bitte den Datenschutzhinweisen von WhatsApp: <a href="https://www.whatsapp.com/legal/?eea=1#privacy-policy">https://www.whatsapp.com/legal/?eea=1#privacy-policy</a></p>
+        <p>Wir haben mit dem Anbieter einen Auftragsverarbeitungsvertrag geschlossen, der die Daten unserer Seitenbesucher schützt und eine Weitergabe an Dritte untersagt. Im Rahmen der oben genannten Verarbeitungen kann es zu Datenübertragungen an Server von Meta Platforms Inc. in den USA kommen. Für Datenübermittlungen in die USA hat sich der Anbieter dem EU-US-Datenschutzrahmen (EU-US Data Privacy Framework) angeschlossen, das auf Basis eines Angemessenheitsbeschlusses der Europäischen Kommission die Einhaltung des europäischen Datenschutzniveaus sicherstellt.</p>
+        <p><strong>5.2 E-Mail / Kontaktformular</strong><br>
+        Im Rahmen der Kontaktaufnahme mit uns (z.B. per Kontaktformular oder E-Mail) werden personenbezogene Daten erhoben. Welche Daten im Falle der Nutzung eines Kontaktformulars erhoben werden, ist aus dem jeweiligen Kontaktformular ersichtlich. Diese Daten werden ausschließlich zum Zweck der Beantwortung Ihres Anliegens bzw. für die Kontaktaufnahme und die damit verbundene technische Administration gespeichert und verwendet.</p>
+        <p>Rechtsgrundlage für die Verarbeitung dieser Daten ist unser berechtigtes Interesse an der Beantwortung Ihres Anliegens gemäß Art. 6 Abs. 1 lit. f DSGVO. Zielt Ihre Kontaktierung auf den Abschluss eines Vertrages ab, so ist zusätzliche Rechtsgrundlage für die Verarbeitung Art. 6 Abs. 1 lit. b DSGVO. Ihre Daten werden nach abschließender Bearbeitung Ihrer Anfrage gelöscht. Dies ist der Fall, wenn sich aus den Umständen entnehmen lässt, dass der betroffene Sachverhalt abschließend geklärt ist und sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
+
+        <h2>6) Datenverarbeitung bei Eröffnung eines Kundenkontos</h2>
+        <p>Gemäß Art. 6 Abs. 1 lit. b DSGVO werden personenbezogene Daten im jeweils erforderlichen Umfang weiterhin erhoben und verarbeitet, wenn Sie uns diese bei der Eröffnung eines Kundenkontos mitteilen. Welche Daten für die Kontoeröffnung erforderlich sind, entnehmen Sie der Eingabemaske des entsprechenden Formulars auf unserer Website.</p>
+        <p>Eine Löschung Ihres Kundenkontos ist jederzeit möglich und kann durch eine Nachricht an die o.g. Adresse des Verantwortlichen erfolgen. Nach Löschung Ihres Kundenkontos werden Ihre Daten gelöscht, sofern alle darüber geschlossenen Verträge vollständig abgewickelt sind, keine gesetzlichen Aufbewahrungsfristen entgegenstehen und unsererseits kein berechtigtes Interesse an der Weiterspeicherung fortbesteht.</p>
+
+        <h2>7) Nutzung von Kundendaten zur Direktwerbung</h2>
+        <p><strong>7.1 Anmeldung zu unserem E-Mail-Newsletter</strong><br>
+        Wenn Sie sich zu unserem E-Mail Newsletter anmelden, übersenden wir Ihnen regelmäßig Informationen zu unseren Angeboten. Pflichtangabe für die Übersendung des Newsletters ist allein Ihre E-Mailadresse. Die Angabe weiterer Daten ist freiwillig und wird verwendet, um Sie persönlich ansprechen zu können. Für den Versand des Newsletters verwenden wir das sog. Double Opt-in Verfahren. Dies bedeutet, dass wir Ihnen erst dann einen E-Mail Newsletter übermitteln werden, wenn Sie uns ausdrücklich bestätigt haben, dass Sie in den Empfang von Newsletter einwilligen. Wir schicken Ihnen dann eine Bestätigungs-E-Mail, mit der Sie gebeten werden durch Anklicken eines entsprechenden Links zu bestätigen, dass Sie künftig den Newsletter erhalten wollen.</p>
+        <p>Mit der Aktivierung des Bestätigungslinks erteilen Sie uns Ihre Einwilligung für die Nutzung Ihrer personenbezogenen Daten gemäß Art. 6 Abs. 1 lit. a DSGVO. Bei der Anmeldung zum Newsletter speichern wir Ihre vom Internet Service-Provider (ISP) eingetragene IP-Adresse sowie das Datum und die Uhrzeit der Anmeldung, um einen möglichen Missbrauch Ihrer E-Mail- Adresse zu einem späteren Zeitpunkt nachvollziehen zu können. Die von uns bei der Anmeldung zum Newsletter erhobenen Daten werden ausschließlich für Zwecke der werblichen Ansprache im Wege des Newsletters benutzt. Sie können den Newsletter jederzeit über den dafür vorgesehenen Link im Newsletter oder durch entsprechende Nachricht an den eingangs genannten Verantwortlichen abbestellen. Nach erfolgter Abmeldung wird Ihre E-Mailadresse unverzüglich in unserem Newsletter-Verteiler gelöscht, soweit Sie nicht ausdrücklich in eine weitere Nutzung Ihrer Daten eingewilligt haben oder wir uns eine darüberhinausgehende Datenverwendung vorbehalten, die gesetzlich erlaubt ist und über die wir Sie in dieser Erklärung informieren.</p>
+        <p><strong>7.2 Versand des E-Mail-Newsletters an Bestandskunden</strong><br>
+        Wenn Sie uns Ihre E-Mailadresse beim Kauf von Waren bzw. Dienstleistungen zur Verfügung gestellt haben, behalten wir uns vor, Ihnen regelmäßig Angebote zu ähnlichen Waren bzw. Dienstleistungen, wie den bereits gekauften, aus unserem Sortiment per E-Mail zuzusenden. Hierfür müssen wir gemäß § 7 Abs. 3 UWG keine gesonderte Einwilligung von Ihnen einholen. Die Datenverarbeitung erfolgt insoweit allein auf Basis unseres berechtigten Interesses an personalisierter Direktwerbung gemäß Art. 6 Abs. 1 lit. f DSGVO. Haben Sie der Nutzung Ihrer E-Mailadresse zu diesem Zweck anfänglich widersprochen, findet ein Mailversand unsererseits nicht statt.</p>
+        <p>Sie sind berechtigt, der Nutzung Ihrer E-Mailadresse zu dem vorbezeichneten Werbezweck jederzeit mit Wirkung für die Zukunft durch eine Mitteilung an den zu Beginn genannten Verantwortlichen zu widersprechen. Hierfür fallen für Sie lediglich Übermittlungskosten nach den Basistarifen an. Nach Eingang Ihres Widerspruchs wird die Nutzung Ihrer E-Mailadresse zu Werbezwecken unverzüglich eingestellt.</p>
+        <p><strong>7.3 WhatsApp-Newsletter</strong><br>
+        Wenn Sie sich zu unserem WhatsApp-Newsletter anmelden, übersenden wir Ihnen regelmäßig Informationen zu unseren Angeboten per WhatsApp. Pflichtangabe für die Übersendung des Newsletters ist allein Ihre Mobilfunknummer.</p>
+        <p>Für den Versand des Newsletters nehmen Sie unsere mitgeteilte Mobilfunknummer in die Adress-Kontakte Ihres Mobilfunkgeräts auf und senden uns die Nachricht „Start“ per WhatsApp. Mit der Übersendung dieser WhatsApp-Nachricht erteilen Sie uns Ihre Einwilligung für die Nutzung Ihrer personenbezogenen Daten gemäß Art. 6 Abs. 1 lit. a DSGVO zum Zwecke der Newsletteübersendung. Wir nehmen Sie sodann in unseren Newsletter-Verteiler auf.</p>
+        <p>Die von uns bei der Anmeldung zum Newsletter erhobenen Daten werden ausschließlich für Zwecke der werblichen Ansprache im Wege des Newsletters verarbeitet. Sie können jederzeit den Newsletter abmelden, indem Sie uns die Nachricht „Stop“ per WhatsApp senden. Nach erfolgter Abmeldung wird Ihre Mobilfunknummer unverzüglich in unserem Newsletter-Verteiler gelöscht, soweit Sie nicht ausdrücklich in eine weitere Nutzung Ihrer Daten eingewilligt haben oder wir uns eine darüberhinausgehende Datenverwendung vorbehalten, die gesetzlich erlaubt ist und über die wir Sie in dieser Erklärung informieren.</p>
+        <p>Bitte beachten Sie, dass WhatsApp Business Zugriff auf das Adressbuch des von uns hierfür verwendeten mobilen Endgeräts erhält und im Adressbuch gespeicherte Telefonnummern automatisch an einen Server des Mutterkonzerns Meta Platforms Inc. in den USA überträgt. Für den Versand unseres WhatsApp-Newsletters verwenden wir daher ein mobiles Endgerät, in dessen Adressbuch ausschließlich die WhatsApp-Kontaktdaten unserer Newsletter-Empfänger gespeichert werden. Hierdurch wird sichergestellt, dass jede Person, deren WhatsApp- Kontaktdaten in unserem Adressbuch gespeichert sind, bereits bei erstmaliger Nutzung der App auf seinem Gerät durch Akzeptanz der WhatsApp-Nutzungsbedingungen in die Übermittlung seiner WhatsApp-Telefonnummer aus den Adressbüchern seiner Chat-Kontakte gemäß Art. 6 Abs. 1 lit. a DSGVO eingewilligt hat. Eine Übermittlung von Daten solcher Nutzer, die WhatsApp nicht verwenden und/oder uns nicht über WhatsApp kontaktiert haben, wird insofern ausgeschlossen.</p>
+        <p>Zweck und Umfang der Datenerhebung und die weitere Verarbeitung und Nutzung der Daten durch WhatsApp sowie Ihre diesbezüglichen Rechte und Einstellungsmöglichkeiten zum Schutz Ihrer Privatsphäre entnehmen Sie bitte den Datenschutzhinweisen von WhatsApp: <a href="https://www.whatsapp.com/legal/?eea=1#privacy-policy">https://www.whatsapp.com/legal/?eea=1#privacy-policy</a>. Wir haben mit WhatsApp einen Auftragsverarbeitungsvertrag geschlossen, der die Daten unserer Newsletter-Empfänger schützt und eine Weitergabe an Dritte untersagt. Im Rahmen der oben genannten Verarbeitungen kann es zu Datenübertragungen an Server von Meta Platforms Inc. in den USA kommen. Für Datenübermittlungen in die USA hat sich der Anbieter dem EU-US-Datenschutzrahmen (EU-US Data Privacy Framework) angeschlossen, das auf Basis eines Angemessenheitsbeschlusses der Europäischen Kommission die Einhaltung des europäischen Datenschutzniveaus sicherstellt.</p>
+
+        <h2>8) Datenverarbeitung zur Bestellabwicklung</h2>
+        <p><strong>8.1 / 8.2</strong> Soweit für die Vertragsabwicklung zu Liefer- und Zahlungszwecken erforderlich, werden die von uns erhobenen personenbezogenen Daten gemäß Art. 6 Abs. 1 lit. b DSGVO an das beauftragte Transportunternehmen und das beauftragte Kreditinstitut weitergegeben.</p>
+        <p>Sofern wir Ihnen auf Grundlage eines entsprechenden Vertrages Aktualisierungen für Waren mit digitalen Elementen oder für digitale Produkte schulden, verarbeiten wir die von Ihnen bei der Bestellung übermittelten Kontaktdaten, um Sie im Rahmen unserer gesetzlichen Informationspflichten gemäß Art. 6 Abs. 1 lit. c DSGVO persönlich zu informieren. Ihre Kontaktdaten werden hierbei streng zweckgebunden für Mitteilungen über von uns geschuldete Aktualisierungen verwendet und zu diesem Zweck durch uns nur insoweit verarbeitet, wie dies für die jeweilige Information erforderlich ist.</p>
+        <p>Zur Erfüllung unserer vertraglichen Pflichten unseren Kunden gegenüber arbeiten wir mit externen Versandpartnern zusammen. Wir geben Ihren Namen sowie Ihre Lieferadresse und, soweit für die Lieferung erforderlich Ihre Telefonnummer, ausschließlich zu Zwecken der Warenlieferung Art. 6 Abs. 1 lit. b DSGVO an einen von uns ausgewählten Versandpartner weiter.</p>
+        <p><strong>8.3 Printful</strong><br>
+        Für die Bestellabwicklung nutzen wir den folgenden Anbieter: Printful,Inc. 11025 Westlake Drive, Charlotte, NC28273, USA. Name, Anschrift sowie gegebenenfalls weitere personenbezogene Daten werden gemäß Art. 6 Abs. 1 lit. b DSGVO ausschließlich zum Zwecke der Abwicklung der Online-Bestellung an den Anbieter weitergegeben. Die Weitergabe Ihrer Daten erfolgt hierbei nur, soweit dies für die Abwicklung der Bestellung tatsächlich erforderlich ist. Für die Übermittlung von Daten in die USA beruft sich der Anbieter auf Standardvertragsklauseln der Europäischen Kommission, welche die Einhaltung des europäischen Datenschutzniveaus sicherstellen sollen.</p>
+
+        <h2>9) Webanalysedienste (Google Analytics 4)</h2>
+        <p>Diese Website benutzt Google Analytics 4, einen Webanalysedienst der Google Ireland Limited. Wenn Sie gem. Art. 6 Abs. 1 lit. a DSGVO einwilligen, werden Daten über Ihre Website-Nutzung verarbeitet. Die Informationen werden an Server von Google übertragen. Google nutzt die erhobenen Informationen in unserem Auftrag, um Ihre Nutzung der Website auszuwerten. Die Informationen werden an Server von Google übertragen und dort weiterverarbeitet. Dabei sind auch Übermittlungen an Google LLC mit Sitz in den USA möglich.</p>
+        <p>Wir nutzen zudem die Funktionen „demografische Merkmale“, Google Signals und geräteübergreifende UserIDs. Weitere Hinweise finden Sie unter <a href="https://business.safety.google/intl/de/privacy/">https://business.safety.google/intl/de/privacy/</a> und <a href="https://policies.google.com/technologies/partner-sites">https://policies.google.com/technologies/partner-sites</a>.</p>
+
+        <h2>10) Retargeting/ Remarketing und Conversion-Tracking</h2>
+        <p><strong>10.1 Meta Pixel mit erweitertem Datenabgleich</strong><br>
+        Innerhalb unseres Online-Angebots verwenden wir im Modus des erweiterten Datenabgleichs den Dienst "Meta Pixel" von Meta Platforms Ireland Limited. Wir verwenden "Meta Pixel" mit erweitertem Datenabgleich, um unsere Werbeanzeigen (sog. "Ads") auf Facebook und/oder Instagram effektiver zu gestalten und sicherzustellen, dass sie den Interessen der Nutzer entsprechen oder bestimmte Merkmale aufweisen, die wir an Meta übermitteln (sog. "Custom Audiences"). Alle übermittelten Daten werden von Meta gespeichert und verarbeitet, so dass eine Zuordnung zum jeweiligen Nutzerprofil möglich ist und Meta die Daten für eigene Werbezwecke gemäß den Datenverwendungsrichtlinien von Meta (<a href="https://www.facebook.com/about/privacy/">https://www.facebook.com/about/privacy/</a>) verwenden kann. Verarbeitung erfolgt bei erteilter Einwilligung (Art. 6 Abs. 1 lit. a DSGVO).</p>
+        <p><strong>10.2 Google Ads Remarketing & 10.3 Conversion-Tracking</strong><br>
+         Diese Webseite nutzt Retargeting und Conversion-Tracking Technologie der Google Ireland Limited. Zu diesem Zweck setzt Google ein Cookie im Browser Ihres Endgeräts, welches automatisch mittels einer pseudonymen Cookie-ID und auf Grundlage der von Ihnen besuchten Seiten eine interessensbasierte Werbung ermöglicht. Verarbeitungen erfolgen bei erteilter Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Sie können Ihre Einwilligung über das Cookie-Consent-Tool widerrufen oder unter <a href="https://www.google.com/settings/ads/plugin?hl=de">https://www.google.com/settings/ads/plugin?hl=de</a> anpassen.</p>
+
+        <h2>11) Seitenfunktionalitäten</h2>
+        <p><strong>11.1 Instagram-Plugins</strong>: Auf unserer Website werden Plugins des sozialen Netzwerkes von Meta Platforms Ireland Ltd. mittels „2-Klick“- oder „Shariff“-Lösung eingebunden.</p>
+        <p><strong>11.2 Youtube</strong>: Einbindung von Videos via Google Ireland Limited. Wenn Sie gem. Art. 6 Abs. 1 lit. a DSGVO einwilligen, setzt der Anbieter Cookies ein, um Informationen über das Nutzerverhalten zu sammeln.</p>
+        <p><strong>11.3 Google Forms</strong>: Nutzung für Umfragen via Google Ireland Ltd. Angaben erfolgen auf freiwilliger Basis.</p>
+        <p>Für Datenübermittlungen in die USA hat sich der Anbieter dem EU-US-Datenschutzrahmen (EU-US Data Privacy Framework) angeschlossen, das auf Basis eines Angemessenheitsbeschlusses der Europäischen Kommission die Einhaltung des europäischen Datenschutzniveaus sicherstellt.</p>
+
+        <h2>12) Rechte des Betroffenen</h2>
+        <p>12.1 Das geltende Datenschutzrecht gewährt Ihnen gegenüber dem Verantwortlichen hinsichtlich der Verarbeitung Ihrer personenbezogenen Daten die nachstehenden Betroffenenrechte:</p>
+        <ul>
+            <li>Auskunftsrecht gemäß Art. 15 DSGVO</li>
+            <li>Recht auf Berichtigung gemäß Art. 16 DSGVO</li>
+            <li>Recht auf Löschung gemäß Art. 17 DSGVO</li>
+            <li>Recht auf Einschränkung der Verarbeitung gemäß Art. 18 DSGVO</li>
+            <li>Recht auf Unterrichtung gemäß Art. 19 DSGVO</li>
+            <li>Recht auf Datenübertragbarkeit gemäß Art. 20 DSGVO</li>
+            <li>Recht auf Widerruf erteilter Einwilligungen gemäß Art. 7 Abs. 3 DSGVO</li>
+            <li>Recht auf Beschwerde gemäß Art. 77 DSGVO</li>
+        </ul>
+        <p><strong>12.2 WIDERSPRUCHSRECHT:</strong><br> WENN WIR IM RAHMEN EINER INTERESSENABWÄGUNG IHRE PERSONENBEZOGENEN DATEN AUFGRUND UNSERES ÜBERWIEGENDEN BERECHTIGTEN INTERESSES VERARBEITEN, HABEN SIE DAS JEDERZEITIGE RECHT, AUS GRÜNDEN, DIE SICH AUS IHRER BESONDEREN SITUATION ERGEBEN, GEGEN DIESE VERARBEITUNG WIDERSPRUCH MIT WIRKUNG FÜR DIE ZUKUNFT EINZULEGEN.</p>
+        <p>WERDEN IHRE PERSONENBEZOGENEN DATEN VON UNS VERARBEITET, UM DIREKTWERBUNG ZU BETREIBEN, HABEN SIE DAS RECHT, JEDERZEIT WIDERSPRUCH GEGEN DIE VERARBEITUNG SIE BETREFFENDER PERSONENBEZOGENER DATEN ZUM ZWECKE DERARTIGER WERBUNG EINZULEGEN.</p>
+
+        <h2>13) Dauer der Speicherung personenbezogener Daten</h2>
+        <p>Die Dauer der Speicherung von personenbezogenen Daten bemisst sich anhand der jeweiligen Rechtsgrundlage, am Verarbeitungszweck und – sofern einschlägig – zusätzlich anhand der jeweiligen gesetzlichen Aufbewahrungsfrist (z.B. handels- und steuerrechtliche Aufbewahrungsfristen). Sofern sich aus den sonstigen Informationen dieser Erklärung über spezifische Verarbeitungssituationen nichts anderes ergibt, werden gespeicherte personenbezogene Daten im Übrigen dann gelöscht, wenn sie für die Zwecke, für die sie erhoben oder auf sonstige Weise verarbeitet wurden, nicht mehr notwendig sind.</p>
+
+        <p style="margin-top: 3rem; font-size: 0.9rem; opacity: 0.6;">Copyright-Hinweis: Diese Datenschutzerklärung wurde von den Fachanwälten der IT-Recht Kanzlei erstellt und ist urheberrechtlich geschützt (https://www.it-recht-kanzlei.de)<br>Stand: 28.08.2025, 22:50:05</p>
     </div>
-    <p>Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung
-    personenbezogener Daten bei der Nutzung der TeachSmarter Web-App.</p>
-  </div>
 
-  <!-- Verantwortlicher -->
-  <div class="card">
-    <h2>Verantwortlicher (Art. 4 Nr. 7 DSGVO)</h2>
-    <p>
-      <strong>Björn Sydow</strong> · TeachSmarter<br>
-      Barschweg 26 · 91325 Adelsdorf · Deutschland<br>
-      E-Mail: <a href="mailto:bjoernsydow@teachsmarter.de">bjoernsydow@teachsmarter.de</a>
-    </p>
-  </div>
+    <footer style="text-align: center; padding: 4rem 5% 3rem; background: var(--navy-dark); border-top: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); font-size: 0.95rem; font-family: 'DM Sans', sans-serif;">
+        &copy; <span id="current-year"></span> TeachSmarter &middot; Björn Sydow &middot; <a href="impressum.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Impressum</a> &middot; <a href="agb.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">AGB</a> &middot; <a href="datenschutz.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Datenschutzerklärung</a> &middot; <a href="widerruf.html" style="color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--teal-light)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Widerrufsrecht</a>
+    </footer>
 
-  <!-- Lokale Datenspeicherung -->
-  <div class="card">
-    <h2>1 · Lokale Datenspeicherung im Browser</h2>
-    <p>TeachSmarter ist eine <strong>Local-First-Anwendung</strong>. Alle von Ihnen eingegebenen Daten werden
-    ausschließlich auf Ihrem Gerät gespeichert:</p>
-    <ul>
-      <li>Klassen- und Schülerdaten (Namen, Notizen, Noten)</li>
-      <li>Unterrichtsplanungen, Stundenentwürfe, Jahrespläne</li>
-      <li>Erstellte Materialien (Arbeitsblätter, Elternbriefe etc.)</li>
-      <li>App-Einstellungen und Lizenzschlüssel</li>
-    </ul>
-    <p><strong>Speicherort:</strong> IndexedDB des Browsers (AES-256-GCM-verschlüsselt via Web Crypto API)</p>
-    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie
-    Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an datensparsamem Design)</p>
-    <div class="highlight-box" style="margin-top:.75rem;margin-bottom:0">
-      <strong>Hinweis für Schulen:</strong> Da Schülerdaten ausschließlich lokal auf dem Gerät der Lehrkraft
-      verbleiben und TeachSmarter keinen Zugriff auf diese Daten hat, ist kein Auftragsverarbeitungsvertrag
-      (AVV) mit TeachSmarter erforderlich.
-    </div>
-  </div>
-
-  <!-- KI-Funktionen -->
-  <div class="card">
-    <h2>2 · KI-gestützte Funktionen</h2>
-    <p>Für die KI-Funktionen (Arbeitsblatt-Generator, Stundenvorbereitung, Jahresplanung u. a.)
-    werden Ihre Eingaben an unsere API weitergeleitet und von dort an den KI-Anbieter übermittelt.</p>
-
-    <h3>Was wird übermittelt?</h3>
-    <p>Ausschließlich die von Ihnen eingegebenen <strong>Unterrichtsinhalte</strong>:</p>
-    <ul>
-      <li>Thema, Fach, Jahrgangsstufe</li>
-      <li>Lehrplanbezüge und pädagogische Optionen</li>
-      <li>Freitext-Eingaben im jeweiligen Formular</li>
-    </ul>
-
-    <div class="highlight-box">
-      <strong>Bitte keine personenbezogenen Daten eingeben.</strong> Schülernamen,
-      Geburtsdaten oder andere personenbezogene Daten gehören nicht in die KI-Eingabefelder.
-      Die App ist so gestaltet, dass dies nicht notwendig ist.
-    </div>
-
-    <h3>KI-Auftragsverarbeiter</h3>
-    <table>
-      <tr><th>Anbieter</th><th>Zweck</th><th>Datenschutz</th></tr>
-      <tr>
-        <td><strong>Anthropic, PBC</strong><br><span style="color:#556070;font-size:.82rem">San Francisco, USA</span></td>
-        <td>Verarbeitung der KI-Anfragen (Claude-Modell)</td>
-        <td><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">anthropic.com/legal/privacy</a></td>
-      </tr>
-      <tr>
-        <td><strong>Cloudflare, Inc.</strong><br><span style="color:#556070;font-size:.82rem">San Francisco, USA</span></td>
-        <td>API-Hosting (Cloudflare Workers)</td>
-        <td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">cloudflare.com/privacypolicy</a></td>
-      </tr>
-    </table>
-    <p style="margin-top:.75rem">Die Übermittlung in Drittländer (USA) erfolgt auf Grundlage von
-    Standardvertragsklauseln (Art. 46 DSGVO). Beide Anbieter sind dem EU-U.S. Data Privacy Framework beigetreten.</p>
-    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)</p>
-  </div>
-
-  <!-- Lizenz & Zahlung -->
-  <div class="card">
-    <h2>3 · Lizenzverarbeitung & Zahlungen</h2>
-    <p>Für den Kauf eines Abonnements oder der Gründeredition wird die Zahlungsabwicklung
-    über <strong>Stripe, Inc.</strong> (USA) durchgeführt.</p>
-    <ul>
-      <li>TeachSmarter speichert <strong>keine</strong> Zahlungsdaten (Kreditkartennummern etc.)</li>
-      <li>Stripe verarbeitet: Name, E-Mail-Adresse, Zahlungsinformationen</li>
-      <li>Wir erhalten von Stripe lediglich eine Bestätigung des Kaufs sowie eine E-Mail-Adresse zur Lizenzzuordnung</li>
-    </ul>
-    <p>Stripe-Datenschutz: <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener">stripe.com/de/privacy</a></p>
-    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)</p>
-  </div>
-
-  <!-- Server-Logs -->
-  <div class="card">
-    <h2>4 · Zugriffsdaten & Server-Logs</h2>
-    <p>Beim Aufrufen der App werden vom Hosting-Anbieter automatisch folgende Daten protokolliert:</p>
-    <ul>
-      <li>IP-Adresse (anonymisiert nach 24 Stunden)</li>
-      <li>Browsertyp und -version</li>
-      <li>Datum und Uhrzeit des Zugriffs</li>
-      <li>Aufgerufene Seite</li>
-    </ul>
-    <p>Diese Daten werden ausschließlich zur Sicherstellung des Betriebs und zur Abwehr von Angriffen
-    verwendet und nach spätestens 7 Tagen gelöscht.</p>
-    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse)</p>
-  </div>
-
-  <!-- Cookies -->
-  <div class="card">
-    <h2>5 · Cookies & Tracking</h2>
-    <div class="highlight-box">
-      <strong>Wir setzen keine Tracking-Cookies und kein Web-Analytics ein.</strong>
-    </div>
-    <p>TeachSmarter verwendet <strong>keine</strong> Google Analytics, Meta Pixel, Hotjar oder
-    vergleichbare Tracking-Dienste. Es werden keine Nutzerprofile erstellt und keine Daten
-    zu Werbezwecken verarbeitet.</p>
-    <p>Technisch notwendige Browserspeicher (IndexedDB, localStorage) dienen ausschließlich der
-    App-Funktionalität und sind keine Cookies im Sinne der ePrivacy-Richtlinie.</p>
-  </div>
-
-  <!-- Betroffenenrechte -->
-  <div class="card">
-    <h2>6 · Ihre Rechte als betroffene Person</h2>
-    <p>Sie haben gemäß DSGVO folgende Rechte:</p>
-    <ul>
-      <li><strong>Auskunft</strong> (Art. 15): Welche Daten wir über Sie verarbeiten</li>
-      <li><strong>Berichtigung</strong> (Art. 16): Korrektur unrichtiger Daten</li>
-      <li><strong>Löschung</strong> (Art. 17): „Recht auf Vergessenwerden"</li>
-      <li><strong>Einschränkung</strong> (Art. 18): Verarbeitung einschränken</li>
-      <li><strong>Datenübertragbarkeit</strong> (Art. 20): Daten in maschinenlesbarem Format</li>
-      <li><strong>Widerspruch</strong> (Art. 21): Verarbeitung auf Basis berechtigten Interesses</li>
-    </ul>
-    <p>Da Ihre Schülerdaten ausschließlich lokal auf Ihrem Gerät liegen, können Sie diese
-    jederzeit selbst über den Browser löschen (App-Einstellungen → Daten löschen).</p>
-    <p>Für Anfragen zu den Daten, die TeachSmarter verarbeitet (E-Mail aus Stripe-Kauf,
-    Lizenzschlüssel): <a href="mailto:bjoernsydow@teachsmarter.de">bjoernsydow@teachsmarter.de</a></p>
-    <p>Sie haben zudem das Recht, sich bei der zuständigen Datenschutz-Aufsichtsbehörde zu
-    beschweren (Bayern: <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">lda.bayern.de</a>).</p>
-  </div>
-
-  <!-- Datensicherheit -->
-  <div class="card">
-    <h2>7 · Datensicherheit</h2>
-    <p>Die App wird über HTTPS ausgeliefert. Alle lokal gespeicherten Daten sind mit
-    AES-256-GCM verschlüsselt (PBKDF2-Schlüsselableitung, 310.000 Iterationen).
-    Der Schlüssel verlässt Ihr Gerät nicht.</p>
-  </div>
-
-  <!-- Änderungen -->
-  <div class="card">
-    <h2>8 · Änderungen dieser Datenschutzerklärung</h2>
-    <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf zu aktualisieren.
-    Die aktuelle Version ist stets unter <a href="https://app.teachsmarter.de/datenschutz.html" target="_blank">app.teachsmarter.de/datenschutz.html</a> abrufbar.
-    Das Datum des letzten Stands ist oben vermerkt.</p>
-  </div>
-
-</div>
-
-<footer>
-  &copy; <span id="yr"></span> TeachSmarter · Björn Sydow ·
-  <a href="impressum.html" style="color:inherit">Impressum</a> ·
-  <a href="support.html" style="color:inherit">Support</a>
-</footer>
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+    </script>
+    <script src="cookie-banner.js"></script>
 </body>
 </html>
