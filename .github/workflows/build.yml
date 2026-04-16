@@ -73,7 +73,8 @@ jobs:
         if: env.WIN_CSC_BASE64 == ''
         shell: powershell
         run: |
-          $pass = ConvertTo-SecureString -String "ts-build-cert" -Force -AsPlainText
+          $randPass = [System.Guid]::NewGuid().ToString()
+          $pass = ConvertTo-SecureString -String $randPass -Force -AsPlainText
           $cert = New-SelfSignedCertificate `
             -Type CodeSigningCert `
             -Subject "CN=Björn Sydow - TeachSmarter, O=TeachSmarter, L=Germany, C=DE" `
@@ -87,8 +88,8 @@ jobs:
             -NotAfter (Get-Date).AddYears(3)
           $certPath = "$env:RUNNER_TEMP\selfsigned.pfx"
           Export-PfxCertificate -Cert $cert -FilePath $certPath -Password $pass | Out-Null
-          echo "WIN_CSC_LINK=$certPath"         >> $env:GITHUB_ENV
-          echo "WIN_CSC_PASSWORD=ts-build-cert" >> $env:GITHUB_ENV
+          echo "WIN_CSC_LINK=$certPath"   >> $env:GITHUB_ENV
+          echo "WIN_CSC_PASSWORD=$randPass" >> $env:GITHUB_ENV
           Write-Host "Self-signed cert created: $($cert.Subject)"
 
       - name: Build & publish Windows
