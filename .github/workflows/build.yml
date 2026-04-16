@@ -97,3 +97,27 @@ jobs:
           GH_TOKEN:         ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK:         ${{ env.WIN_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ env.WIN_CSC_PASSWORD }}
+
+  publish-release:
+    needs: [build-mac, build-win]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+          # Release-ID über tag_name suchen (könnte Draft sein)
+          RELEASE_ID=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10" \
+            | python3 -c "import sys,json; releases=json.load(sys.stdin); r=[x for x in releases if x['tag_name']=='$TAG']; print(r[0]['id'] if r else '')")
+          if [ -z "$RELEASE_ID" ]; then
+            echo "Keine Release für Tag $TAG gefunden — übersprungen"
+            exit 0
+          fi
+          curl -s -X PATCH \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"draft":false,"name":"TeachSmarter '"$TAG"'","body":"TeachSmarter '"$TAG"' — automatisch gebaut und veröffentlicht."}' \
+            "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID"
+          echo "Release $RELEASE_ID als Published markiert."
