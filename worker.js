@@ -1418,7 +1418,7 @@ async function handleGiveawayCreate(request, env, corsHeaders) {
       plan, credits: parseInt(credits) || 29,
       used: false, createdAt: new Date().toISOString()
     }), { expirationTtl: 60 * 60 * 24 * 60 }); // 60 Tage gültig
-    tokens.push({ token, url: 'https://app.teachsmarter.de/claim.html?token=' + token });
+    tokens.push({ token, url: 'https://app.teachsmarter.de/claim?token=' + token });
   }
   return json({ tokens }, 200, corsHeaders);
 }
