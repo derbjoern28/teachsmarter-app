@@ -1035,8 +1035,10 @@ let feiertageData = [];
 // "pfingstferien" → "Pfingstferien", "pfingstferien Bayern 2026" → "Pfingstferien"
 function normFerienName(n) {
   if (!n) return n;
-  const w = n.trim().split(/\s+/)[0]; // nur erstes Wort (entfernt ggf. "Bayern 2026" etc.)
-  return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  // Entferne Anhänge wie "Bayern 2026", "NRW" etc. — Ferien-APIs hängen manchmal Bundesland/Jahr an
+  const clean = n.trim().replace(/\s+(Bayern|NRW|BW|SN|ST|TH|SH|HH|HB|MV|BB|BE|SL|HE|NI|RP|BY)\b.*/i, '').trim();
+  const w = clean.split(/\s+/)[0];
+  return w.charAt(0).toUpperCase() + w.slice(1);
 }
 
 async function loadHolidays() {
@@ -1044,7 +1046,7 @@ async function loadHolidays() {
   const bundesland = state.bundesland || '';
   const blCode = BL_CODES[bundesland];
   const year = new Date().getFullYear();
-  const cacheKey = `ts_holidays_${land}_${bundesland}_${year}_v4`;
+  const cacheKey = `ts_holidays_${land}_${bundesland}_${year}_v5`;
 
   // Try cache first (7 day TTL)
   try {
@@ -1066,10 +1068,14 @@ async function loadHolidays() {
   const results = { ferien: [], feiertage: [], timestamp: Date.now() };
 
   // 1. SCHULFERIEN
-  const deCode = BL_CODES_DE[bundesland]; // only set for DE states
-  if (land === 'DE' && deCode) {
-    // Primary: fetch live from Worker proxy (ferien-api.de) for current + next year
-    let apiOk = false;
+  // Embedded-Daten sind primär (korrekte Namen, kuratiert) — externe API hat inkonsistente Namen
+  // (z.B. "Frühlingsferien" statt "Faschingsferien" für Bayern)
+  const deCode = BL_CODES_DE[bundesland];
+  if (land === 'DE' && deCode && FERIEN_EMBEDDED[deCode]) {
+    // Primär: embedded (zuverlässig, korrekte Namen)
+    results.ferien = FERIEN_EMBEDDED[deCode].map(f => ({ name: f.name, start: f.start, end: f.end }));
+  } else if (land === 'DE' && deCode) {
+    // Kein embedded für dieses Bundesland → API als Fallback
     try {
       const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TS_API_TOKEN };
       const fetches = [year - 1, year, year + 1].map(yr =>
@@ -1078,18 +1084,10 @@ async function loadHolidays() {
       );
       const [prev, cur, nxt] = await Promise.all(fetches);
       const apiFerien = [...prev, ...cur, ...nxt].filter(f => f.name && f.start && f.end);
-      if (apiFerien.length > 0) {
-        results.ferien = apiFerien;
-        apiOk = true;
-      }
+      if (apiFerien.length > 0) results.ferien = apiFerien;
     } catch(e) { console.log('Schulferien API nicht erreichbar:', e); }
-
-    // Fallback: embedded data
-    if (!apiOk && FERIEN_EMBEDDED[deCode]) {
-      results.ferien = FERIEN_EMBEDDED[deCode].map(f => ({ name: f.name, start: f.start, end: f.end }));
-    }
   } else if (blCode && FERIEN_EMBEDDED[blCode]) {
-    // AT/CH: always use embedded data
+    // AT/CH: embedded
     results.ferien = FERIEN_EMBEDDED[blCode].map(f => ({ name: f.name, start: f.start, end: f.end }));
   }
 
