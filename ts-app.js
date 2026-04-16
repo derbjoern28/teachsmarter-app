@@ -737,6 +737,7 @@ function esDeleteKlasse(id){
   saveState();
   buildKlassenNav();
   renderEinstellungen();
+  if(typeof initJpSelectors === 'function') initJpSelectors();
 }
 
 function esAddKlasse(){
@@ -757,6 +758,7 @@ function _esAddKlasseConfirm(){
   saveState();
   buildKlassenNav();
   renderProfil();
+  if(typeof initJpSelectors === 'function') initJpSelectors();
 }
 
 function _esAddKlasseCancel(){
@@ -1120,7 +1122,7 @@ if('serviceWorker' in navigator){
         await reg.unregister();
       }
     }
-    navigator.serviceWorker.register('./sw.js?v=51', { scope: './' })
+    navigator.serviceWorker.register('./sw.js?v=52', { scope: './' })
       .catch(e => console.warn('SW registration failed:', e.message));
   });
 }

@@ -1566,8 +1566,8 @@ async function sendLicenseEmail(env, email, key, plan, credits) {
                      isFounder ? "Founder's Edition (29 KI-Credits)" :
                      credits + ' KI-Credits';
 
-  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-Setup.exe';
-  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/latest/download/TeachSmarter-mac-arm64.dmg';
+  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.4/TeachSmarter-Setup.exe';
+  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.4/TeachSmarter-mac-arm64.dmg';
   const WEB_URL = 'https://app.teachsmarter.de/TeachSmarter_Dashboard';
 
   const downloadBlock = (isFounder || isPremium) ? `
