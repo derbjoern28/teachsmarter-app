@@ -1115,7 +1115,7 @@ if('serviceWorker' in navigator){
         await reg.unregister();
       }
     }
-    navigator.serviceWorker.register('./sw.js?v=49', { scope: './' })
+    navigator.serviceWorker.register('./sw.js?v=50', { scope: './' })
       .catch(e => console.warn('SW registration failed:', e.message));
   });
 }

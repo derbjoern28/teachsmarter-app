@@ -3,7 +3,7 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v49';
+const CACHE = 'teachsmarter-v50';
 
 /* Cloudflare Pages liefert HTML-Dateien ohne .html-Extension (Pretty URLs).
    Alle Shell-URLs daher ohne .html — sonst 308-Redirect und Cache-Miss. */
@@ -64,8 +64,25 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  /* .html-URLs: SW nicht einmischen — Chrome folgt dem Cloudflare 308-Redirect nativ.
-     SW-generierte Redirects für Navigation-Requests führen in Chrome zu ERR_FAILED. */
+  /* Navigation-Requests (Tab öffnen, Link klicken): immer nativ ans Netzwerk.
+     SW-generierte Responses für navigate-Requests führen in Chrome zu ERR_FAILED
+     wenn Cloudflare-Redirects (/ → /TeachSmarter_Dashboard) im Spiel sind.
+     Offline-Fallback: gecachtes Dashboard oder Ladehinweis. */
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).catch(() =>
+        caches.match('/TeachSmarter_Dashboard').then(r => r ||
+          new Response(
+            '<h2 style="font-family:sans-serif;padding:2rem;color:#3BA89B">TeachSmarter wird geladen…<br><small style="color:#999">Bitte kurz warten und Seite neu laden.</small></h2>',
+            { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+          )
+        )
+      )
+    );
+    return;
+  }
+
+  /* .html-URLs zusätzlich ausschließen (Fallback für ältere Browser) */
   if (url.pathname.endsWith('.html')) return;
 
   /* Externe Requests: NUR date.nager.at (Feiertage), Network-first + Cache-Fallback mit 7-Tage-TTL */
