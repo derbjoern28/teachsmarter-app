@@ -9,6 +9,13 @@ function backupPath() {
   return path.join(app.getPath('userData'), 'ts-auto-backup.json');
 }
 
+function requestBackupAndClose() {
+  if (!win || win.isDestroyed()) { app.exit(0); return; }
+  win.webContents.send('ts-request-backup');
+  // Sicherheits-Timeout: nach 4s erzwingen falls Renderer nicht antwortet
+  setTimeout(() => { if (!win.isDestroyed()) win.destroy(); }, 4000);
+}
+
 function createWindow() {
   const iconFile = process.platform === 'win32' ? 'ts-icon.ico'
     : 'ts-icon-app.png';
@@ -30,6 +37,14 @@ function createWindow() {
 
   win.loadFile('TeachSmarter_Dashboard.html');
 
+  // ── Backup beim Schließen: close-Event abfangen BEVOR Fenster destroyed wird
+  win.on('close', (e) => {
+    if (quitting) return; // Backup schon erledigt, Fenster darf schließen
+    e.preventDefault();
+    quitting = true;
+    requestBackupAndClose();
+  });
+
   // Externe Links (http/https) im System-Browser öffnen, interne Popups (blob/file) erlauben
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -49,36 +64,22 @@ function createWindow() {
 
 // ── Auto-Backup IPC ──────────────────────────────────────────────────────────
 
-// Renderer fragt: "Gibt es ein gespeichertes Backup?"
 ipcMain.handle('ts-load-backup', () => {
   const p = backupPath();
   return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
 });
 
-// Renderer liefert Backup-JSON nach Aufforderung → speichern, dann quit
 ipcMain.handle('ts-confirm-backup', (event, json) => {
   try {
-    fs.writeFileSync(backupPath(), json, 'utf8');
+    if (json) fs.writeFileSync(backupPath(), json, 'utf8');
   } catch (e) {
     console.error('Auto-Backup schreiben fehlgeschlagen:', e);
   }
-  if (quitting) app.exit(0);
+  // Backup erledigt → Fenster wirklich zerstören (löst window-all-closed aus)
+  if (win && !win.isDestroyed()) win.destroy();
 });
 
-// ── Quit-Flow: erst Backup anfordern, dann beenden ──────────────────────────
-
-app.on('before-quit', (e) => {
-  if (quitting) return; // zweiter Aufruf nach app.exit → durchlassen
-  e.preventDefault();
-  quitting = true;
-  if (win) {
-    win.webContents.send('ts-request-backup');
-    // Sicherheits-Timeout: nach 4s erzwingen falls Renderer nicht antwortet
-    setTimeout(() => app.exit(0), 4000);
-  } else {
-    app.exit(0);
-  }
-});
+// ── App-Lifecycle ────────────────────────────────────────────────────────────
 
 app.whenReady().then(() => {
   createWindow();
