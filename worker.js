@@ -40,6 +40,11 @@ export default {
         return await handleStripeWebhook(request, env, corsHeaders);
       }
 
+      // Giveaway Claim: öffentlich (Token = Auth), kein API_AUTH_TOKEN nötig
+      if (path === '/giveaway/claim' && request.method === 'POST') {
+        return await handleGiveawayClaim(request, env, corsHeaders);
+      }
+
       // Alle übrigen Endpoints: API_AUTH_TOKEN prüfen (schützt gegen fremde Nutzung)
       if (env.API_AUTH_TOKEN) {
         const authHeader = request.headers.get('Authorization') || '';
@@ -48,7 +53,12 @@ export default {
         }
       }
 
-if (path === '/verify' && request.method === 'POST') {
+      // Admin: Giveaway-Tokens generieren
+      if (path === '/admin/giveaway/create' && request.method === 'POST') {
+        return await handleGiveawayCreate(request, env, corsHeaders);
+      }
+
+      if (path === '/verify' && request.method === 'POST') {
         return await handleVerify(request, env, corsHeaders);
       }
 
@@ -1385,6 +1395,68 @@ Antworte NUR mit dem JSON-Objekt {"${feldKey}":"..."}.`,
 }
 
 // ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// GIVEAWAY
+// ═══════════════════════════════════════════
+
+function generateToken() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let t = '';
+  for (let i = 0; i < 12; i++) t += chars[Math.floor(Math.random() * chars.length)];
+  return t;
+}
+
+async function handleGiveawayCreate(request, env, corsHeaders) {
+  const { plan, credits, count } = await request.json();
+  const validPlans = ['founder', 'credits'];
+  if (!validPlans.includes(plan)) return json({ error: 'Ungültiger Plan' }, 400, corsHeaders);
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 50);
+  const tokens = [];
+  for (let i = 0; i < n; i++) {
+    const token = generateToken();
+    await env.LICENSES.put('giveaway:' + token, JSON.stringify({
+      plan, credits: parseInt(credits) || 29,
+      used: false, createdAt: new Date().toISOString()
+    }), { expirationTtl: 60 * 60 * 24 * 60 }); // 60 Tage gültig
+    tokens.push({ token, url: 'https://app.teachsmarter.de/claim.html?token=' + token });
+  }
+  return json({ tokens }, 200, corsHeaders);
+}
+
+async function handleGiveawayClaim(request, env, corsHeaders) {
+  const { token, email } = await request.json();
+  if (!token || !email) return json({ error: 'Token und Email erforderlich.' }, 400, corsHeaders);
+
+  const data = await env.LICENSES.get('giveaway:' + token, 'json');
+  if (!data) return json({ error: 'Ungültiger oder abgelaufener Link.' }, 404, corsHeaders);
+  if (data.used) return json({ error: 'Dieser Gewinn-Link wurde bereits eingelöst.' }, 409, corsHeaders);
+
+  const key = generateKey(data.plan === 'founder' ? 'founder' : 'credits_giveaway');
+  const license = {
+    key, email,
+    plan: data.plan,
+    credits: data.credits,
+    creditsTotal: data.credits,
+    createdAt: new Date().toISOString(),
+    source: 'giveaway',
+    purchases: [{ date: new Date().toISOString(), product: 'giveaway_' + data.plan, credits: data.credits }]
+  };
+  await env.LICENSES.put(key, JSON.stringify(license));
+  const emailKeys = await env.LICENSES.get('email:' + email, 'json') || [];
+  emailKeys.push(key);
+  await env.LICENSES.put('email:' + email, JSON.stringify(emailKeys));
+
+  // Token als eingelöst markieren
+  data.used = true;
+  data.redeemedBy = email;
+  data.redeemedAt = new Date().toISOString();
+  await env.LICENSES.put('giveaway:' + token, JSON.stringify(data));
+
+  await sendLicenseEmail(env, email, key, data.plan, data.credits);
+
+  return json({ ok: true, key, plan: data.plan, credits: data.credits }, 200, corsHeaders);
+}
+
 // HELPERS
 // ═══════════════════════════════════════════
 function generateKey(productId) {
