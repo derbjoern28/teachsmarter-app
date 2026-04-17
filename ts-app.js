@@ -305,6 +305,8 @@ function renderEinstellungen(){
   const credits = state.ki_credits || 0;
   const planLabel = { free:'Kostenlos', starter:'Starter', pro:'Pro ✦' };
   const planCls   = { free:'free', starter:'starter', pro:'pro' };
+  const ownApiActive = hasUserApiKey();
+  const PROVIDER_LABELS = { anthropic: 'Claude (Anthropic)', openai: 'ChatGPT (OpenAI)', gemini: 'Gemini (Google)' };
 
   document.getElementById('view-einstellungen').innerHTML = `
     <div class="es-page">
@@ -362,7 +364,47 @@ function renderEinstellungen(){
         </div>
       </div>
 
+      <!-- ── Eigene KI-API ── -->
+      <div class="es-section">
+        <div class="es-section-title">Eigene KI-API</div>
+        <div class="es-card">
+          ${ownApiActive ? `
+          <!-- Aktiv-Status -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--sp-sm)">
+            <span style="display:inline-flex;align-items:center;gap:6px;background:var(--ts-teal-subtle);border:1.5px solid var(--ts-teal);color:var(--ts-teal-dark);border-radius:20px;padding:4px 12px;font-size:.82rem;font-weight:600">
+              ✓ Eigene API aktiv
+            </span>
+            <span style="font-size:.82rem;color:var(--ts-text-secondary)">${PROVIDER_LABELS[userApiProvider] || userApiProvider}</span>
+          </div>
+          <div class="es-hint" style="margin-bottom:var(--sp-sm)">Alle KI-Funktionen laufen über deinen eigenen API-Schlüssel. Kosten werden direkt über deinen Account beim jeweiligen Anbieter abgerechnet.</div>
+          <button class="btn btn-danger btn-sm" style="width:auto" onclick="esRemoveUserApiKey()">API-Schlüssel entfernen</button>
+          ` : `
+          <!-- Eingabe-Formular -->
+          <div class="es-field" style="margin-bottom:var(--sp-sm)">
+            <label class="es-label">Anbieter</label>
+            <select id="es-api-provider" class="input" style="max-width:280px">
+              <option value="anthropic">Claude (Anthropic)</option>
+              <option value="openai">ChatGPT (OpenAI)</option>
+              <option value="gemini">Gemini (Google)</option>
+            </select>
+          </div>
+          <div class="es-field" style="margin-bottom:var(--sp-sm)">
+            <label class="es-label">API-Schlüssel</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="es-user-api-key" class="input" type="password" style="flex:1;font-family:monospace"
+                     placeholder="sk-ant-... / sk-... / AIza..."
+                     onkeydown="if(event.key==='Enter')esSaveUserApiKey()">
+              <button class="btn btn-primary btn-sm" style="width:auto;white-space:nowrap" onclick="esSaveUserApiKey()">Speichern</button>
+            </div>
+            <div id="es-user-api-msg" style="font-size:.8rem;margin-top:4px;display:none"></div>
+          </div>
+          <div class="es-hint">Optional: Hinterlege deinen eigenen API-Schlüssel — dann entfällt das Credit-System komplett und die KI-Kosten werden direkt über deinen Account abgerechnet. Dein Schlüssel wird ausschließlich lokal gespeichert.</div>
+          `}
+        </div>
+      </div>
+
       <!-- ── Abo & Credits ── -->
+      ${ownApiActive ? '' : `
       <div class="es-section">
         <div class="es-section-title">Abo &amp; KI-Credits</div>
         <div class="es-card">
@@ -399,6 +441,7 @@ function renderEinstellungen(){
           <div class="es-hint">Gib deinen Lizenzschlüssel ein, den du nach dem Kauf per E-Mail erhalten hast. Mit KI-Credits nutzt du den Assistenten für Stundenvorbereitung, Sequenzplanung und Jahresplanung.</div>
         </div>
       </div>
+      `}
 
 
       <!-- ── Datensicherung ── -->
@@ -959,6 +1002,49 @@ function _esLicenseMsg(text, type){
   el.style.display = 'block';
   el.style.color = type === 'ok' ? 'var(--ts-teal)' : type === 'error' ? '#e04' : 'var(--ts-text-secondary)';
   el.textContent = text;
+}
+
+/* ── Eigene KI-API speichern / entfernen ── */
+async function esSaveUserApiKey() {
+  const key      = (document.getElementById('es-user-api-key')?.value || '').trim();
+  const provider = document.getElementById('es-api-provider')?.value || 'anthropic';
+  const msgEl    = document.getElementById('es-user-api-msg');
+
+  const showMsg = (txt, type) => {
+    if (!msgEl) return;
+    msgEl.style.display = 'block';
+    msgEl.style.color = type === 'ok' ? 'var(--ts-teal)' : type === 'error' ? '#e04' : 'var(--ts-text-secondary)';
+    msgEl.textContent = txt;
+  };
+
+  if (!key) { showMsg('Bitte API-Schlüssel eingeben.', 'error'); return; }
+
+  showMsg('Wird geprüft …', 'info');
+
+  try {
+    const res  = await fetch(TS_API + '/api/ki', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TS_API_TOKEN },
+      body: JSON.stringify({ userApiKey: key, userApiProvider: provider, feature: 'ping', context: {} })
+    });
+    const data = await res.json();
+    if (data.error === 'invalid_api_key') {
+      showMsg('Ungültiger API-Schlüssel. Bitte prüfen.', 'error');
+      return;
+    }
+    // Any other error (even "unknown feature") means the key was accepted
+    setUserApiKey(key, provider);
+    renderEinstellungen();
+    _showToast('Eigene API gespeichert ✓', 'success');
+  } catch(e) {
+    showMsg('Verbindungsfehler. Bitte Internetverbindung prüfen.', 'error');
+  }
+}
+
+function esRemoveUserApiKey() {
+  removeUserApiKey();
+  renderEinstellungen();
+  _showToast('API-Schlüssel entfernt — Credit-System ist wieder aktiv.', 'success');
 }
 
 /* ── iCal Import (WebUntis) ── */

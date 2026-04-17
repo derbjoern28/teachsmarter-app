@@ -70,6 +70,10 @@ export default {
         return await handleCreditsInfo(request, env, corsHeaders);
       }
 
+      if (path === '/api/refund' && request.method === 'POST') {
+        return await handleRefund(request, env, corsHeaders);
+      }
+
       // Schulferien-Proxy: ferien-api.de für alle 16 DE-Bundesländer
       if (path === '/api/schulferien' && request.method === 'GET') {
         return await handleSchulferien(request, env, corsHeaders);
@@ -333,9 +337,38 @@ async function handleVerify(request, env, cors) {
 // ═══════════════════════════════════════════
 async function handleKI(request, env, cors) {
   const body = await request.json();
-  const { key, feature, context } = body;
+  const { key, feature, context, userApiKey, userApiProvider } = body;
 
-  // Verify license
+  // ── Eigene API des Nutzers ──────────────────────────────────────
+  if (userApiKey) {
+    // Ping: Key validieren ohne echten Prompt
+    if (feature === 'ping') {
+      try {
+        await _callProviderApi(userApiKey, userApiProvider || 'anthropic', '', 'Antworte nur mit "ok".', 10);
+        return json({ ok: true }, 200, cors);
+      } catch(e) {
+        const msg = e.message || '';
+        if (msg.includes('invalid_api_key') || msg.includes('401') || msg.includes('403')) {
+          return json({ error: 'invalid_api_key', message: 'API-Schlüssel ungültig oder abgelaufen.' }, 401, cors);
+        }
+        return json({ ok: true }, 200, cors); // Anderer Fehler = Key existiert
+      }
+    }
+    const { systemPrompt, userPrompt, maxTokens } = buildPrompt(feature, context);
+    let text;
+    try {
+      text = await _callProviderApi(userApiKey, userApiProvider || 'anthropic', systemPrompt, userPrompt, maxTokens);
+    } catch(e) {
+      const msg = e.message || '';
+      if (msg.includes('invalid_api_key') || msg.includes('401') || msg.includes('403')) {
+        return json({ error: 'invalid_api_key', message: 'API-Schlüssel ungültig oder abgelaufen.' }, 401, cors);
+      }
+      return json({ error: 'KI-Fehler. Bitte erneut versuchen.', message: msg }, 502, cors);
+    }
+    return json({ result: text }, 200, cors);
+  }
+
+  // ── TeachSmarter Credits-System ─────────────────────────────────
   if (!key) return json({ error: 'No license key' }, 401, cors);
   const license = await env.LICENSES.get(key, 'json');
   if (!license) return json({ error: 'Invalid key' }, 401, cors);
@@ -343,24 +376,24 @@ async function handleKI(request, env, cors) {
   // Check credits
   const isFlatrate = license.plan === 'premium' || license.subscriptionStatus === 'active';
   const KI_COSTS = {
-    thema_vorschlag:     1,
+    thema_vorschlag:     0,
     feld_refresh:        1,
-    interaktiv:          3, // Fallback — wird unten dynamisch überschrieben
-    sequenzplanung:      2,
-    tafelbild:           2,
-    differenzierung:     2,
-    elternbrief:         2,
-    praesentation:       2,
-    jahresplanung:       3,
-    stundenvorbereitung: 3,
-    arbeitsblatt:        3,
+    interaktiv:          2,
+    sequenzplanung:      1,
+    tafelbild:           1,
+    differenzierung:     1,
+    elternbrief:         1,
+    praesentation:       1,
+    jahresplanung:       2,
+    stundenvorbereitung: 1,
+    arbeitsblatt:        1,
     appbaukasten:        1,
     appbaukasten_themen: 1,
   };
   const IV_UMFANG_COSTS = { s: 2, m: 3, l: 5, xl: 8 };
-  let creditCost = KI_COSTS[feature] || 1;
-  if (feature === 'interaktiv') creditCost = IV_UMFANG_COSTS[context?.umfang] ?? 3;
-  if (!isFlatrate && license.credits < creditCost) {
+  let creditCost = KI_COSTS[feature] ?? 1;
+  if (feature === 'interaktiv') creditCost = IV_UMFANG_COSTS[context?.umfang] ?? 2;
+  if (!isFlatrate && creditCost > 0 && license.credits < creditCost) {
     return json({ error: 'no_credits', message: 'Nicht genug KI-Credits. Bitte Credits nachkaufen.' }, 402, cors);
   }
 
@@ -368,31 +401,13 @@ async function handleKI(request, env, cors) {
   const { systemPrompt, userPrompt, maxTokens } = buildPrompt(feature, context);
 
   // Call Anthropic API
-  const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: maxTokens || 2000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
-
-  if (!apiResponse.ok) {
-    const err = await apiResponse.text();
-    console.error('Anthropic API error:', apiResponse.status, err);
-    let detail = '';
-    try { detail = JSON.parse(err)?.error?.message || ''; } catch {}
-    return json({ error: 'KI-Fehler. Bitte erneut versuchen.', message: detail || `HTTP ${apiResponse.status}` }, 502, cors);
+  let text;
+  try {
+    text = await _callProviderApi(env.ANTHROPIC_API_KEY, 'anthropic', systemPrompt, userPrompt, maxTokens);
+  } catch(e) {
+    const detail = e.message || '';
+    return json({ error: 'KI-Fehler. Bitte erneut versuchen.', message: detail }, 502, cors);
   }
-
-  const result = await apiResponse.json();
-  const text = result.content?.[0]?.text || '';
 
   // Deduct credits (unless premium)
   if (!isFlatrate) {
@@ -405,6 +420,91 @@ async function handleKI(request, env, cors) {
     credits: license.credits,
     isFlatrate,
   }, 200, cors);
+}
+
+async function handleRefund(request, env, cors) {
+  const { key, feature, amount } = await request.json();
+  if (!key || !amount || amount <= 0) return json({ error: 'Invalid request' }, 400, cors);
+
+  const license = await env.LICENSES.get(key, 'json');
+  if (!license) return json({ error: 'Invalid key' }, 404, cors);
+
+  const isFlatrate = license.plan === 'premium' || license.subscriptionStatus === 'active';
+  if (isFlatrate) return json({ credits: license.credits, isFlatrate }, 200, cors);
+
+  license.credits += amount;
+  await env.LICENSES.put(key, JSON.stringify(license));
+
+  return json({ credits: license.credits, isFlatrate }, 200, cors);
+}
+
+async function _callProviderApi(apiKey, provider, systemPrompt, userPrompt, maxTokens) {
+  maxTokens = maxTokens || 2000;
+
+  if (provider === 'openai') {
+    const messages = [];
+    if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+    messages.push({ role: 'user', content: userPrompt });
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: maxTokens, messages }),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      let detail = '';
+      try { detail = JSON.parse(err)?.error?.message || ''; } catch {}
+      throw new Error(res.status === 401 ? 'invalid_api_key' : (detail || `HTTP ${res.status}`));
+    }
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || '';
+  }
+
+  if (provider === 'gemini') {
+    const parts = systemPrompt
+      ? [{ text: systemPrompt + '\n\n' + userPrompt }]
+      : [{ text: userPrompt }];
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts }] }),
+      }
+    );
+    if (!res.ok) {
+      const err = await res.text();
+      let detail = '';
+      try { detail = JSON.parse(err)?.error?.message || ''; } catch {}
+      throw new Error((res.status === 400 || res.status === 403) ? 'invalid_api_key' : (detail || `HTTP ${res.status}`));
+    }
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  }
+
+  // Default: Anthropic Claude
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    let detail = '';
+    try { detail = JSON.parse(err)?.error?.message || ''; } catch {}
+    throw new Error(res.status === 401 ? 'invalid_api_key' : (detail || `HTTP ${res.status}`));
+  }
+  const result = await res.json();
+  return result.content?.[0]?.text || '';
 }
 
 // ═══════════════════════════════════════════
@@ -1566,8 +1666,8 @@ async function sendLicenseEmail(env, email, key, plan, credits) {
                      isFounder ? "Founder's Edition (29 KI-Credits)" :
                      credits + ' KI-Credits';
 
-  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.4/TeachSmarter-Setup.exe';
-  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.4/TeachSmarter-mac-arm64.dmg';
+  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.5/TeachSmarter-Setup.exe';
+  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.5/TeachSmarter-mac-arm64.dmg';
   const WEB_URL = 'https://app.teachsmarter.de/TeachSmarter_Dashboard';
 
   const downloadBlock = (isFounder || isPremium) ? `

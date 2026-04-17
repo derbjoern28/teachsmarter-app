@@ -74,25 +74,51 @@ const TS_STRIPE_PREMIUM      = '';
 
 let licenseKey = localStorage.getItem('ts_license_key') || '';
 
+// Eigene KI-API des Nutzers
+let userApiKey      = localStorage.getItem('ts_user_api_key')      || '';
+let userApiProvider = localStorage.getItem('ts_user_api_provider') || 'anthropic';
+
+function hasUserApiKey() { return !!userApiKey; }
+
+function setUserApiKey(key, provider) {
+  userApiKey      = key.trim();
+  userApiProvider = provider || 'anthropic';
+  localStorage.setItem('ts_user_api_key',      userApiKey);
+  localStorage.setItem('ts_user_api_provider', userApiProvider);
+}
+
+function removeUserApiKey() {
+  userApiKey      = '';
+  userApiProvider = 'anthropic';
+  localStorage.removeItem('ts_user_api_key');
+  localStorage.removeItem('ts_user_api_provider');
+}
+
 // Credits-Kosten pro Feature (muss mit worker.js übereinstimmen)
 const KI_COSTS = {
-  thema_vorschlag:    { credits: 1, label: 'Themenvorschläge',          desc: 'Schnelle KI-Vorschläge' },
+  thema_vorschlag:    { credits: 0, label: 'Themenvorschläge',          desc: 'Kostenlose KI-Vorschläge' },
   feld_refresh:       { credits: 1, label: 'Feld neu generieren',       desc: 'Einzelnes Feld der Stundenvorbereitung' },
-  sequenzplanung:     { credits: 2, label: 'Sequenzplanung',            desc: 'Sequenzen für einen Lernbereich' },
-  jahresplanung:      { credits: 3, label: 'Jahresplanung',             desc: 'Vollständige Jahresplanung' },
-  stundenvorbereitung:{ credits: 3, label: 'Stundenvorbereitung',       desc: 'Detaillierter Verlaufsplan' },
-  arbeitsblatt:       { credits: 3, label: 'Arbeitsblatt-Generator',    desc: 'Fertiges Arbeitsblatt mit Lösung' },
-  interaktiv:         { credits: 3, label: 'Interaktives Arbeitsblatt', desc: 'HTML5-Lernspiel (Kosten je nach Umfang)' },
-  tafelbild:          { credits: 2, label: 'Tafelbild-Planer',          desc: 'Strukturiertes Tafelbild' },
-  praesentation:      { credits: 2, label: 'Präsentations-Wizard',      desc: 'Präsentation mit Struktur' },
-  differenzierung:    { credits: 2, label: 'Differenzierungshelfer',    desc: 'Differenzierte Aufgaben' },
-  elternbrief:        { credits: 2, label: 'Elternbrief-Assistent',     desc: 'DSGVO-konformer Elternbrief' },
+  sequenzplanung:     { credits: 1, label: 'Sequenzplanung',            desc: 'Sequenzen für einen Lernbereich' },
+  jahresplanung:      { credits: 2, label: 'Jahresplanung',             desc: 'Vollständige Jahresplanung' },
+  stundenvorbereitung:{ credits: 1, label: 'Stundenvorbereitung',       desc: 'Detaillierter Verlaufsplan' },
+  arbeitsblatt:       { credits: 1, label: 'Arbeitsblatt-Generator',    desc: 'Fertiges Arbeitsblatt mit Lösung' },
+  interaktiv:         { credits: 2, label: 'Interaktives Arbeitsblatt', desc: 'HTML5-Lernspiel (Kosten je nach Umfang)' },
+  tafelbild:          { credits: 1, label: 'Tafelbild-Planer',          desc: 'Strukturiertes Tafelbild' },
+  praesentation:      { credits: 1, label: 'Präsentations-Wizard',      desc: 'Präsentation mit Struktur' },
+  differenzierung:    { credits: 1, label: 'Differenzierungshelfer',    desc: 'Differenzierte Aufgaben' },
+  elternbrief:        { credits: 1, label: 'Elternbrief-Assistent',     desc: 'DSGVO-konformer Elternbrief' },
 };
 
 function _kiConfirmDialog(feature, creditsOverride) {
+  // Eigene API: kein Credit-Dialog nötig
+  if (hasUserApiKey()) return Promise.resolve(true);
+
+  const base = KI_COSTS[feature] || { credits: 1, label: feature, desc: '' };
+  const cost = creditsOverride !== undefined ? { ...base, credits: creditsOverride } : base;
+  // Kostenlose Features: direkt bestätigen
+  if (cost.credits === 0) return Promise.resolve(true);
+
   return new Promise(resolve => {
-    const base = KI_COSTS[feature] || { credits: 1, label: feature, desc: '' };
-    const cost = creditsOverride !== undefined ? { ...base, credits: creditsOverride } : base;
     const isFlatrate = state.plan === 'premium';
     const currentCredits = state.ki_credits || 0;
 
@@ -183,7 +209,8 @@ function updateToolsNavState() {
 }
 
 async function callKI(feature, context, creditsOverride) {
-  if (!licenseKey) {
+  // Eigene API des Nutzers: Lizenzschlüssel wird nicht benötigt
+  if (!hasUserApiKey() && !licenseKey) {
     _showToast('Bitte zuerst einen Lizenzschlüssel eingeben (Einstellungen → Abo & KI).', 'error');
     navigate('einstellungen');
     return null;
@@ -194,30 +221,65 @@ async function callKI(feature, context, creditsOverride) {
   // Loading-Spinner anzeigen
   const loadingEl = _kiShowLoading();
   try {
+    const body = hasUserApiKey()
+      ? { userApiKey, userApiProvider, feature, context }
+      : { key: licenseKey, feature, context };
+
     const res = await fetch(TS_API + '/api/ki', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TS_API_TOKEN },
-      body: JSON.stringify({ key: licenseKey, feature, context })
+      body: JSON.stringify(body)
     });
     const data = await res.json();
     loadingEl.remove();
+    if (data.error === 'invalid_api_key') {
+      _showToast('Dein API-Schlüssel ist ungültig oder abgelaufen. Bitte in den Einstellungen prüfen.', 'error');
+      navigate('einstellungen');
+      return null;
+    }
     if (data.error === 'no_credits') { showCreditsDialog(); return null; }
     if (data.error) { _showToast('KI-Fehler: ' + (data.message || data.error), 'error'); return null; }
-    updateCreditDisplay(data.credits, data.isFlatrate);
-    if (!data.isFlatrate && data.credits !== undefined) {
-      state.ki_credits = data.credits;
-      saveState();
+    if (!hasUserApiKey()) {
+      updateCreditDisplay(data.credits, data.isFlatrate);
+      if (!data.isFlatrate && data.credits !== undefined) {
+        state.ki_credits = data.credits;
+        saveState();
+      }
     }
     const parsed = _kiParseResult(data.result);
     if (!parsed) {
       console.error('[TeachSmarter] KI Parse failed. Raw result (first 2000 chars):', (data.result||'').substring(0, 2000));
-      _showToast('KI-Antwort konnte nicht verarbeitet werden. Bitte erneut versuchen.', 'error');
+      _showToast('KI-Antwort konnte nicht verarbeitet werden. Credits wurden erstattet.', 'error');
+      if (!hasUserApiKey() && licenseKey && !data.isFlatrate) {
+        const base = KI_COSTS[feature] || { credits: 1 };
+        const refundAmount = creditsOverride !== undefined ? creditsOverride : base.credits;
+        _kiRefundCredits(refundAmount);
+      }
     }
     return parsed;
   } catch (e) {
     loadingEl.remove();
     _showToast('Verbindungsfehler. Bitte Internetverbindung prüfen.', 'error');
     return null;
+  }
+}
+
+async function _kiRefundCredits(amount) {
+  if (!amount || amount <= 0 || !licenseKey) return;
+  try {
+    const res = await fetch(TS_API + '/api/refund', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TS_API_TOKEN },
+      body: JSON.stringify({ key: licenseKey, amount })
+    });
+    const data = await res.json();
+    if (data.credits !== undefined) {
+      state.ki_credits = data.credits;
+      saveState();
+      updateCreditDisplay(data.credits, data.isFlatrate);
+    }
+  } catch(e) {
+    console.error('[TeachSmarter] Refund failed:', e);
   }
 }
 
@@ -281,10 +343,9 @@ function _kiParseResult(raw) {
 }
 
 function updateCreditDisplay(credits, isFlatrate) {
-  // Update header badge (if present)
+  if (hasUserApiKey()) return; // Eigene API aktiv — Credits werden nicht angezeigt
   const badge = document.getElementById('ki-credits-badge');
   if (badge) badge.textContent = isFlatrate ? '∞' : credits;
-  // Update Einstellungen display
   const val = document.getElementById('es-credits-val');
   if (val) val.textContent = isFlatrate ? '∞ Flatrate' : credits;
   const bar = document.querySelector('.es-credits-bar');
