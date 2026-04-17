@@ -1,6 +1,6 @@
 {
   "name": "teachsmarter",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "TeachSmarter – KI-Lehrerkalender für DACH",
   "main": "main.js",
   "scripts": {
@@ -51,7 +51,9 @@
       "target": "dmg",
       "icon": "ts-icon-app.png",
       "category": "public.app-category.education",
-      "artifactName": "TeachSmarter-mac-${arch}.dmg"
+      "artifactName": "TeachSmarter-mac-${arch}.dmg",
+      "identity": null,
+      "gatekeeperAssess": false
     },
     "nsis": {
       "oneClick": false,

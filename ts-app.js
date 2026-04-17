@@ -262,16 +262,30 @@ function renderProfil(){
       <div class="es-section">
         <div class="es-section-title">Stundenplan</div>
         <div class="es-card">
+          <!-- Zeitraster -->
           <div class="es-sp-info">
-            <div class="es-toggle-label">Aktueller Stundenplan</div>
-            <div class="es-toggle-desc">${_spSummary()}</div>
+            <div class="es-toggle-label">Zeitraster</div>
+            <div class="es-toggle-desc">${_zrSummary()}</div>
           </div>
-          <div class="es-btn-row">
-            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esOpenSpEditor()">Stundenplan bearbeiten</button>
+          <div class="es-btn-row" style="gap:8px">
+            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esToggleZeitraster()" id="es-btn-zeitraster">✏️ Zeiten bearbeiten</button>
+            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esAddStunde()">+ Stunde</button>
           </div>
-          <div id="es-sp-editor" style="display:none;margin-top:var(--sp-md)">
-            <div class="es-sp-grid-wrap" id="es-sp-grid"></div>
-            <div class="es-hint">Zelle antippen → Fach und Klasse auswählen. Änderungen werden sofort gespeichert.</div>
+          <div id="es-zr-editor" style="display:none;margin-top:var(--sp-md)">
+            <div id="es-zr-list"></div>
+            <button class="btn btn-secondary btn-sm" style="width:auto;margin-top:6px;color:var(--ts-danger,#d32f2f)" onclick="esRemoveLastStunde()">– Letzte Stunde entfernen</button>
+          </div>
+          <!-- Fach-Belegung -->
+          <div style="margin-top:var(--sp-md);padding-top:var(--sp-md);border-top:1px solid var(--ts-border-light)">
+            <div class="es-toggle-label" style="margin-bottom:6px">Fach-Belegung</div>
+            <div class="es-toggle-desc" style="margin-bottom:8px">${_spSummary()}</div>
+            <div class="es-btn-row">
+              <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esOpenSpEditor()">Stundenplan bearbeiten</button>
+            </div>
+            <div id="es-sp-editor" style="display:none;margin-top:var(--sp-md)">
+              <div class="es-sp-grid-wrap" id="es-sp-grid"></div>
+              <div class="es-hint">Zelle antippen → Fach und Klasse auswählen. Änderungen werden sofort gespeichert.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -743,6 +757,97 @@ function _spSummary(){
   return filled > 0 ? `${filled} von ${total} Slots belegt` : 'Noch nicht eingerichtet';
 }
 
+function _zrSummary(){
+  const zr = getZeitraster();
+  if(!zr || !zr.length) return 'Kein Zeitraster';
+  return `${zr.length} Stunden · ${zr[0].von}–${zr[zr.length-1].bis} Uhr`;
+}
+
+function _esTimeDiff(a, b){
+  const [ah,am] = a.split(':').map(Number);
+  const [bh,bm] = b.split(':').map(Number);
+  return (bh*60+bm) - (ah*60+am);
+}
+
+function _esAddMinutes(timeStr, min){
+  const [h,m] = timeStr.split(':').map(Number);
+  const total = h*60 + m + min;
+  return `${String(Math.floor(total/60)%24).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
+}
+
+let _esZrOpen = false;
+function esToggleZeitraster(){
+  _esZrOpen = !_esZrOpen;
+  const ed = document.getElementById('es-zr-editor');
+  const btn = document.getElementById('es-btn-zeitraster');
+  if(!ed) return;
+  ed.style.display = _esZrOpen ? 'block' : 'none';
+  if(btn) btn.textContent = _esZrOpen ? '✓ Fertig' : '✏️ Zeiten bearbeiten';
+  if(_esZrOpen){
+    if(!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+    esRenderZeitrasterEditor();
+  } else {
+    saveState();
+    esRenderSpGrid();
+    if(typeof renderWoche==='function') renderWoche();
+    if(typeof renderHeute==='function') renderHeute();
+  }
+}
+
+function esRenderZeitrasterEditor(){
+  const zr = getZeitraster();
+  const list = document.getElementById('es-zr-list');
+  if(!list) return;
+  list.innerHTML = zr.map((s,i) => {
+    let pauseHtml = '';
+    if(i > 0){
+      const diff = _esTimeDiff(zr[i-1].bis, s.von);
+      if(diff > 0) pauseHtml = `<span style="font-size:.68rem;color:var(--ts-warning,#f59e0b);background:#FFF8EE;padding:2px 8px;border-radius:99px;font-weight:500;margin-left:auto">☕ ${diff} Min. Pause</span>`;
+    }
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:6px 0">
+      <span style="font-size:.82rem;font-weight:600;color:var(--ts-text);min-width:24px;text-align:right">${s.nr}.</span>
+      <input type="time" class="input" style="width:110px;padding:6px 10px;font-size:.88rem;text-align:center" value="${s.von}" onchange="esUpdateZeitraster(${i},'von',this.value)">
+      <span style="color:var(--ts-text-muted);font-size:.82rem">–</span>
+      <input type="time" class="input" style="width:110px;padding:6px 10px;font-size:.88rem;text-align:center" value="${s.bis}" onchange="esUpdateZeitraster(${i},'bis',this.value)">
+      ${pauseHtml}
+    </div>`;
+  }).join('');
+}
+
+function esUpdateZeitraster(index, field, value){
+  if(!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+  state.zeitraster[index][field] = value;
+  saveState();
+  esRenderZeitrasterEditor();
+}
+
+function esAddStunde(){
+  if(!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+  const last = state.zeitraster[state.zeitraster.length-1];
+  const newVon = last.bis;
+  const newBis = _esAddMinutes(newVon, 45);
+  state.zeitraster.push({nr: state.zeitraster.length+1, von: newVon, bis: newBis});
+  saveState();
+  esRenderZeitrasterEditor();
+  esRenderSpGrid();
+  // Open editor if not already open
+  if(!_esZrOpen){ _esZrOpen=true; const ed=document.getElementById('es-zr-editor'); if(ed) ed.style.display='block'; const btn=document.getElementById('es-btn-zeitraster'); if(btn) btn.textContent='✓ Fertig'; }
+}
+
+function esRemoveLastStunde(){
+  if(!state.zeitraster) state.zeitraster = JSON.parse(JSON.stringify(DEFAULT_ZEITRASTER));
+  if(state.zeitraster.length <= 1) return;
+  const removed = state.zeitraster.length-1;
+  state.zeitraster.pop();
+  // Clean stundenplan entries for removed slot
+  if(state.stundenplan) [0,1,2,3,4].forEach(d=>{ delete state.stundenplan[`${d}-${removed}`]; });
+  saveState();
+  esRenderZeitrasterEditor();
+  esRenderSpGrid();
+  if(typeof renderWoche==='function') renderWoche();
+  if(typeof renderHeute==='function') renderHeute();
+}
+
 function esUpdateKlasse(id, field, val){
   const k = (state.klassen||[]).find(k=>k.id===id);
   if(!k) return;
@@ -1208,7 +1313,7 @@ if('serviceWorker' in navigator){
         await reg.unregister();
       }
     }
-    navigator.serviceWorker.register('./sw.js?v=52', { scope: './' })
+    navigator.serviceWorker.register('./sw.js?v=56', { scope: './' })
       .catch(e => console.warn('SW registration failed:', e.message));
   });
 }
