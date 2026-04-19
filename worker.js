@@ -70,6 +70,11 @@ export default {
         return await handleCreditsInfo(request, env, corsHeaders);
       }
 
+      // Lehrplan-Vorschau: LB-Namen live vom offiziellen Lehrplan holen
+      if (path === '/api/lehrplan' && request.method === 'POST') {
+        return await handleLehrplan(request, env, corsHeaders);
+      }
+
       if (path === '/api/refund' && request.method === 'POST') {
         return await handleRefund(request, env, corsHeaders);
       }
@@ -563,6 +568,22 @@ async function handleCreditsInfo(request, env, cors) {
     plan: license.plan,
     isFlatrate: license.plan === 'premium' || license.subscriptionStatus === 'active',
   }, 200, cors);
+}
+
+// ═══════════════════════════════════════════
+// LEHRPLAN PREVIEW ENDPOINT
+// ═══════════════════════════════════════════
+
+async function handleLehrplan(request, env, cors) {
+  const { bundesland, schulart, fach, jgst } = await request.json();
+  if (!bundesland || !schulart || !fach || !jgst) {
+    return json({ error: 'Missing params' }, 400, cors);
+  }
+  const names = await fetchLehrplanLBs(bundesland, schulart, fach, jgst);
+  if (!names || names.length === 0) {
+    return json({ lernbereiche: null, source: 'none' }, 200, cors);
+  }
+  return json({ lernbereiche: names, source: 'official' }, 200, cors);
 }
 
 // ═══════════════════════════════════════════

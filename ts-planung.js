@@ -6839,7 +6839,52 @@ const LEHRPLAN_DB = {
 
 function extractJgst(className){const m=className.match(/(\d+)/);return m?m[1]:null}
 
+// Live-Lehrplan-Cache: wird pro Kombination (BL|SA|Fach|Jgst) befüllt
+let _lehrplanLiveCache = { key: null, lbs: null };
+
+function _lehrplanCacheKey(){
+  const bl=state.bundesland, sa=state.schulart;
+  const fachId=document.getElementById('jp-fach')?.value;
+  const klasseId=document.getElementById('jp-klasse')?.value;
+  if(!bl||!sa||!fachId||!klasseId) return null;
+  const klasse=getKlasse(klasseId);
+  const jgst=klasse?extractJgst(klasse.name):null;
+  const fach=getFach(fachId);
+  if(!jgst||!fach) return null;
+  return `${bl}|${sa}|${fach.name}|${jgst}`;
+}
+
+async function _loadLehrplanLive(){
+  const key=_lehrplanCacheKey();
+  if(!key || _lehrplanLiveCache.key===key) return; // Cache aktuell
+  const [bl,sa,fachName,jgst]=key.split('|');
+  try {
+    const resp=await fetch(TS_API+'/api/lehrplan',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TS_API_TOKEN},
+      body:JSON.stringify({bundesland:bl,schulart:sa,fach:fachName,jgst})
+    });
+    if(!resp.ok) return;
+    const data=await resp.json();
+    if(data.lernbereiche&&data.lernbereiche.length>0){
+      // Gleichmäßige UE-Schätzung; Nutzer kann per +/− anpassen
+      const klasseId=document.getElementById('jp-klasse')?.value;
+      const fachId=document.getElementById('jp-fach')?.value;
+      const totalUE=(klasseId&&fachId)?getSchoolWeeks(klasseId,fachId).reduce((s,w)=>s+(w.isFerien?0:(w.ue||0)),0):160;
+      const ueEach=Math.max(10,Math.round(totalUE/data.lernbereiche.length));
+      _lehrplanLiveCache.key=key;
+      _lehrplanLiveCache.lbs=data.lernbereiche.map(n=>({n,ue:ueEach}));
+    }
+  } catch(e){ /* silent — Fallback auf lokale DB */ }
+}
+
 function getLehrplanForSelection(){
+  // 1. Live-Cache bevorzugen (aktuell vom ISB)
+  const key=_lehrplanCacheKey();
+  if(key && _lehrplanLiveCache.key===key && _lehrplanLiveCache.lbs){
+    return _lehrplanLiveCache.lbs;
+  }
+  // 2. Fallback: lokale DB
   const bl=state.bundesland,sa=state.schulart,fachId=document.getElementById('jp-fach').value;
   const klasseId=document.getElementById('jp-klasse').value;
   if(!bl||!sa||!fachId||!klasseId) return null;
@@ -6847,7 +6892,6 @@ function getLehrplanForSelection(){
   if(!klasse) return null;
   const jgst=extractJgst(klasse.name);
   if(!jgst) return null;
-  // Find in DB
   const blCode = Object.entries({
     'Baden-Württemberg':'BW','Bayern':'BY','Berlin':'BE','Brandenburg':'BB','Bremen':'HB','Hamburg':'HH',
     'Hessen':'HE','Mecklenburg-Vorpommern':'MV','Niedersachsen':'NI','Nordrhein-Westfalen':'NW',
@@ -6862,12 +6906,21 @@ function getLehrplanForSelection(){
   return saData[fachId][jgst] || null;
 }
 
-function renderKiPanel(){
+async function renderKiPanel(){
   const container=document.getElementById('pl-ki-lernbereiche');
   const infoEl=document.getElementById('pl-ki-lehrplan-info');
-  const lbs=getLehrplanForSelection();
   const plan=getJpPlan();
-  
+
+  // Fetch live Lehrplan wenn noch nicht gecacht
+  const key=_lehrplanCacheKey();
+  if(key && _lehrplanLiveCache.key!==key){
+    infoEl.textContent='🔄 Lehrplan wird geladen…';
+    container.innerHTML='<div style="font-size:.78rem;color:var(--ts-text-muted);padding:12px 0">Lade aktuellen Lehrplan vom ISB…</div>';
+    await _loadLehrplanLive();
+  }
+
+  const lbs=getLehrplanForSelection();
+
   if(!lbs){
     infoEl.textContent='Kein Lehrplan gefunden für diese Auswahl.';
     container.innerHTML='<div style="font-size:.78rem;color:var(--ts-text-muted);padding:8px 0">Wähle Klasse + Fach, um Lehrplan-Inhalte zu laden.</div>';
@@ -6876,7 +6929,8 @@ function renderKiPanel(){
   
   const klasse=getKlasse(document.getElementById('jp-klasse').value);
   const fach=getFach(document.getElementById('jp-fach').value);
-  infoEl.textContent=`${state.bundesland||''} · ${state.schulart||''} · Jgst. ${klasse?extractJgst(klasse.name):''} · ${fach?fach.name:''}`;
+  const isLive=key&&_lehrplanLiveCache.key===key&&_lehrplanLiveCache.lbs;
+  infoEl.innerHTML=`${esc(state.bundesland||'')} · ${esc(state.schulart||'')} · Jgst. ${klasse?extractJgst(klasse.name):''} · ${fach?esc(fach.name):''}${isLive?' <span style="color:var(--ts-teal);font-size:.7rem">✓ aktuell</span>':`<span style="font-size:.7rem;color:var(--ts-text-muted)"> · lokale DB</span>`}`;
   
   const existingNames = plan ? plan.lernbereiche.map(l=>l.name) : [];
   
