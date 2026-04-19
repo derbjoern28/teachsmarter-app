@@ -300,97 +300,73 @@ function _updatePanelToggleBtn(){
 // === EMBEDDED LEHRPLAN DATA (Alle Bundeslaender + AT/CH) ===
 const LEHRPLAN_DB = {
   BY:{
+  // === MITTELSCHULE — Quelle: ISB Bayern LehrplanPLUS (Regelklasse) ===
   Mittelschule:{
     mathe:{
-      5:[{n:"Natürliche Zahlen",ue:22},{n:"Grundrechenarten",ue:24},{n:"Geometrische Grundbegriffe",ue:16},{n:"Größen und Messen",ue:18},{n:"Ganze Zahlen",ue:14},{n:"Daten und Zufall",ue:10}],
-      6:[{n:"Brüche und Anteile",ue:20},{n:"Dezimalbrüche",ue:18},{n:"Geometrie: Flächen",ue:16},{n:"Proportionalität",ue:14},{n:"Prozentbegriff",ue:12},{n:"Daten auswerten",ue:10}],
-      7:[{n:"Rationale Zahlen",ue:18},{n:"Prozent- und Zinsrechnung",ue:20},{n:"Geometrie: Dreiecke & Vierecke",ue:16},{n:"Terme und Gleichungen",ue:18},{n:"Zuordnungen & Dreisatz",ue:14},{n:"Daten und Zufall",ue:10}],
-      8:[{n:"Terme und Gleichungen",ue:22},{n:"Lineare Funktionen",ue:18},{n:"Flächenberechnung",ue:16},{n:"Raumgeometrie: Prismen",ue:14},{n:"Wahrscheinlichkeit",ue:12},{n:"Sachrechnen",ue:10}],
-      9:[{n:"Quadratische Gleichungen",ue:20},{n:"Quadratische Funktionen",ue:16},{n:"Körperberechnung",ue:16},{n:"Trigonometrie",ue:14},{n:"Sachbezogene Mathematik",ue:14},{n:"Daten und Zufall",ue:10}],
-      10:[{n:"Exponentialfunktionen",ue:16},{n:"Wachstum und Zerfall",ue:14},{n:"Raumgeometrie",ue:16},{n:"Wahrscheinlichkeit vertieft",ue:14},{n:"Finanzmathematik",ue:14},{n:"Prüfungsvorbereitung",ue:18}]
+      5:[{n:"Natürliche Zahlen",ue:22},{n:"Ganze Zahlen",ue:20},{n:"Geometrische Figuren und Lagebeziehungen",ue:22},{n:"Flächeninhalt – Rechtecke",ue:18},{n:"Größen im Alltag",ue:20},{n:"Daten",ue:16},{n:"Gleichungen und Formeln",ue:26}],
+      6:[{n:"Bruchzahlen",ue:24},{n:"Rationale Zahlen",ue:22},{n:"Geometrische Figuren, Körper und Lagebeziehungen",ue:20},{n:"Flächeninhalt – Oberflächeninhalt von Quadern",ue:20},{n:"Rauminhalt – Quader",ue:18},{n:"Daten",ue:16},{n:"Gleichungen und Formeln",ue:24}],
+      7:[{n:"Prozentrechnung",ue:20},{n:"Rationale Zahlen – Rechenregeln",ue:18},{n:"Geometrische Figuren, Körper und Lagebeziehungen",ue:18},{n:"Flächeninhalt – Parallelogramme und Dreiecke",ue:18},{n:"Rauminhalt – gerade Prismen",ue:16},{n:"Diagramme und statistische Kennwerte",ue:16},{n:"Gleichungen",ue:18},{n:"Proportionalität",ue:20}],
+      8:[{n:"Prozentrechnung",ue:20},{n:"Quadratzahlen und Quadratwurzeln",ue:16},{n:"Geometrische Figuren, Körper und Lagebeziehungen",ue:18},{n:"Flächeninhalt – Kreise",ue:18},{n:"Rauminhalt – Zylinder",ue:16},{n:"Zufallsexperimente",ue:16},{n:"Gleichungen",ue:20},{n:"Funktionale Zusammenhänge",ue:20}],
+      9:[{n:"Prozent- und Zinsrechnung",ue:20},{n:"Potenzen",ue:16},{n:"Geometrische Figuren, Körper und Lagebeziehungen",ue:18},{n:"Flächeninhalt – Vielecke",ue:16},{n:"Rauminhalt – Prismen, Pyramiden, Kegel",ue:20},{n:"Wahrscheinlichkeiten",ue:18},{n:"Gleichungen",ue:18},{n:"Funktionale Zusammenhänge",ue:18}]
     },
     deutsch:{
-      5:[{n:"Erzählen und Kreatives Schreiben",ue:18},{n:"Lesestrategien & Textverständnis",ue:16},{n:"Sprache untersuchen: Wortarten",ue:18},{n:"Rechtschreibung",ue:20},{n:"Berichten & Beschreiben",ue:14},{n:"Medien & Präsentieren",ue:10}],
-      6:[{n:"Vorgangsbeschreibung",ue:14},{n:"Jugendbuch lesen",ue:16},{n:"Sprache: Satzglieder",ue:18},{n:"Rechtschreibstrategien",ue:16},{n:"Argumentieren & Begründen",ue:14},{n:"Gedichte & Balladen",ue:12}],
-      7:[{n:"Inhaltsangabe",ue:16},{n:"Argumentieren & Erörtern",ue:18},{n:"Sprache: Aktiv/Passiv, Konjunktiv",ue:14},{n:"Jugendroman",ue:16},{n:"Bewerbung & Lebenslauf",ue:14},{n:"Medien kritisch nutzen",ue:12}],
-      8:[{n:"Textgebundene Erörterung",ue:18},{n:"Protokoll & Bericht",ue:14},{n:"Sprache: Stilmittel",ue:14},{n:"Kurzgeschichten analysieren",ue:16},{n:"Referat & Präsentation",ue:12},{n:"Rechtschreibung vertieft",ue:12}],
-      9:[{n:"Erörterungsaufsatz",ue:18},{n:"Textanalyse",ue:16},{n:"Sprache: Sprachreflexion",ue:14},{n:"Drama/Lektüre",ue:16},{n:"Bewerbungstraining",ue:12},{n:"Prüfungsvorbereitung",ue:14}]
+      5:[{n:"Sprechen und Zuhören",ue:38},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:38},{n:"Schreiben",ue:38},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:30}],
+      6:[{n:"Sprechen und Zuhören",ue:38},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:38},{n:"Schreiben",ue:38},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:30}],
+      7:[{n:"Sprechen und Zuhören",ue:38},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:38},{n:"Schreiben",ue:38},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:30}],
+      8:[{n:"Sprechen und Zuhören",ue:38},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:38},{n:"Schreiben",ue:38},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:30}],
+      9:[{n:"Sprechen und Zuhören",ue:38},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:38},{n:"Schreiben",ue:38},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:30}]
     },
     englisch:{
-      5:[{n:"Welcome / About me",ue:14},{n:"School & Friends",ue:16},{n:"My Family & Home",ue:16},{n:"Free Time & Hobbies",ue:16},{n:"Animals & Nature",ue:14},{n:"Celebrations",ue:12}],
-      6:[{n:"Holidays & Travel",ue:16},{n:"Daily Routines",ue:14},{n:"Shopping & Food",ue:14},{n:"Sports & Health",ue:14},{n:"Media & Technology",ue:14},{n:"The UK",ue:12}],
-      7:[{n:"USA - Land & People",ue:16},{n:"Jobs & Careers",ue:14},{n:"Environment",ue:14},{n:"Relationships",ue:14},{n:"Media & Communication",ue:14},{n:"Cultural Awareness",ue:12}],
-      8:[{n:"Australia",ue:16},{n:"Work Experience",ue:14},{n:"Global Issues",ue:14},{n:"Technology & Future",ue:14},{n:"Literature",ue:12},{n:"Exam Preparation",ue:12}],
-      9:[{n:"Globalisation",ue:16},{n:"World of Work",ue:16},{n:"Intercultural Topics",ue:14},{n:"Current Events",ue:14},{n:"Speaking & Writing Skills",ue:14},{n:"Prüfungsvorbereitung",ue:16}]
+      5:[{n:"Kommunikative Kompetenzen",ue:26},{n:"Interkulturelle Kompetenzen",ue:20},{n:"Text- und Medienkompetenzen",ue:20},{n:"Methodische Kompetenzen",ue:20},{n:"Themengebiete",ue:26}],
+      6:[{n:"Kommunikative Kompetenzen",ue:26},{n:"Interkulturelle Kompetenzen",ue:20},{n:"Text- und Medienkompetenzen",ue:20},{n:"Methodische Kompetenzen",ue:20},{n:"Themengebiete",ue:26}],
+      7:[{n:"Kommunikative Kompetenzen",ue:26},{n:"Interkulturelle Kompetenzen",ue:20},{n:"Text- und Medienkompetenzen",ue:20},{n:"Methodische Kompetenzen",ue:20},{n:"Themengebiete",ue:26}],
+      8:[{n:"Kommunikative Kompetenzen",ue:26},{n:"Interkulturelle Kompetenzen",ue:20},{n:"Text- und Medienkompetenzen",ue:20},{n:"Methodische Kompetenzen",ue:20},{n:"Themengebiete",ue:26}],
+      9:[{n:"Kommunikative Kompetenzen",ue:26},{n:"Interkulturelle Kompetenzen",ue:20},{n:"Text- und Medienkompetenzen",ue:20},{n:"Methodische Kompetenzen",ue:20},{n:"Themengebiete",ue:26}]
     },
     nt:{
-      5:[{n:"Körper des Menschen",ue:20},{n:"Tiere & Pflanzen",ue:18},{n:"Stoffe und ihre Eigenschaften",ue:16},{n:"Wetter & Klima",ue:14},{n:"Sinne & Wahrnehmung",ue:14}],
-      6:[{n:"Ökosystem Wald/Wiese",ue:18},{n:"Energie im Alltag",ue:16},{n:"Magnetismus & Elektrizität",ue:18},{n:"Ernährung & Verdauung",ue:16},{n:"Umweltschutz",ue:12}],
-      7:[{n:"Optik: Licht & Sehen",ue:16},{n:"Akustik: Schall",ue:12},{n:"Ökosystem Gewässer",ue:16},{n:"Pubertät & Sexualerziehung",ue:12},{n:"Chemie im Alltag",ue:16},{n:"Elektrizitätslehre",ue:14}],
-      8:[{n:"Mechanik: Kraft & Bewegung",ue:18},{n:"Chemische Reaktionen",ue:16},{n:"Atmung & Blutkreislauf",ue:14},{n:"Suchtprävention",ue:10},{n:"Wärmelehre",ue:14}],
-      9:[{n:"Atombau & Periodensystem",ue:16},{n:"Säuren & Basen",ue:14},{n:"Genetik",ue:16},{n:"Evolution",ue:12},{n:"Energieversorgung",ue:14},{n:"Prüfungsvorbereitung",ue:12}]
+      5:[{n:"Naturwissenschaftliches Arbeiten",ue:26},{n:"Lebensgrundlage Sonne",ue:28},{n:"Mensch und Gesundheit",ue:26},{n:"Materie, Stoffe und Technik",ue:28}],
+      6:[{n:"Naturwissenschaftliches Arbeiten",ue:26},{n:"Lebensgrundlagen Wasser und Boden",ue:28},{n:"Mensch und Gesundheit – Pubertät und vorgeburtliche Entwicklung",ue:26},{n:"Materie, Stoffe und Technik",ue:28}],
+      7:[{n:"Naturwissenschaftliches Arbeiten",ue:26},{n:"Lebensgrundlage Luft",ue:28},{n:"Mensch und Gesundheit",ue:26},{n:"Materie, Stoffe und Technik",ue:28}],
+      8:[{n:"Naturwissenschaftliches Arbeiten",ue:26},{n:"Lebensgrundlage Energie",ue:28},{n:"Mensch und Gesundheit",ue:26},{n:"Materie, Stoffe und Technik",ue:28}],
+      9:[{n:"Naturwissenschaftliches Arbeiten",ue:26},{n:"Lebensgrundlage Kohlenstoff",ue:28},{n:"Mensch und Gesundheit",ue:26},{n:"Materie, Stoffe und Technik",ue:28}]
     },
     gpg:{
-      5:[{n:"Orientierung in Raum und Zeit",ue:16},{n:"Leben in Gemeinschaften",ue:14},{n:"Steinzeit bis Antike",ue:18},{n:"Heimatraum erkunden",ue:14}],
-      6:[{n:"Mittelalter",ue:18},{n:"Europa entdecken",ue:16},{n:"Zusammenleben & Demokratie",ue:14},{n:"Handel & Wirtschaft früher/heute",ue:14}],
-      7:[{n:"Reformation & Neuzeit",ue:16},{n:"Industrialisierung",ue:16},{n:"Globalisierung",ue:14},{n:"Migration & Integration",ue:14},{n:"Politisches System BRD",ue:14}],
-      8:[{n:"Weimarer Republik",ue:14},{n:"Nationalsozialismus & Holocaust",ue:18},{n:"Nachkriegszeit & Teilung",ue:14},{n:"Europa & EU",ue:14},{n:"Nachhaltigkeit & Umwelt",ue:12}],
-      9:[{n:"Wiedervereinigung",ue:12},{n:"Weltpolitik nach 1990",ue:14},{n:"Menschenrechte",ue:12},{n:"Wirtschaft & Beruf",ue:14},{n:"Aktuelle politische Themen",ue:14}]
+      5:[{n:"Lebensraum Erde",ue:28},{n:"Zeit und Wandel",ue:28},{n:"Politik und Gesellschaft",ue:26},{n:"Lebenswelt",ue:26}],
+      6:[{n:"Lebensraum Erde",ue:28},{n:"Zeit und Wandel",ue:28},{n:"Politik und Gesellschaft",ue:26},{n:"Lebenswelt",ue:26}],
+      7:[{n:"Lebensraum Erde",ue:28},{n:"Zeit und Wandel",ue:28},{n:"Politik und Gesellschaft",ue:26},{n:"Lebenswelt",ue:26}],
+      8:[{n:"Lebensraum Erde",ue:28},{n:"Zeit und Wandel",ue:28},{n:"Politik und Gesellschaft",ue:26},{n:"Lebenswelt",ue:26}],
+      9:[{n:"Lebensraum Erde",ue:28},{n:"Zeit und Wandel",ue:28},{n:"Politik und Gesellschaft",ue:26},{n:"Lebenswelt",ue:26}]
     },
     wib:{
-      7:[{n:"Berufsorientierung",ue:16},{n:"Wirtschaft im Alltag",ue:12},{n:"Haushalt & Konsum",ue:12},{n:"Berufsfelder erkunden",ue:12}],
-      8:[{n:"Betrieb & Arbeitswelt",ue:14},{n:"Sozialversicherung",ue:10},{n:"Berufsvorbereitung",ue:14},{n:"Wirtschaft & Recht",ue:10}],
-      9:[{n:"Ausbildung & Stellensuche",ue:16},{n:"Rechte & Pflichten",ue:12},{n:"Verbraucherschutz",ue:10},{n:"Globale Wirtschaft",ue:10}]
+      7:[{n:"Projekt",ue:18},{n:"Arbeit",ue:14},{n:"Berufsorientierung",ue:20},{n:"Wirtschaft",ue:14},{n:"Recht",ue:12},{n:"Technik",ue:14}],
+      8:[{n:"Projekt",ue:20},{n:"Berufsorientierung",ue:22},{n:"Wirtschaft",ue:16},{n:"Recht",ue:14},{n:"Technik",ue:16}],
+      9:[{n:"Projekt",ue:18},{n:"Arbeit",ue:14},{n:"Berufsorientierung",ue:22},{n:"Wirtschaft",ue:14},{n:"Recht",ue:12},{n:"Technik",ue:12}]
     },
     sport:{
-      5:[{n:"Leichtathletik Grundlagen",ue:16},{n:"Turnen & Gymnasik",ue:14},{n:"Ballspiele Einführung",ue:14},{n:"Schwimmen",ue:14},{n:"Spielerziehung",ue:10}],
-      6:[{n:"Leichtathletik vertieft",ue:14},{n:"Turnen: Boden & Geräte",ue:14},{n:"Volleyball / Basketball",ue:14},{n:"Schwimmen & Ausdauer",ue:14},{n:"Tanz & Bewegungsgestaltung",ue:10}],
-      7:[{n:"Ausdauer & Fitness",ue:14},{n:"Turnen vertieft",ue:12},{n:"Rückschlagspiele",ue:14},{n:"Mannschaftssport",ue:14},{n:"Körper & Gesundheit",ue:10}],
-      8:[{n:"Konditionstraining",ue:14},{n:"Sportspiele Taktik",ue:16},{n:"Turnen: Kür",ue:12},{n:"Kampfsport Einführung",ue:12},{n:"Freizeit & Trendsport",ue:10}],
-      9:[{n:"Leistungssport & Wettkampf",ue:14},{n:"Mannschaftssport vertieft",ue:14},{n:"Gesundheitssport",ue:12},{n:"Sporttheorie Einführung",ue:12},{n:"Wahlsport",ue:10}],
-      10:[{n:"Abiturvorb.: Leichtathletik",ue:12},{n:"Abiturvorb.: Mannschaftssport",ue:12},{n:"Sporttheorie",ue:12},{n:"Ausdauer & Kraft",ue:12},{n:"Prüfungsvorbereitung",ue:10}]
-    },
-    musik:{
-      5:[{n:"Musizieren: Grundlagen",ue:16},{n:"Rhythmus & Notation",ue:14},{n:"Musikgeschichte: Antike bis Barock",ue:12},{n:"Stimme & Singen",ue:12},{n:"Musikhören",ue:10}],
-      6:[{n:"Tonarten & Harmonik",ue:14},{n:"Klassik & Romantik",ue:14},{n:"Instrumentenkunde",ue:12},{n:"Komponisten kennenlernen",ue:12},{n:"Musikgestaltung",ue:10}],
-      7:[{n:"Musikalische Analyse",ue:14},{n:"Populäre Musik",ue:14},{n:"Musik & Gefühle",ue:12},{n:"Filmmusik",ue:12},{n:"Komposition & Arrangement",ue:12}],
-      8:[{n:"Klassische Musik im Überblick",ue:14},{n:"Jazz & Blues",ue:12},{n:"Musikgeschichte 20. Jh.",ue:14},{n:"Medien & Musik",ue:12},{n:"Musik & Tanz",ue:10}],
-      9:[{n:"Musik & Gesellschaft",ue:14},{n:"Stilistik & Analyse",ue:14},{n:"Musizieren vertieft",ue:12},{n:"Weltmusik",ue:12},{n:"Kreative Musikgestaltung",ue:10}],
-      10:[{n:"Musik & Identität",ue:12},{n:"Analyse von Musikwerken",ue:14},{n:"Musikpraxis vertieft",ue:12},{n:"Musikgeschichte Überblick",ue:12},{n:"Prüfungsvorbereitung",ue:10}]
-    },
-    kunst:{
-      5:[{n:"Zeichnen: Grundlagen",ue:16},{n:"Farblehre",ue:14},{n:"Druckgrafik",ue:12},{n:"Kunstgeschichte: Einführung",ue:10},{n:"Collage & Plastik",ue:10}],
-      6:[{n:"Perspektive & Raum",ue:16},{n:"Malerei: Techniken",ue:14},{n:"Kunstgeschichte: Renaissance",ue:12},{n:"Plastisches Gestalten",ue:12},{n:"Grafik & Design",ue:10}],
-      7:[{n:"Menschendarstellung",ue:14},{n:"Fotografie & Medienkunst",ue:12},{n:"Kunstgeschichte: Barock",ue:12},{n:"Experimentelles Gestalten",ue:12},{n:"Architektur",ue:10}],
-      8:[{n:"Kunstgeschichte: Impressionismus",ue:14},{n:"Abstrakte Kunst",ue:12},{n:"Illustration & Storytelling",ue:12},{n:"3D-Gestalten",ue:12},{n:"Digitale Medien",ue:10}],
-      9:[{n:"Kunstgeschichte: Moderne",ue:14},{n:"Konzeptkunst",ue:12},{n:"Freie künstlerische Arbeit",ue:16},{n:"Kunst & Gesellschaft",ue:10},{n:"Portfolio & Präsentation",ue:10}],
-      10:[{n:"Kunstgeschichte Überblick",ue:14},{n:"Kunst analysieren & interpretieren",ue:14},{n:"Eigene Werkmappe",ue:16},{n:"Ausstellungsgestaltung",ue:10},{n:"Prüfungsvorbereitung",ue:10}]
-    },
-    religion:{
-      5:[{n:"Ich & meine Welt",ue:14},{n:"Bibel: Entstehung & Aufbau",ue:14},{n:"Glaube & Gemeinschaft",ue:12},{n:"Schöpfung & Verantwortung",ue:12},{n:"Weltreligionen: Überblick",ue:10}],
-      6:[{n:"Jesus von Nazareth",ue:16},{n:"Kirche: Geschichte & Gegenwart",ue:14},{n:"Islam & Judentum",ue:14},{n:"Ethik: Gerechtigkeit",ue:12},{n:"Fragen nach Gott",ue:10}],
-      7:[{n:"Bibel: Propheten",ue:12},{n:"Ethik: Menschenwürde",ue:14},{n:"Christentum weltweit",ue:12},{n:"Hinduismus & Buddhismus",ue:14},{n:"Tod & Auferstehung",ue:10}],
-      8:[{n:"Kirchengeschichte",ue:14},{n:"Ethik: Bioethik",ue:14},{n:"Glaube & Vernunft",ue:12},{n:"Religionen im Dialog",ue:12},{n:"Gewissen & Entscheidung",ue:10}],
-      9:[{n:"Ethik: Gerechtigkeit & Politik",ue:14},{n:"Theodizee",ue:12},{n:"Ökumene & Weltkirche",ue:12},{n:"Religionskritik",ue:12},{n:"Friedensethik",ue:10}],
-      10:[{n:"Ethik vertieft",ue:14},{n:"Eschatologie",ue:12},{n:"Religiöse Biographien",ue:12},{n:"Religion & Gesellschaft heute",ue:12},{n:"Prüfungsvorbereitung",ue:10}]
+      5:[{n:"Gesundheit und Fitness",ue:28},{n:"Fairness/Kooperation/Selbstkompetenz",ue:26},{n:"Freizeit und Umwelt",ue:24},{n:"Sportliche Handlungsfelder",ue:30}],
+      6:[{n:"Gesundheit und Fitness",ue:28},{n:"Fairness/Kooperation/Selbstkompetenz",ue:26},{n:"Freizeit und Umwelt",ue:24},{n:"Sportliche Handlungsfelder",ue:30}],
+      7:[{n:"Gesundheit und Fitness",ue:28},{n:"Fairness/Kooperation/Selbstkompetenz",ue:26},{n:"Freizeit und Umwelt",ue:24},{n:"Sportliche Handlungsfelder",ue:30}],
+      8:[{n:"Gesundheit und Fitness",ue:28},{n:"Fairness/Kooperation/Selbstkompetenz",ue:26},{n:"Freizeit und Umwelt",ue:24},{n:"Sportliche Handlungsfelder",ue:30}],
+      9:[{n:"Gesundheit und Fitness",ue:28},{n:"Fairness/Kooperation/Selbstkompetenz",ue:26},{n:"Freizeit und Umwelt",ue:24},{n:"Sportliche Handlungsfelder",ue:30}]
     }
   },
+  // === GYMNASIUM — Mathe + Deutsch: ISB Bayern LehrplanPLUS; andere Fächer: Annäherungswerte, Verifizierung folgt ===
   Gymnasium:{
     mathe:{
-      5:[{n:"Natürliche Zahlen & Grundrechenarten",ue:24},{n:"Geometrie: Grundbegriffe",ue:18},{n:"Größen & Messen",ue:16},{n:"Ganze Zahlen",ue:16},{n:"Daten & Häufigkeiten",ue:10}],
-      6:[{n:"Brüche & Bruchrechnen",ue:22},{n:"Dezimalbrüche",ue:16},{n:"Flächeninhalt & Umfang",ue:16},{n:"Proportionale Zuordnungen",ue:14},{n:"Achsensymmetrie",ue:12},{n:"Daten & Zufall",ue:10}],
-      7:[{n:"Rationale Zahlen",ue:16},{n:"Terme & Gleichungen",ue:22},{n:"Prozent- & Zinsrechnung",ue:18},{n:"Geometrie: Dreiecke & Kongruenz",ue:18},{n:"Dreisatz & Proportionalität",ue:12},{n:"Wahrscheinlichkeit",ue:10}],
-      8:[{n:"Potenzen & Wurzeln",ue:14},{n:"Lineare Funktionen",ue:20},{n:"Gleichungssysteme",ue:18},{n:"Geometrie: Aehnlichkeit",ue:16},{n:"Körper: Oberfläche & Volumen",ue:16},{n:"Stochastik",ue:10}],
-      9:[{n:"Quadratische Funktionen",ue:20},{n:"Quadratische Gleichungen",ue:18},{n:"Trigonometrie",ue:18},{n:"Satz des Pythagoras vertieft",ue:12},{n:"Körperberechnung",ue:14},{n:"Stochastik vertieft",ue:12}],
+      5:[{n:"Natürliche Zahlen und ganze Zahlen",ue:30},{n:"Geometrische Figuren und Lagebeziehungen",ue:20},{n:"Multiplikation, Division und Verbindung der Grundrechenarten",ue:20},{n:"Geld, Länge, Masse, Zeit und Flächeninhalt",ue:20}],
+      6:[{n:"Bruchzahlen und Dezimalbrüche",ue:36},{n:"Flächeninhalt und Volumen",ue:26},{n:"Prozentrechnung, Daten und Diagramme",ue:22}],
+      7:[{n:"Terme",ue:22},{n:"Symmetrische Figuren und Winkel",ue:20},{n:"Lineare Gleichungen und Prozentrechnung",ue:24},{n:"Kenngrößen von Daten",ue:18},{n:"Kongruenz, Dreiecke und Dreieckskonstruktionen",ue:22}],
+      8:[{n:"Funktion und Term",ue:20},{n:"Lineare Funktionen",ue:22},{n:"Elementare gebrochen-rationale Funktionen",ue:16},{n:"Bruchterme und Bruchgleichungen",ue:18},{n:"Laplace-Experimente",ue:16},{n:"Lineare Gleichungssysteme",ue:16},{n:"Kreis und Zylinder",ue:20}],
+      9:[{n:"Quadratwurzeln",ue:16},{n:"Quadratische Funktionen und quadratische Gleichungen",ue:30},{n:"Wahrscheinlichkeit verknüpfter Ereignisse",ue:18},{n:"Ähnlichkeit und Strahlensatz",ue:20},{n:"Potenzfunktionen",ue:16},{n:"Satz des Pythagoras",ue:16},{n:"Trigonometrie",ue:20}],
       10:[{n:"Exponentialfunktionen",ue:16},{n:"Logarithmus",ue:12},{n:"Analytische Geometrie",ue:18},{n:"Differentialrechnung Einführung",ue:20},{n:"Stochastik: Binomialverteilung",ue:16},{n:"Prüfungsvorbereitung",ue:12}]
     },
     deutsch:{
-      5:[{n:"Erzählen & Kreatives Schreiben",ue:18},{n:"Lesen: Jugendbuch",ue:16},{n:"Sprachbetrachtung: Wortarten",ue:18},{n:"Rechtschreibung & Zeichensetzung",ue:18},{n:"Berichten & Beschreiben",ue:12}],
-      6:[{n:"Vorgangsbeschreibung",ue:14},{n:"Lesen: Märchen & Fabeln",ue:16},{n:"Grammatik: Satzglieder & Satzarten",ue:18},{n:"Gedichte erschließen",ue:12},{n:"Rechtschreibstrategien",ue:14},{n:"Präsentieren",ue:10}],
-      7:[{n:"Inhaltsangabe & Charakterisierung",ue:16},{n:"Argumentieren & Begründen",ue:16},{n:"Kurzgeschichten analysieren",ue:16},{n:"Sprachbetrachtung: Satzstrukturen",ue:14},{n:"Medien & Kommunikation",ue:12}],
-      8:[{n:"Textgebundene Erörterung",ue:18},{n:"Epische Texte analysieren",ue:16},{n:"Drama erschließen",ue:16},{n:"Sprachreflexion & Stilistik",ue:12},{n:"Präsentation & Referat",ue:12}],
-      9:[{n:"Lektüre: Roman analysieren",ue:18},{n:"Textinterpretation vertieft",ue:16},{n:"Sprachgeschichte & Varietäten",ue:12},{n:"Bewerbung & Lebenslauf",ue:14},{n:"Journalistische Textsorten",ue:10},{n:"Mündliche Prüfungsvorbereitung",ue:10}],
-      10:[{n:"Rhetorische Analyse",ue:16},{n:"Lyrik: Analyse & Interpretation",ue:16},{n:"Prüfungsaufsatz",ue:18},{n:"Wissenschaftliche Texte",ue:12},{n:"Literarische Epochen",ue:12},{n:"Prüfungsvorbereitung",ue:14}]
+      5:[{n:"Sprechen und Zuhören",ue:36},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:36},{n:"Schreiben",ue:36},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:32}],
+      6:[{n:"Sprechen und Zuhören",ue:36},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:36},{n:"Schreiben",ue:36},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:32}],
+      7:[{n:"Sprechen und Zuhören",ue:36},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:36},{n:"Schreiben",ue:36},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:32}],
+      8:[{n:"Sprechen und Zuhören",ue:30},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:30},{n:"Schreiben",ue:30},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:28},{n:"Profilbereich am MuG",ue:22}],
+      9:[{n:"Sprechen und Zuhören",ue:30},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:30},{n:"Schreiben",ue:30},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:28},{n:"Profilbereich am MuG",ue:22}],
+      10:[{n:"Sprechen und Zuhören",ue:30},{n:"Lesen – mit Texten und weiteren Medien umgehen",ue:30},{n:"Schreiben",ue:30},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:28},{n:"Profilbereich am MuG",ue:22}]
     },
     englisch:{
       5:[{n:"Welcome - Getting to know each other",ue:14},{n:"School & Friends",ue:16},{n:"Family & Home",ue:16},{n:"Free Time & Hobbies",ue:16},{n:"Animals & Nature",ue:12}],
@@ -488,21 +464,23 @@ const LEHRPLAN_DB = {
     }
   },
   Realschule:{
+    // === MATHE — Quelle: ISB Bayern LehrplanPLUS Realschule ===
     mathe:{
-      5:[{n:"Natürliche Zahlen",ue:22},{n:"Grundrechenarten",ue:20},{n:"Geometrie",ue:18},{n:"Größen & Messen",ue:16},{n:"Ganze Zahlen",ue:12},{n:"Daten",ue:10}],
-      6:[{n:"Brüche & Bruchrechnen",ue:20},{n:"Dezimalbrüche",ue:18},{n:"Flächeninhalte",ue:16},{n:"Proportionalität",ue:14},{n:"Daten & Zufall",ue:12}],
-      7:[{n:"Rationale Zahlen",ue:18},{n:"Terme & Gleichungen",ue:20},{n:"Prozent- & Zinsrechnung",ue:18},{n:"Geometrie: Dreiecke",ue:14},{n:"Dreisatz & Zuordnungen",ue:12},{n:"Wahrscheinlichkeit",ue:10}],
-      8:[{n:"Lineare Funktionen",ue:18},{n:"Gleichungssysteme",ue:16},{n:"Geometrie: Aehnlichkeit",ue:14},{n:"Körper: Oberfläche & Volumen",ue:16},{n:"Stochastik",ue:10}],
-      9:[{n:"Quadratische Funktionen",ue:18},{n:"Trigonometrie",ue:16},{n:"Körperberechnung",ue:14},{n:"Stochastik vertieft",ue:12},{n:"Sachrechnen",ue:10}],
-      10:[{n:"Exponentialfunktionen Einführung",ue:14},{n:"Analytische Geometrie",ue:14},{n:"Stochastik",ue:14},{n:"Sachrechnen vertieft",ue:14},{n:"Prüfungsvorbereitung",ue:18}]
+      5:[{n:"Natürliche Zahlen",ue:24},{n:"Ganze Zahlen",ue:18},{n:"Geometrische Grundbegriffe und ebene Figuren",ue:22},{n:"Flächeninhalt und Umfang",ue:18},{n:"Brüche",ue:18},{n:"Daten",ue:14}],
+      6:[{n:"Brüche und Dezimalzahlen",ue:24},{n:"Proportionalität und Dreisatz",ue:18},{n:"Prozentrechnung",ue:18},{n:"Geometrie: Kreis und Körper",ue:20},{n:"Terme und Gleichungen",ue:18},{n:"Daten und Zufall",ue:14}],
+      7:[{n:"Rationale Zahlen",ue:20},{n:"Terme und lineare Gleichungen",ue:20},{n:"Prozent- und Zinsrechnung",ue:18},{n:"Geometrie: Pythagoras und Ähnlichkeit",ue:20},{n:"Lineare Funktionen",ue:16},{n:"Stochastik",ue:14}],
+      8:[{n:"Potenzen und Wurzeln",ue:16},{n:"Lineare Gleichungssysteme",ue:18},{n:"Geometrie: Kreis, Ähnlichkeit, Körper",ue:20},{n:"Körperberechnungen",ue:18},{n:"Quadratische Gleichungen Einführung",ue:16},{n:"Stochastik",ue:14}],
+      9:[{n:"Quadratische Gleichungen und Funktionen",ue:22},{n:"Trigonometrie",ue:20},{n:"Körperberechnungen vertieft",ue:16},{n:"Stochastik",ue:16},{n:"Prüfungsvorbereitung",ue:18}],
+      10:[{n:"Exponentialfunktionen",ue:16},{n:"Analytische Geometrie Einführung",ue:16},{n:"Stochastik vertieft",ue:16},{n:"Lineare Optimierung",ue:14},{n:"Prüfungsvorbereitung",ue:22}]
     },
+    // === DEUTSCH — Quelle: ISB Bayern LehrplanPLUS Realschule ===
     deutsch:{
-      5:[{n:"Erzählen & Kreatives Schreiben",ue:18},{n:"Lesen: Jugendbuch",ue:16},{n:"Sprachbetrachtung: Wortarten",ue:18},{n:"Rechtschreibung & Zeichensetzung",ue:18},{n:"Berichten & Beschreiben",ue:12}],
-      6:[{n:"Vorgangsbeschreibung",ue:14},{n:"Lesen: Märchen & Fabeln",ue:16},{n:"Grammatik: Satzglieder & Satzarten",ue:18},{n:"Gedichte erschließen",ue:12},{n:"Rechtschreibstrategien",ue:14},{n:"Präsentieren",ue:10}],
-      7:[{n:"Inhaltsangabe & Charakterisierung",ue:16},{n:"Argumentieren & Begründen",ue:16},{n:"Kurzgeschichten analysieren",ue:16},{n:"Sprachbetrachtung: Satzstrukturen",ue:14},{n:"Medien & Kommunikation",ue:12}],
-      8:[{n:"Textgebundene Erörterung",ue:18},{n:"Epische Texte analysieren",ue:16},{n:"Drama erschließen",ue:16},{n:"Sprachreflexion & Stilistik",ue:12},{n:"Präsentation & Referat",ue:12}],
-      9:[{n:"Lektüre: Roman analysieren",ue:18},{n:"Textinterpretation vertieft",ue:16},{n:"Sprachgeschichte & Varietäten",ue:12},{n:"Bewerbung & Lebenslauf",ue:14},{n:"Journalistische Textsorten",ue:10},{n:"Mündliche Prüfungsvorbereitung",ue:10}],
-      10:[{n:"Rhetorische Analyse",ue:16},{n:"Lyrik: Analyse & Interpretation",ue:16},{n:"Prüfungsaufsatz",ue:18},{n:"Wissenschaftliche Texte",ue:12},{n:"Literarische Epochen",ue:12},{n:"Prüfungsvorbereitung",ue:14}]
+      5:[{n:"Sprechen und Zuhören",ue:34},{n:"Lesen – mit Texten und Medien umgehen",ue:34},{n:"Schreiben",ue:34},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:26}],
+      6:[{n:"Sprechen und Zuhören",ue:34},{n:"Lesen – mit Texten und Medien umgehen",ue:34},{n:"Schreiben",ue:34},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:26}],
+      7:[{n:"Sprechen und Zuhören",ue:34},{n:"Lesen – mit Texten und Medien umgehen",ue:34},{n:"Schreiben",ue:34},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:26}],
+      8:[{n:"Sprechen und Zuhören",ue:34},{n:"Lesen – mit Texten und Medien umgehen",ue:34},{n:"Schreiben",ue:34},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:26}],
+      9:[{n:"Sprechen und Zuhören",ue:34},{n:"Lesen – mit Texten und Medien umgehen",ue:34},{n:"Schreiben",ue:34},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:26}],
+      10:[{n:"Sprechen und Zuhören",ue:34},{n:"Lesen – mit Texten und Medien umgehen",ue:34},{n:"Schreiben",ue:34},{n:"Sprachgebrauch und Sprache untersuchen und reflektieren",ue:26}]
     },
     englisch:{
       5:[{n:"Welcome - Getting to know each other",ue:14},{n:"School & Friends",ue:16},{n:"Family & Home",ue:16},{n:"Free Time & Hobbies",ue:16},{n:"Animals & Nature",ue:12}],
@@ -597,6 +575,298 @@ const LEHRPLAN_DB = {
       8:[{n:"Unternehmen & Betrieb",ue:14},{n:"Arbeit & Arbeitsrecht",ue:12},{n:"Sozialversicherung",ue:10},{n:"Berufsorientierung",ue:14}],
       9:[{n:"Wirtschaftsordnung BRD",ue:14},{n:"Globale Wirtschaft",ue:12},{n:"Bewerbung & Praktikum",ue:14},{n:"Verbraucherschutz",ue:10}],
       10:[{n:"Ausbildung & Studium",ue:14},{n:"Wirtschaft & Politik",ue:12},{n:"Nachhaltiges Wirtschaften",ue:10},{n:"Prüfungsvorbereitung",ue:10}]
+    }
+  },
+  Berufsschule:{
+    deutsch:{
+      1:[{n:"Kommunikation im Beruf",ue:20},{n:"Berufliche Schriftstücke",ue:16},{n:"Präsentieren & Moderieren",ue:14},{n:"Lesetechniken & Textanalyse",ue:14},{n:"Reflexion über Sprache",ue:10}],
+      2:[{n:"Bewerbung & Lebenslauf",ue:18},{n:"Protokoll & Bericht",ue:16},{n:"Argumentation & Diskussion",ue:16},{n:"Literatur & Medien",ue:14},{n:"Sprachreflexion",ue:10}],
+      3:[{n:"Berufliche Kommunikation vertieft",ue:16},{n:"Präsentation & Rhetorik",ue:14},{n:"Textproduktion vertieft",ue:16},{n:"Prüfungsvorbereitung Deutsch",ue:20},{n:"Mündliche Abschlussprüfung",ue:10}]
+    },
+    politik:{
+      1:[{n:"Demokratie & Rechtsstaat",ue:14},{n:"Wirtschaftsordnung",ue:12},{n:"Arbeitnehmerrechte",ue:14},{n:"Sozialversicherungssystem",ue:12}],
+      2:[{n:"Tarifvertrag & Mitbestimmung",ue:14},{n:"Globalisierung",ue:12},{n:"Politisches System BRD",ue:12},{n:"Aktuelle gesellschaftliche Themen",ue:14}],
+      3:[{n:"Europa & EU",ue:14},{n:"Soziale Gerechtigkeit",ue:12},{n:"Umwelt & Nachhaltigkeit",ue:12},{n:"Politische Partizipation",ue:10}]
+    },
+    religion:{
+      1:[{n:"Sinn der Arbeit & Berufsethos",ue:14},{n:"Werte & Normen im Berufsalltag",ue:12},{n:"Gewissen & Verantwortung",ue:12},{n:"Religionen & Weltanschauungen",ue:10}],
+      2:[{n:"Gerechtigkeit & Berufsethik",ue:14},{n:"Familie & Partnerschaft",ue:12},{n:"Mensch & Technik",ue:12},{n:"Sinn & Transzendenz",ue:10}],
+      3:[{n:"Bioethik & Technikethik",ue:14},{n:"Tod & Trauer",ue:10},{n:"Glaubensfragen heute",ue:12},{n:"Abschlussreflexion",ue:10}]
+    },
+    sport:{
+      1:[{n:"Fitness & Gesundheit",ue:14},{n:"Rückenschule / Ausgleichssport",ue:14},{n:"Mannschaftssport",ue:14},{n:"Entspannung & Stressbewältigung",ue:10}],
+      2:[{n:"Ausdauer & Kraft",ue:14},{n:"Individualsport",ue:14},{n:"Sportspiele",ue:12},{n:"Gesundheitsprävention",ue:12}],
+      3:[{n:"Fitness & Lifestyle",ue:14},{n:"Sportarten nach Wahl",ue:14},{n:"Gesundheitssport vertieft",ue:12},{n:"Prüfungsvorbereitung",ue:10}]
+    },
+    englisch:{
+      1:[{n:"Workplace Communication",ue:16},{n:"Job Application",ue:14},{n:"Company & Profession",ue:14},{n:"Technical Vocabulary",ue:12},{n:"Business Correspondence",ue:12}],
+      2:[{n:"International Business",ue:14},{n:"Customer Communication",ue:14},{n:"Presentations & Reports",ue:14},{n:"Technology & Innovation",ue:12},{n:"Exam Preparation",ue:14}],
+      3:[{n:"Advanced Business English",ue:14},{n:"Global Trade",ue:12},{n:"Professional Writing",ue:14},{n:"Exam Preparation",ue:18},{n:"Oral Presentation",ue:12}]
+    },
+    lernfeld:{
+      1:[{n:"LF 1: Betrieb & Berufsfeld erkunden",ue:20},{n:"LF 2: Geschäftsprozesse verstehen",ue:24},{n:"LF 3: Aufgaben & Abläufe planen",ue:20},{n:"LF 4: Informationsquellen nutzen",ue:18},{n:"LF 5: Kommunizieren & Kooperieren",ue:18}],
+      2:[{n:"LF 6: Kernprozesse ausführen",ue:24},{n:"LF 7: Qualität sichern",ue:20},{n:"LF 8: Wirtschaftliche Aspekte beachten",ue:20},{n:"LF 9: Projekte durchführen",ue:22},{n:"LF 10: Fachspezifische Vertiefung",ue:20}],
+      3:[{n:"LF 11: Komplexe Aufgaben lösen",ue:24},{n:"LF 12: Abschlussprojekt vorbereiten",ue:20},{n:"LF 13: Prüfungsvorbereitung Fachpraxis",ue:22},{n:"LF 14: Abschlusspräsentation",ue:14}]
+    }
+  },
+  'Fachoberschule (FOS)':{
+    mathe:{
+      11:[{n:"Mengenlehre & Logik",ue:16},{n:"Vektoren & Matrizen",ue:22},{n:"Analytische Geometrie",ue:20},{n:"Stochastik: Wahrscheinlichkeitsrechnung",ue:18},{n:"Finanzmathematik",ue:14}],
+      12:[{n:"Differentialrechnung",ue:24},{n:"Integralrechnung",ue:22},{n:"Kurvendiskussion",ue:20},{n:"Stochastik vertieft",ue:16},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    deutsch:{
+      11:[{n:"Textsorten & Textanalyse",ue:18},{n:"Erörterung",ue:16},{n:"Literaturanalyse: Epik",ue:14},{n:"Rhetorische Analyse",ue:14},{n:"Sprachreflexion",ue:12}],
+      12:[{n:"Literaturanalyse vertieft",ue:18},{n:"Aufsatzformen: Fachabitur",ue:20},{n:"Lyrik & Drama",ue:14},{n:"Wissenschaftliches Schreiben",ue:14},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    englisch:{
+      11:[{n:"Reading & Text Analysis",ue:16},{n:"Grammar Review",ue:14},{n:"Writing Skills",ue:14},{n:"Listening & Speaking",ue:14},{n:"Cultural Studies",ue:12}],
+      12:[{n:"Advanced Writing",ue:16},{n:"Literature & Media",ue:14},{n:"Current Affairs",ue:14},{n:"Exam Preparation: Writing",ue:16},{n:"Exam Preparation: Speaking",ue:12}]
+    },
+    physik:{
+      11:[{n:"Mechanik: Kinematik & Dynamik",ue:20},{n:"Wärmelehre",ue:16},{n:"Elektrizitätslehre",ue:18},{n:"Optik",ue:14},{n:"Schwingungen & Wellen",ue:12}],
+      12:[{n:"Elektrodynamik",ue:20},{n:"Quantenmechanik Grundlagen",ue:16},{n:"Kernphysik",ue:14},{n:"Atombau",ue:14},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    chemie:{
+      11:[{n:"Atombau & Bindungen",ue:18},{n:"Organische Chemie: Kohlenwasserstoffe",ue:20},{n:"Reaktionskinetik",ue:14},{n:"Chemisches Gleichgewicht",ue:14},{n:"Elektrochemie",ue:14}],
+      12:[{n:"Organische Chemie vertieft",ue:18},{n:"Polymere & Kunststoffe",ue:14},{n:"Analytische Chemie",ue:16},{n:"Umweltchemie",ue:12},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    bwr:{
+      11:[{n:"Grundlagen BWL: Betrieb & Umwelt",ue:16},{n:"Buchführung: Grundlagen",ue:20},{n:"Jahresabschluss",ue:18},{n:"Kostenrechnung",ue:16},{n:"Finanzierung",ue:14}],
+      12:[{n:"Investitionsrechnung",ue:18},{n:"Controlling",ue:16},{n:"Jahresabschlussanalyse",ue:18},{n:"Steuerlehre Grundlagen",ue:14},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    vwl:{
+      11:[{n:"Wirtschaftskreislauf",ue:14},{n:"Angebot & Nachfrage",ue:16},{n:"Marktformen",ue:14},{n:"Konjunktur & Wachstum",ue:14},{n:"Wirtschaftspolitik",ue:14}],
+      12:[{n:"Geld & Geldpolitik",ue:14},{n:"Außenwirtschaft & EU",ue:16},{n:"Soziale Marktwirtschaft",ue:14},{n:"Globalisierung",ue:14},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    rechtslehre:{
+      11:[{n:"BGB Grundlagen: Rechtsgeschäfte",ue:16},{n:"Kaufvertrag & Störungen",ue:18},{n:"Arbeitsrecht",ue:16},{n:"Gesellschaftsrecht Überblick",ue:14},{n:"Handelsrecht",ue:12}],
+      12:[{n:"Vertragsrecht vertieft",ue:16},{n:"Schuldrecht",ue:16},{n:"Öffentliches Recht",ue:14},{n:"Steuerrecht Grundlagen",ue:12},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    paedagogik:{
+      11:[{n:"Grundbegriffe der Pädagogik",ue:16},{n:"Lerntheorien",ue:16},{n:"Entwicklungspsychologie",ue:18},{n:"Sozialisation",ue:14},{n:"Erziehung & Bildung",ue:14}],
+      12:[{n:"Didaktik & Methodik",ue:16},{n:"Klinische Psychologie Grundlagen",ue:14},{n:"Sozialpsychologie",ue:16},{n:"Inklusion & Diversität",ue:14},{n:"Prüfungsvorbereitung",ue:18}]
+    },
+    soziologie:{
+      11:[{n:"Grundbegriffe der Soziologie",ue:14},{n:"Soziale Ungleichheit",ue:16},{n:"Familie & Gesellschaft",ue:14},{n:"Sozialisation & Identität",ue:14},{n:"Migration & Integration",ue:14}],
+      12:[{n:"Sozialstruktur Deutschlands",ue:14},{n:"Abweichendes Verhalten",ue:12},{n:"Gesellschaftlicher Wandel",ue:14},{n:"Sozialpolitik",ue:14},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    informatik:{
+      11:[{n:"Datenstrukturen & Algorithmen",ue:18},{n:"Objektorientierte Programmierung",ue:20},{n:"Datenbanken: SQL",ue:16},{n:"Betriebssysteme & Netzwerke",ue:14},{n:"Datenschutz & IT-Sicherheit",ue:10}],
+      12:[{n:"Softwareentwicklung: Projekte",ue:18},{n:"Web-Technologien",ue:16},{n:"KI & Digitalisierung",ue:14},{n:"IT-Recht",ue:12},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    sport:{
+      11:[{n:"Fitness & Gesundheitssport",ue:16},{n:"Mannschaftssport",ue:14},{n:"Sporttheorie: Anatomie",ue:12},{n:"Individualsport",ue:12},{n:"Entspannung",ue:8}],
+      12:[{n:"Leistungssport & Wettkampf",ue:14},{n:"Sporttheorie: Trainingslehre",ue:14},{n:"Gesundheitssport",ue:14},{n:"Wahlsport",ue:12},{n:"Prüfungsvorbereitung",ue:10}]
+    }
+  },
+  'Berufsoberschule (BOS)':{
+    mathe:{
+      12:[{n:"Differentialrechnung Vertiefung",ue:22},{n:"Integralrechnung",ue:20},{n:"Lineare Algebra",ue:18},{n:"Stochastik",ue:16},{n:"Finanzmathematik",ue:14}],
+      13:[{n:"Analysis vertieft",ue:24},{n:"Kurvendiskussion komplex",ue:20},{n:"Stochastik: Hypothesentests",ue:18},{n:"Abituraufgaben üben",ue:20},{n:"Prüfungsvorbereitung",ue:14}]
+    },
+    deutsch:{
+      12:[{n:"Literaturepochen: Überblick",ue:16},{n:"Lektüre: Prosa analysieren",ue:18},{n:"Aufsatzformen",ue:16},{n:"Lyrik & Drama",ue:14},{n:"Wissenschaftliches Schreiben",ue:12}],
+      13:[{n:"Abituraufsatz",ue:20},{n:"Literaturanalyse vertieft",ue:18},{n:"Rhetorische Analyse",ue:14},{n:"Sprache & Gesellschaft",ue:12},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    englisch:{
+      12:[{n:"Advanced Reading & Analysis",ue:16},{n:"Essay Writing",ue:16},{n:"Cultural Studies: Britain & USA",ue:14},{n:"Listening Comprehension",ue:12},{n:"Grammar in Context",ue:14}],
+      13:[{n:"Abitur Writing",ue:18},{n:"Abitur Speaking",ue:14},{n:"Literature Analysis",ue:16},{n:"Current Affairs",ue:12},{n:"Prüfungsvorbereitung",ue:18}]
+    },
+    bwr:{
+      12:[{n:"Buchführung vertieft",ue:20},{n:"Kosten- & Leistungsrechnung",ue:18},{n:"Jahresabschluss & Analyse",ue:18},{n:"Investition & Finanzierung",ue:14},{n:"Unternehmensplanung",ue:10}],
+      13:[{n:"Strategisches Management",ue:16},{n:"Controlling vertieft",ue:16},{n:"Steuern & Recht",ue:16},{n:"Wirtschaftsprüfung Grundlagen",ue:12},{n:"Prüfungsvorbereitung",ue:20}]
+    },
+    paedagogik:{
+      12:[{n:"Lerntheorien vertieft",ue:16},{n:"Entwicklungspsychologie vertieft",ue:16},{n:"Didaktik Vertiefung",ue:14},{n:"Sonderpädagogik",ue:14},{n:"Diagnostik",ue:12}],
+      13:[{n:"Forschungsmethoden",ue:14},{n:"Klinische Psychologie",ue:14},{n:"Pädagogische Institutionen",ue:12},{n:"Fallanalysen",ue:14},{n:"Prüfungsvorbereitung",ue:18}]
+    }
+  },
+  Wirtschaftsschule:{
+    bwp:{
+      7:[{n:"Was ist ein Betrieb?",ue:18},{n:"Kaufvertrag & Ablauf",ue:16},{n:"Einkauf & Beschaffung",ue:14},{n:"Rechnungslegung Grundlagen",ue:14}],
+      8:[{n:"Personalwesen",ue:16},{n:"Marketing & Absatz",ue:16},{n:"Lagerwirtschaft",ue:14},{n:"Zahlungsverkehr",ue:12},{n:"Rechtliche Grundlagen",ue:12}],
+      9:[{n:"Finanz- & Rechnungswesen",ue:18},{n:"Unternehmensführung",ue:14},{n:"E-Commerce & Digitalisierung",ue:14},{n:"Unternehmensgründung",ue:14},{n:"Projektarbeit",ue:12}],
+      10:[{n:"Jahresabschluss",ue:18},{n:"Betriebliche Planung",ue:14},{n:"Unternehmenssimulation ERP",ue:16},{n:"Fallstudien",ue:14},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    mathe:{
+      7:[{n:"Prozent- und Zinsrechnung",ue:18},{n:"Dreisatz & Proportionalität",ue:16},{n:"Terme & Gleichungen",ue:18},{n:"Geometrie",ue:14},{n:"Daten & Statistik",ue:10}],
+      8:[{n:"Gleichungssysteme",ue:16},{n:"Finanzmathematik",ue:16},{n:"Körperberechnung",ue:14},{n:"Stochastik Grundlagen",ue:14},{n:"Sachrechnen",ue:12}],
+      9:[{n:"Funktionen",ue:18},{n:"Finanzmathematik vertieft",ue:16},{n:"Statistik vertieft",ue:14},{n:"Sachrechnen komplex",ue:14},{n:"Prüfungsvorbereitung",ue:10}],
+      10:[{n:"Differentialrechnung Einführung",ue:14},{n:"Finanzmathematik Abschluss",ue:16},{n:"Stochastik",ue:14},{n:"Sachrechnen & Anwendung",ue:16},{n:"Prüfungsvorbereitung",ue:18}]
+    },
+    deutsch:{
+      7:[{n:"Geschäftliche Kommunikation",ue:16},{n:"Inhaltsangabe & Texte",ue:16},{n:"Rechtschreibung & Grammatik",ue:18},{n:"Präsentieren",ue:12},{n:"Medien",ue:10}],
+      8:[{n:"Bewerbungsunterlagen",ue:16},{n:"Textanalyse",ue:16},{n:"Argumentieren & Erörtern",ue:16},{n:"Protokoll & Bericht",ue:14},{n:"Literatur",ue:10}],
+      9:[{n:"Erörterungsaufsatz",ue:18},{n:"Literaturanalyse",ue:14},{n:"Berufliche Textsorten",ue:14},{n:"Präsentation & Referat",ue:12},{n:"Rechtschreibung",ue:12}],
+      10:[{n:"Aufsatz Vorbereitung",ue:16},{n:"Literaturanalyse vertieft",ue:16},{n:"Sprachreflexion",ue:12},{n:"Präsentation",ue:12},{n:"Prüfungsvorbereitung",ue:18}]
+    },
+    englisch:{
+      7:[{n:"Business Vocabulary",ue:14},{n:"Company & Professions",ue:14},{n:"Written Correspondence",ue:14},{n:"Listening & Speaking",ue:14},{n:"Grammar",ue:12}],
+      8:[{n:"International Trade",ue:14},{n:"Customer Service",ue:14},{n:"Business Letters",ue:14},{n:"Presentations",ue:12},{n:"Grammar vertieft",ue:12}],
+      9:[{n:"Marketing & Advertising",ue:14},{n:"Job Application",ue:14},{n:"Company Visits & Reports",ue:14},{n:"Grammar & Writing",ue:14},{n:"Reading Comprehension",ue:10}],
+      10:[{n:"Advanced Business English",ue:14},{n:"Case Studies",ue:14},{n:"Exam Writing",ue:14},{n:"Oral Exam Preparation",ue:14},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    iv:{
+      7:[{n:"Textverarbeitung: Word / Google Docs",ue:16},{n:"Tabellenkalkulation: Grundlagen",ue:16},{n:"Präsentation: PowerPoint",ue:12},{n:"Digitale Kommunikation",ue:10}],
+      8:[{n:"Tabellenkalkulation vertieft",ue:18},{n:"Datenbanken Grundlagen",ue:14},{n:"ERP-Software Einführung",ue:14},{n:"Datenschutz",ue:8}],
+      9:[{n:"ERP-Software vertieft",ue:18},{n:"Unternehmenssimulation",ue:16},{n:"Digitale Geschäftsprozesse",ue:14},{n:"Internet & E-Commerce",ue:12}],
+      10:[{n:"ERP-Abschlussübung",ue:16},{n:"Digitale Projekte",ue:14},{n:"IT-Sicherheit",ue:12},{n:"Prüfungsvorbereitung",ue:16}]
+    },
+    geografie:{
+      7:[{n:"Wirtschaftsgeografie: Europa",ue:16},{n:"Standortfaktoren",ue:14},{n:"Landwirtschaft & Industrie",ue:14},{n:"Deutschland als Wirtschaftsstandort",ue:14}],
+      8:[{n:"Globalisierung & Welthandel",ue:16},{n:"Entwicklungsländer",ue:14},{n:"Rohstoffe & Energie",ue:14},{n:"Umwelt & Nachhaltigkeit",ue:12}],
+      9:[{n:"Europäische Union",ue:16},{n:"Ostasien als Wirtschaftsraum",ue:14},{n:"BRIC-Staaten",ue:14},{n:"Migration & Bevölkerung",ue:12}],
+      10:[{n:"Weltwirtschaft",ue:14},{n:"Globale Probleme",ue:14},{n:"Geopolitik",ue:12},{n:"Prüfungsvorbereitung",ue:14}]
+    }
+  },
+  'Berufsfachschule (BFS)':{
+    deutsch:{
+      1:[{n:"Kommunikation im Pflegealltag",ue:18},{n:"Berichte & Dokumentation",ue:16},{n:"Fachsprachliche Texte",ue:14},{n:"Präsentation",ue:12}],
+      2:[{n:"Fachkommunikation vertieft",ue:16},{n:"Textanalyse & Reflexion",ue:14},{n:"Berufliche Schriftstücke",ue:16},{n:"Prüfungsvorbereitung",ue:20}]
+    },
+    pflege:{
+      1:[{n:"Pflegeplanung & Pflegeprozess",ue:24},{n:"Grundpflege",ue:20},{n:"Anatomie & Physiologie",ue:20},{n:"Hygiene & Infektionsschutz",ue:16},{n:"Pflege älterer Menschen",ue:16}],
+      2:[{n:"Pflege chronisch kranker Menschen",ue:20},{n:"Aktivierung & Rehabilitation",ue:18},{n:"Palliativpflege",ue:14},{n:"Medikamentenkunde",ue:16},{n:"Prüfungsvorbereitung",ue:22}]
+    },
+    englisch:{
+      1:[{n:"Medical English: Body & Health",ue:14},{n:"Patient Communication",ue:14},{n:"Medical Vocabulary",ue:14},{n:"Healthcare Systems",ue:10}],
+      2:[{n:"Clinical Documentation",ue:14},{n:"Intercultural Communication",ue:12},{n:"Healthcare English vertieft",ue:14},{n:"Exam Preparation",ue:16}]
+    },
+    sport:{
+      1:[{n:"Ergonomie & Rückenschule",ue:16},{n:"Entspannung & Stressbewältigung",ue:14},{n:"Erste Hilfe & Prävention",ue:14},{n:"Ausdauer & Kraft",ue:12}],
+      2:[{n:"Gesundheitssport",ue:14},{n:"Pflegespezifische Bewegungsübungen",ue:14},{n:"Abschluss",ue:10}]
+    }
+  },
+  Fachschule:{
+    bwr:{
+      1:[{n:"Betriebswirtschaft: Grundlagen",ue:20},{n:"Buchführung & Jahresabschluss",ue:22},{n:"Kosten- und Leistungsrechnung",ue:18},{n:"Personalwesen",ue:16},{n:"Marketing",ue:14}],
+      2:[{n:"Investition & Finanzierung",ue:18},{n:"Unternehmensführung",ue:16},{n:"Controlling & Planung",ue:18},{n:"Projektmanagement",ue:14},{n:"Technikerarbeit / Abschlussarbeit",ue:24}]
+    },
+    technologie:{
+      1:[{n:"Werkstofftechnik",ue:20},{n:"Fertigungstechnik",ue:20},{n:"Konstruktion & CAD",ue:18},{n:"Qualitätsmanagement",ue:14},{n:"Arbeitssicherheit",ue:12}],
+      2:[{n:"Produktionssysteme",ue:18},{n:"CNC & Automation",ue:18},{n:"Projekttechnik",ue:16},{n:"Messtechnik",ue:14},{n:"Technikerarbeit",ue:24}]
+    },
+    mathe:{
+      1:[{n:"Höhere Mathematik: Grundlagen",ue:18},{n:"Differentialrechnung",ue:18},{n:"Integralrechnung",ue:16},{n:"Statistik & Wahrscheinlichkeit",ue:14},{n:"Technische Anwendungen",ue:14}],
+      2:[{n:"Numerische Methoden",ue:16},{n:"Lineare Algebra",ue:16},{n:"Technische Mathematik vertieft",ue:18},{n:"Anwendungsaufgaben",ue:14},{n:"Prüfungsvorbereitung",ue:14}]
+    }
+  },
+  Fachakademie:{
+    paedagogik:{
+      1:[{n:"Grundlagen der Erziehungswissenschaft",ue:20},{n:"Entwicklungspsychologie",ue:18},{n:"Lerntheorien & Didaktik",ue:16},{n:"Sozialisation & Familie",ue:14},{n:"Inklusion Grundlagen",ue:14}],
+      2:[{n:"Klinische Psychologie",ue:16},{n:"Frühpädagogik vertieft",ue:16},{n:"Forschungsmethoden",ue:14},{n:"Berufspraktikum Reflexion",ue:18},{n:"Abschlussarbeit",ue:26}]
+    },
+    deutsch:{
+      1:[{n:"Wissenschaftliches Schreiben",ue:18},{n:"Fachsprachliche Kommunikation",ue:16},{n:"Literaturrecherche & Zitieren",ue:14},{n:"Präsentation & Vortrag",ue:14}],
+      2:[{n:"Hausarbeit & Dokumentation",ue:18},{n:"Kommunikation im pädagogischen Alltag",ue:14},{n:"Fachsprache vertieft",ue:14},{n:"Prüfungsvorbereitung",ue:18}]
+    },
+    sport:{
+      1:[{n:"Bewegungspädagogik",ue:16},{n:"Sport & Spiel für Kinder",ue:16},{n:"Psychomotorik",ue:14},{n:"Entspannungspädagogik",ue:12}],
+      2:[{n:"Bewegungsförderung für Kinder",ue:14},{n:"Inklusive Sportangebote",ue:14},{n:"Sporttherapie Grundlagen",ue:12},{n:"Abschlussreflexion",ue:10}]
+    }
+  },
+  // === FÖRDERSCHULE (Förderschwerpunkt Lernen) — Quelle: ISB Bayern LehrplanPLUS ===
+  Förderschule:{
+    mathe:{
+      1:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:22},{n:"Methodenkompetenzen",ue:16}],
+      2:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:22},{n:"Methodenkompetenzen",ue:16}],
+      3:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:22},{n:"Methodenkompetenzen",ue:16}],
+      4:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:22},{n:"Methodenkompetenzen",ue:16}],
+      5:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      6:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      7:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      8:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      9:[{n:"Zahlen und Operationen",ue:38},{n:"Raum und Form",ue:28},{n:"Größen und Messen",ue:28},{n:"Daten, Häufigkeit und Wahrscheinlichkeit",ue:26},{n:"Methodenkompetenzen",ue:20}]
+    },
+    deutsch:{
+      1:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      2:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      3:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      4:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      5:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      6:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      7:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      8:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}],
+      9:[{n:"Sprechen und Zuhören",ue:46},{n:"Lesen – mit Texten und Medien umgehen",ue:46},{n:"Schreiben",ue:42},{n:"Methodenkompetenzen",ue:26}]
+    },
+    englisch:{
+      3:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}],
+      4:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}],
+      5:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}],
+      6:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}],
+      7:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}],
+      8:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}],
+      9:[{n:"Mündliche Kompetenzen",ue:28},{n:"Schriftliche Kompetenzen",ue:22},{n:"Wortschatz, Formen und Funktionen",ue:22},{n:"Landeskundliche und interkulturelle Kompetenzen",ue:18},{n:"Methodenkompetenzen",ue:16}]
+    },
+    gpg:{
+      5:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      6:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      7:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      8:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      9:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}]
+    },
+    nt:{
+      5:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      6:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      7:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      8:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}],
+      9:[{n:"Demokratie und Gesellschaft",ue:18},{n:"Mensch und Natur",ue:18},{n:"Zeit und Wandel",ue:18},{n:"Lebensraum und Mobilität",ue:18},{n:"Technik und Kultur",ue:16},{n:"Methodenkompetenzen",ue:12}]
+    },
+    sport:{
+      1:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      2:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      3:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      4:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      5:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      6:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      7:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      8:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}],
+      9:[{n:"Gesundheit und Fitness",ue:30},{n:"Fairness, Kooperation, Selbstkompetenz",ue:28},{n:"Spielen, gestalten und leisten",ue:32},{n:"Methodenkompetenzen",ue:18}]
+    },
+    musik:{
+      1:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      2:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      3:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      4:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      5:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      6:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      7:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      8:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}],
+      9:[{n:"Singen und Sprechen",ue:28},{n:"Mit Instrumenten spielen",ue:26},{n:"Hören und Gestalten von Musik",ue:26},{n:"Methodenkompetenzen",ue:20}]
+    },
+    kunst:{
+      1:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      2:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      3:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      4:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      5:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      6:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      7:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      8:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}],
+      9:[{n:"Gestalten",ue:32},{n:"Bilder und Objekte betrachten",ue:30},{n:"Methodenkompetenzen",ue:22}]
+    },
+    hsb:{
+      5:[{n:"Arbeitsprozess",ue:20},{n:"Gestaltung",ue:20},{n:"Werkzeuge, Geräte und Maschinen",ue:18},{n:"Technisches Zeichnen",ue:16},{n:"Methodenkompetenzen",ue:14}],
+      6:[{n:"Arbeitsprozess",ue:20},{n:"Gestaltung",ue:20},{n:"Werkzeuge, Geräte und Maschinen",ue:18},{n:"Technisches Zeichnen",ue:16},{n:"Methodenkompetenzen",ue:14}],
+      7:[{n:"Arbeitsprozess",ue:20},{n:"Gestaltung",ue:20},{n:"Werkzeuge, Geräte und Maschinen",ue:18},{n:"Technisches Zeichnen",ue:16},{n:"Methodenkompetenzen",ue:14}],
+      8:[{n:"Arbeitsprozess",ue:20},{n:"Gestaltung",ue:20},{n:"Werkzeuge, Geräte und Maschinen",ue:18},{n:"Technisches Zeichnen",ue:16},{n:"Methodenkompetenzen",ue:14}],
+      9:[{n:"Arbeitsprozess",ue:20},{n:"Gestaltung",ue:20},{n:"Werkzeuge, Geräte und Maschinen",ue:18},{n:"Technisches Zeichnen",ue:16},{n:"Methodenkompetenzen",ue:14}]
+    },
+    religion:{
+      1:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      2:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      3:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      4:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      5:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      6:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      7:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      8:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}],
+      9:[{n:"Mensch und Welt",ue:14},{n:"Die Frage nach Gott",ue:14},{n:"Biblische Botschaft",ue:14},{n:"Jesus Christus",ue:14},{n:"Kirche und Gemeinde",ue:12},{n:"Andere Religionen – Weltanschauungen",ue:12},{n:"Methodenkompetenzen",ue:12}]
+    },
+    informatik:{
+      7:[{n:"Hardware und Betriebssysteme",ue:22},{n:"Digitaler Informationsaustausch",ue:18},{n:"Datenverarbeitung",ue:18},{n:"Programmieren",ue:24},{n:"Methodenkompetenzen",ue:14}],
+      8:[{n:"Hardware und Betriebssysteme",ue:22},{n:"Digitaler Informationsaustausch",ue:18},{n:"Datenverarbeitung",ue:18},{n:"Programmieren",ue:24},{n:"Methodenkompetenzen",ue:14}],
+      9:[{n:"Hardware und Betriebssysteme",ue:22},{n:"Digitaler Informationsaustausch",ue:18},{n:"Datenverarbeitung",ue:18},{n:"Programmieren",ue:24},{n:"Methodenkompetenzen",ue:14}]
     }
   }
   },
@@ -6587,9 +6857,7 @@ function getLehrplanForSelection(){
   if(!blCode) return null;
   const blData = LEHRPLAN_DB[blCode[1]];
   if(!blData) return null;
-  // Try exact schulart, then any
   let saData = blData[sa];
-  if(!saData) saData = Object.values(blData)[0];
   if(!saData || !saData[fachId]) return null;
   return saData[fachId][jgst] || null;
 }
@@ -6950,6 +7218,7 @@ async function kiDistribute(){
   const btn = document.querySelector('[onclick="kiDistribute()"]');
   if (btn) { btn.textContent = '⏳ KI denkt...'; btn.disabled = true; }
 
+  // Worker fetches current Lehrplan live from official source (ISB, etc.)
   const result = await callKI('jahresplanung', {
     bundesland:    state.bundesland || '',
     schulart:      state.schulart || '',

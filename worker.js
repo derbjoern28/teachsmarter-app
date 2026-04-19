@@ -79,6 +79,20 @@ export default {
         return await handleSchulferien(request, env, corsHeaders);
       }
 
+      // iCal-Proxy: WebUntis CORS-Problem umgehen
+      if (path === '/ical-proxy' && request.method === 'GET') {
+        const targetUrl = url.searchParams.get('url');
+        if (!targetUrl) return json({ error: 'Missing url' }, 400, corsHeaders);
+        try {
+          const upstream = await fetch(targetUrl, { headers: { 'User-Agent': 'TeachSmarter/1.0' } });
+          if (!upstream.ok) return json({ error: 'Upstream HTTP ' + upstream.status }, 502, corsHeaders);
+          const text = await upstream.text();
+          return new Response(text, { headers: { ...corsHeaders, 'Content-Type': 'text/plain; charset=utf-8' } });
+        } catch(e) {
+          return json({ error: e.message }, 502, corsHeaders);
+        }
+      }
+
       return json({ error: 'Not found' }, 404, corsHeaders);
 
     } catch (err) {
@@ -354,6 +368,9 @@ async function handleKI(request, env, cors) {
         return json({ ok: true }, 200, cors); // Anderer Fehler = Key existiert
       }
     }
+    if (feature === 'jahresplanung') {
+      context._fetchedLBs = await fetchLehrplanLBs(context.bundesland, context.schulart, context.fach, context.jgst);
+    }
     const { systemPrompt, userPrompt, maxTokens } = buildPrompt(feature, context);
     let text;
     try {
@@ -395,6 +412,11 @@ async function handleKI(request, env, cors) {
   if (feature === 'interaktiv') creditCost = IV_UMFANG_COSTS[context?.umfang] ?? 2;
   if (!isFlatrate && creditCost > 0 && license.credits < creditCost) {
     return json({ error: 'no_credits', message: 'Nicht genug KI-Credits. Bitte Credits nachkaufen.' }, 402, cors);
+  }
+
+  // For Jahresplanung: fetch current Lehrplan from official source
+  if (feature === 'jahresplanung') {
+    context._fetchedLBs = await fetchLehrplanLBs(context.bundesland, context.schulart, context.fach, context.jgst);
   }
 
   // Build prompt based on feature
@@ -449,6 +471,25 @@ async function _callProviderApi(apiKey, provider, systemPrompt, userPrompt, maxT
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
       body: JSON.stringify({ model: 'gpt-4o', max_tokens: maxTokens, messages }),
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      let detail = '';
+      try { detail = JSON.parse(err)?.error?.message || ''; } catch {}
+      throw new Error(res.status === 401 ? 'invalid_api_key' : (detail || `HTTP ${res.status}`));
+    }
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || '';
+  }
+
+  if (provider === 'perplexity') {
+    const messages = [];
+    if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+    messages.push({ role: 'user', content: userPrompt });
+    const res = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'sonar-pro', max_tokens: maxTokens, messages }),
     });
     if (!res.ok) {
       const err = await res.text();
@@ -525,6 +566,84 @@ async function handleCreditsInfo(request, env, cors) {
 }
 
 // ═══════════════════════════════════════════
+// LEHRPLAN FETCH (ISB Bayern + Fallbacks)
+// ═══════════════════════════════════════════
+
+// ISB LehrplanPLUS Bayern: Fach-Name → URL-Slug
+const BY_FACH_SLUGS = {
+  'mathematik':'mathematik','mathe':'mathematik','math':'mathematik',
+  'deutsch':'deutsch',
+  'englisch':'englisch','english':'englisch',
+  'natur und technik':'natur-und-technik','natur-und-technik':'natur-und-technik','nt':'natur-und-technik',
+  'geschichte-politik-geographie':'geschichte-politik-geographie','gpg':'geschichte-politik-geographie',
+  'geschichte/politik/geographie':'geschichte-politik-geographie',
+  'wirtschaft und beruf':'wirtschaft-und-beruf','wirtschaft-und-beruf':'wirtschaft-und-beruf','wib':'wirtschaft-und-beruf',
+  'sport':'sport',
+  'musik':'musik',
+  'kunst':'kunst',
+  'religionslehre':'katholische-religionslehre','religion':'katholische-religionslehre',
+  'ev. religionslehre':'evangelische-religionslehre','evangelische religionslehre':'evangelische-religionslehre',
+  'biologie':'biologie','bio':'biologie',
+  'physik':'physik',
+  'chemie':'chemie',
+  'geschichte':'geschichte',
+  'geographie':'geographie','geografie':'geographie',
+  'informatik':'informatik',
+  'französisch':'franzoesisch','franzoesisch':'franzoesisch','franz.':'franzoesisch',
+  'hauswirtschaft und soziales':'hauswirtschaft-und-soziales','hsb':'hauswirtschaft-und-soziales',
+};
+
+// ISB LehrplanPLUS Bayern: Schulart → { urlPart, suffix }
+const BY_SCHULART_MAP = {
+  'Mittelschule':  { urlPart:'mittelschule',  suffix:'/regelklasse' },
+  'Gymnasium':     { urlPart:'gymnasium',     suffix:'' },
+  'Realschule':    { urlPart:'realschule',    suffix:'/wpfg1' },
+  'Förderschule':  { urlPart:'foerderschule', suffix:'/foerderschwerpunkt/lernen' },
+  'Grundschule':   { urlPart:'grundschule',   suffix:'' },
+  'FOS/BOS':       { urlPart:'fos-bos',       suffix:'' },
+  'Berufsschule':  { urlPart:'berufsschule',  suffix:'' },
+};
+
+async function fetchLehrplanBY(schulart, fach, jgst) {
+  const saInfo = BY_SCHULART_MAP[schulart];
+  const fachSlug = BY_FACH_SLUGS[fach?.toLowerCase()?.trim()];
+  if (!saInfo || !fachSlug) return null;
+
+  const url = `https://www.lehrplanplus.bayern.de/fachlehrplan/${saInfo.urlPart}/${jgst}/${fachSlug}${saInfo.suffix}`;
+  try {
+    const resp = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 TeachSmarter/1.0' },
+      cf: { cacheTtl: 86400, cacheEverything: true },
+    });
+    if (!resp.ok) return null;
+    const html = await resp.text();
+
+    // ISB LehrplanPLUS: Lernbereiche appear as "Lernbereich N: Titel" in headings
+    const found = [];
+    const re = /Lernbereich\s+\d+[:\s]+([^<\n\r]{3,80})/gi;
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      const name = m[1].trim().replace(/&amp;/g,'&').replace(/&#\d+;|&[a-z]+;/g,'').replace(/\s+/g,' ');
+      if (name && !found.includes(name)) found.push(name);
+    }
+    return found.length > 0 ? found : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Entry point: fetch LBs for any Bundesland (BY implemented, others: null → KI invents)
+async function fetchLehrplanLBs(bundesland, schulart, fach, jgst) {
+  if (!bundesland || !schulart || !fach || !jgst) return null;
+  const bl = bundesland.trim();
+  if (bl === 'Bayern' || bl === 'BY') {
+    return await fetchLehrplanBY(schulart, fach, jgst);
+  }
+  // Other states: return null — KI builds plan from its training knowledge
+  return null;
+}
+
+// ═══════════════════════════════════════════
 // PROMPT BUILDER
 // ═══════════════════════════════════════════
 function buildPrompt(feature, ctx) {
@@ -548,6 +667,14 @@ Merkmale guten Unterrichts (nach Hilbert Meyer): Klare Strukturierung, Lernförd
 
     case 'jahresplanung': {
       const totalUE = parseInt(ctx.totalUE) || 160;
+      // Priority: 1) Live-fetched from official source, 2) client-provided, 3) KI invents
+      const fetchedNames = ctx._fetchedLBs && ctx._fetchedLBs.length > 0 ? ctx._fetchedLBs : null;
+      const clientLBs = ctx.lernbereiche && Array.isArray(ctx.lernbereiche) && ctx.lernbereiche.length > 0 ? ctx.lernbereiche : null;
+      const hasLehrplan = fetchedNames || clientLBs;
+      const lbList = fetchedNames
+        ? fetchedNames.map((n,i)=>`${i+1}. "${n}"`).join('\n')
+        : clientLBs ? clientLBs.map((lb,i)=>`${i+1}. "${lb.name}" (Richtwert: ${lb.ue} UE)`).join('\n') : '';
+      const sourceNote = fetchedNames ? ' (aktuell vom offiziellen Lehrplan abgerufen)' : '';
       return {
       systemPrompt: baseSystem + `\n\nDu erstellst eine Jahresplanung für ein Fach.
 PFLICHTREGELN — exakt einhalten:
@@ -556,8 +683,9 @@ PFLICHTREGELN — exakt einhalten:
 3. Wenn am Ende eines Blocks noch UEs in einer Woche frei sind, beginnt der nächste Block in derselben Woche.
 4. Berücksichtige didaktische Progression (leicht→schwer, aufbauend) und Prüfungszeiträume.
 5. Antworte als JSON-Array: [{"name":"Lernbereich","ue":12,"sequenzen":[{"title":"Sequenz","ue":4}]}]
-6. Antworte NUR mit dem JSON-Array, keine Erklärung.`,
-      userPrompt: `Erstelle eine Jahresplanung.
+6. Antworte NUR mit dem JSON-Array, keine Erklärung.
+${hasLehrplan ? `7. PFLICHT: Verwende AUSSCHLIESSLICH die vorgegebenen Lernbereiche aus dem offiziellen Lehrplan${sourceNote} — erfinde keine eigenen, füge keine hinzu, lasse keinen weg. Nur die UE-Werte anpassen.` : '7. Erstelle fachlich korrekte Lernbereiche passend zum Lehrplan des Bundeslandes.'}`,
+      userPrompt: `${hasLehrplan ? `Verteile die Unterrichtsstunden auf die Lernbereiche des offiziellen Lehrplans${sourceNote}.` : 'Erstelle eine Jahresplanung mit den passenden Lernbereichen laut Lehrplan.'}
 Bundesland: ${ctx.bundesland || 'Bayern'}
 Schulart: ${ctx.schulart || 'Mittelschule'}
 Fach: ${ctx.fach || 'Mathematik'}
@@ -565,8 +693,8 @@ Jahrgangsstufe: ${ctx.jgst || '7'}
 Wochenstunden: ${ctx.wochenstunden || 4}
 Verfügbare UE im Schuljahr: ${totalUE} (PFLICHT: Summe aller ue-Werte muss exakt ${totalUE} ergeben)
 ${ctx.schwerpunkte ? 'Schwerpunkte: ' + ctx.schwerpunkte : ''}
-${ctx.besonderheiten ? 'Besonderheiten: ' + ctx.besonderheiten : ''}
 ${ctx.schulbuch ? 'Schulbuch: ' + ctx.schulbuch : ''}
+${hasLehrplan ? `\nVORGEGEBENE LERNBEREICHE${sourceNote} (exakt diese Namen verwenden, nur UE anpassen):\n${lbList}` : ''}
 
 Antworte NUR mit dem JSON-Array.`,
       maxTokens: 3000,
@@ -1666,32 +1794,22 @@ async function sendLicenseEmail(env, email, key, plan, credits) {
                      isFounder ? "Founder's Edition (29 KI-Credits)" :
                      credits + ' KI-Credits';
 
-  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.5/TeachSmarter-Setup.exe';
-  const MAC_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.5/TeachSmarter-mac-arm64.dmg';
-  const WEB_URL = 'https://app.teachsmarter.de/TeachSmarter_Dashboard';
+  const WIN_URL = 'https://github.com/derbjoern28/teachsmarter-app/releases/download/v1.1.6/TeachSmarter-Setup.exe';
+  const WEB_URL = 'https://app.teachsmarter.de';
 
   const downloadBlock = (isFounder || isPremium) ? `
-        <p style="color:#555;margin-bottom:12px"><strong>📥 App herunterladen:</strong></p>
-        <table style="width:100%;border-collapse:separate;border-spacing:0 8px;margin-bottom:24px">
-          <tr>
-            <td style="padding:0 4px 0 0">
-              <a href="${WIN_URL}"
-                 style="display:block;background:#0078d4;color:#fff;text-decoration:none;border-radius:8px;padding:12px 16px;text-align:center;font-weight:600;font-size:.9rem">
-                🪟 Windows herunterladen (.exe)
-              </a>
-            </td>
-            <td style="padding:0 0 0 4px">
-              <a href="${MAC_URL}"
-                 style="display:block;background:#1d1d1f;color:#fff;text-decoration:none;border-radius:8px;padding:12px 16px;text-align:center;font-weight:600;font-size:.9rem">
-                🍎 Mac herunterladen (.dmg)
-              </a>
-            </td>
-          </tr>
-        </table>
-        <p style="color:#555;margin-bottom:24px;font-size:.85rem">
-          Oder direkt im Browser (PWA) öffnen:
-          <a href="${WEB_URL}" style="color:#3BA89B">${WEB_URL}</a>
+        <a href="${WEB_URL}"
+           style="display:block;background:linear-gradient(135deg,#3BA89B,#2d9088);color:#fff;text-decoration:none;border-radius:10px;padding:16px 20px;text-align:center;font-weight:700;font-size:1rem;margin-bottom:16px;letter-spacing:.01em">
+          🚀 App jetzt öffnen — für alle Systeme
+        </a>
+        <p style="color:#888;font-size:.8rem;text-align:center;margin-bottom:20px">
+          Browser · iPad · iPhone · Mac · Android
         </p>
+        <p style="color:#555;margin-bottom:12px;font-size:.85rem"><strong>Windows Desktop-App:</strong></p>
+        <a href="${WIN_URL}"
+           style="display:block;background:#0078d4;color:#fff;text-decoration:none;border-radius:8px;padding:11px 16px;text-align:center;font-weight:600;font-size:.85rem;margin-bottom:24px">
+          🪟 Windows herunterladen (.exe)
+        </a>
   ` : '';
 
   await sendEmail(env, {
@@ -1718,7 +1836,7 @@ async function sendLicenseEmail(env, email, key, plan, credits) {
 
         <p style="color:#555;margin-bottom:8px"><strong>So aktivierst du deinen Schlüssel:</strong></p>
         <ol style="color:#555;padding-left:20px;margin-bottom:24px">
-          <li>Öffne die TeachSmarter App (Download oben oder PWA)</li>
+          <li>Öffne <a href="${WEB_URL}" style="color:#3BA89B">app.teachsmarter.de</a> oder die Windows-App</li>
           <li>Gehe zu <strong>Einstellungen → Abo &amp; KI</strong></li>
           <li>Trage den Schlüssel ein und tippe auf <strong>Aktivieren</strong></li>
         </ol>
