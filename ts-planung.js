@@ -178,9 +178,10 @@ function _computeScheduleInner(plan, weeks){
     // week where the previous block ended (even if there are empty weeks in between).
     // Walk backwards past fully-untouched weeks until we find a partially-used week.
     let wi = lb.pinWeek;
+    // Walk backward skipping ferien OR completely-untouched weeks to find last partial week
     let lookback = wi - 1;
-    while (lookback >= 0 && !weeks[lookback].isFerien && schedule[lookback].capacity > 0
-           && schedule[lookback].remaining === schedule[lookback].capacity) {
+    while (lookback >= 0 && (weeks[lookback].isFerien ||
+           (schedule[lookback].capacity > 0 && schedule[lookback].remaining === schedule[lookback].capacity))) {
       lookback--;
     }
     if (lookback >= 0 && !weeks[lookback].isFerien
@@ -7462,9 +7463,11 @@ function renderPlanung(){
     } else {
       const hasPruef = !!pruefungen[wi];
       const ueLabel = sched.blockedUE ? `${w.ue} <span style="color:var(--ts-error);font-size:.7rem">−${sched.blockedUE}</span>` : `${w.ue}`;
-      html+=`<div class="pl-wk${isCurrent?' today':''}${hasPruef?' has-pruef':''}${_wkBlockEvts.length?' has-block-evt':''}" data-wi="${wi}">
+      // No usable UE this week (all blocked by events or 0-UE fach day) → grayed, no action
+      const noCapacity = sched.capacity <= 0;
+      html+=`<div class="pl-wk${isCurrent?' today':''}${hasPruef?' has-pruef':''}${_wkBlockEvts.length?' has-block-evt':''}${noCapacity?' no-capacity':''}" data-wi="${wi}">
         <div class="pl-wk-kw">${w.kw}</div><div class="pl-wk-date">${dateLabel}</div>
-        <div class="pl-wk-slot pl-wk-empty" style="flex-direction:column;align-items:stretch"><span class="pl-wk-hint" onclick="openWeekModal(${wi})">+ Lernbereich</span>${_evtBanners}${_pruefTag(wi)}</div>
+        <div class="pl-wk-slot${noCapacity?'':' pl-wk-empty'}" style="flex-direction:column;align-items:stretch">${noCapacity?'<span style="font-size:.65rem;color:var(--ts-text-muted);font-style:italic">–</span>':`<span class="pl-wk-hint" onclick="openWeekModal(${wi})">+ Lernbereich</span>`}${_evtBanners}${_pruefTag(wi)}</div>
         <div class="pl-wk-ue">${ueLabel}</div>
       </div>`;
     }

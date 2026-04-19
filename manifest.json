@@ -7,7 +7,7 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#FAF8F5",
+  "background_color": "#3BA89B",
   "theme_color": "#3BA89B",
   "icons": [
     {
@@ -20,12 +20,12 @@
       "src": "ts-icon-app.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     },
     {
-      "src": "ts-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "ts-icon-app.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any"
     }
   ],
