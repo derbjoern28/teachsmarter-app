@@ -3,7 +3,7 @@
    Scope: nur eigene Origin + date.nager.at
    ═══════════════════════════════════════════ */
 
-const CACHE = 'teachsmarter-v62';
+const CACHE = 'teachsmarter-v86';
 
 /* Cloudflare Pages liefert HTML-Dateien ohne .html-Extension (Pretty URLs).
    Alle Shell-URLs daher ohne .html — sonst 308-Redirect und Cache-Miss. */

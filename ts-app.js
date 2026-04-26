@@ -47,6 +47,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initApp(){
+  // PIN-Overlay immer zuerst schließen — verhindert Dauerschleife wenn License-Check
+  // abbricht oder ein anderer früher Return folgt
+  if(document.activeElement) document.activeElement.blur();
+  const overlay = document.getElementById('pin-overlay');
+  if(overlay) overlay.style.display = 'none';
+
   // ── License Gate ─────────────────────────────────────────────────────
   if (!licenseKey) {
     showLicenseGate();
@@ -75,12 +81,6 @@ async function initApp(){
   if(typeof renderMonat === 'function') renderMonat();
   if(typeof loadHolidays === 'function') loadHolidays();
 
-  // Fokus entfernen bevor Overlay schließt — verhindert iOS-Zoom nach PIN-Eingabe
-  if(document.activeElement) document.activeElement.blur();
-
-  const overlay = document.getElementById('pin-overlay');
-  if(overlay) overlay.style.display = 'none';
-
   // Neuer Nutzer: Welcome-Popup mit Link zu "Mein Profil"
   if(isNewUser) showWelcomePopup();
 
@@ -88,6 +88,98 @@ async function initApp(){
   // (PWA auf frischen Geräten hat noch kein state.plan in IndexedDB)
   if (licenseKey) await verifyLicense();
   updateToolsNavState();
+  if(!isNewUser) setTimeout(checkBackupReminder, 2000);
+
+  // Einmaliges Dankeschön-Popup mit Gutschein (nur bestehende Nutzer, einmalig)
+  if(!isNewUser && !localStorage.getItem('ts_promo_ty1')) {
+    setTimeout(showPromoPopupTy1, 1200);
+  }
+}
+
+function showPromoPopupTy1() {
+  if(localStorage.getItem('ts_promo_ty1')) return;
+  localStorage.setItem('ts_promo_ty1', '1');
+
+  const el = document.createElement('div');
+  el.id = 'ts-promo-ty1';
+  el.style.cssText = [
+    'position:fixed','inset:0','z-index:3000',
+    'display:flex','align-items:center','justify-content:center',
+    'background:rgba(0,0,0,.45)','padding:1rem'
+  ].join(';');
+  el.innerHTML = `
+    <div style="background:var(--ts-bg-card);border-radius:18px;max-width:380px;width:100%;padding:2rem 1.75rem;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.22);position:relative">
+      <div style="font-size:2.2rem;margin-bottom:.5rem">🎉</div>
+      <div style="font-size:1.15rem;font-weight:700;color:var(--ts-text);margin-bottom:.5rem">Danke, dass du dabei bist!</div>
+      <div style="font-size:.88rem;color:var(--ts-text-secondary);line-height:1.55;margin-bottom:1.25rem">
+        Wir arbeiten jeden Tag daran, TeachSmarter besser zu machen — dein Vertrauen motiviert uns sehr.<br>
+        Als kleines Dankeschön gibt es <strong>5&nbsp;€ Rabatt</strong> in unserem Shop:
+      </div>
+
+      <div style="background:linear-gradient(135deg,#3BA89B15,#5B8EC915);border:2px dashed #3BA89B;border-radius:12px;padding:.85rem 1rem;margin-bottom:1.25rem">
+        <div style="font-size:.72rem;font-weight:600;color:var(--ts-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Dein Gutscheincode</div>
+        <div style="font-size:1.4rem;font-weight:800;letter-spacing:.12em;color:#3BA89B;font-family:monospace">schulplaner5</div>
+        <div style="font-size:.75rem;color:var(--ts-text-muted);margin-top:.25rem">Einmalig einlösbar · kein Mindestbestellwert</div>
+      </div>
+
+      <button onclick="window.open('https://shop.teachsmarter.de','_blank','noopener');document.getElementById('ts-promo-ty1').remove()"
+        style="display:block;width:100%;background:#3BA89B;color:#fff;border:none;padding:.75rem 1.5rem;border-radius:10px;font-weight:700;font-size:.95rem;margin-bottom:.75rem;cursor:pointer;font-family:inherit">
+        Jetzt einlösen → Shop öffnen
+      </button>
+      <button onclick="document.getElementById('ts-promo-ty1').remove()"
+        style="background:none;border:none;color:var(--ts-text-muted);font-size:.82rem;cursor:pointer;font-family:inherit">
+        Später
+      </button>
+    </div>`;
+  document.body.appendChild(el);
+}
+
+function checkBackupReminder(){
+  const last = parseInt(localStorage.getItem('ts_last_backup') || '0', 10);
+  const daysSince = last ? Math.floor((Date.now() - last) / 86400000) : null;
+  const WARN_DAYS = 7;
+  if(last && daysSince < WARN_DAYS) return;
+
+  const label = last
+    ? `Dein letztes Backup ist ${daysSince} Tag${daysSince !== 1 ? 'e' : ''} alt.`
+    : 'Du hast noch kein Backup erstellt.';
+
+  const banner = document.createElement('div');
+  banner.id = 'ts-backup-banner';
+  banner.style.cssText = [
+    'position:fixed',
+    'bottom:24px',
+    'left:50%',
+    'transform:translateX(-50%)',
+    'z-index:9500',
+    'background:#1A3C5E',
+    'border:1px solid rgba(59,168,155,.35)',
+    'border-radius:14px',
+    'padding:14px 18px',
+    'display:flex',
+    'align-items:center',
+    'gap:14px',
+    'box-shadow:0 8px 32px rgba(0,0,0,.3)',
+    'max-width:min(480px,90vw)',
+    'width:max-content',
+    'font-family:var(--font-body,sans-serif)',
+  ].join(';');
+
+  banner.innerHTML = `
+    <span style="font-size:1.5rem;flex-shrink:0">💾</span>
+    <div style="flex:1;min-width:0">
+      <div style="color:#fff;font-size:.88rem;font-weight:600;margin-bottom:2px">Backup empfohlen</div>
+      <div style="color:rgba(255,255,255,.65);font-size:.8rem">${label} Jetzt sichern — ein Klick genügt.</div>
+    </div>
+    <button onclick="esExportData()"
+      style="flex-shrink:0;background:#3BA89B;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">
+      Backup ↓
+    </button>
+    <button onclick="this.closest('#ts-backup-banner').remove()"
+      style="flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.1rem;cursor:pointer;padding:0 2px;line-height:1"
+      title="Schließen">×</button>`;
+
+  document.body.appendChild(banner);
 }
 
 function showWelcomePopup(){
@@ -193,6 +285,22 @@ function renderProfil(){
             <button class="btn btn-primary btn-sm" style="width:auto" onclick="esSaveProfile()">Speichern</button>
             <span id="es-profile-saved" class="note-saved">Gespeichert ✓</span>
           </div>
+        </div>
+      </div>
+
+      <!-- ── Eigene Ferien ── -->
+      <div class="es-section">
+        <div class="es-section-title">Eigene Ferien & Feiertage</div>
+        <div class="es-card">
+          ${state.land==='CH'?`<div class="es-toggle-desc" style="margin-bottom:var(--sp-sm)">Schweizer Schulferien sind kantonal und regional verschieden — trage deine Ferien hier manuell ein. Sie erscheinen im Ferien-Countdown und in der Kalenderansicht.</div>`:`<div class="es-toggle-desc" style="margin-bottom:var(--sp-sm)">Füge schulspezifische Ferientage hinzu, die nicht automatisch erkannt werden.</div>`}
+          <div id="es-custom-ferien-list" style="display:grid;gap:6px;margin-bottom:var(--sp-sm)">
+            ${(()=>{ const cf=typeof _cfGetAll==='function'?_cfGetAll():[];
+              return cf.length?cf.map(f=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--ts-bg-warm);border-radius:8px;border:1px solid var(--ts-border-light)">
+                <div><span style="font-weight:600;font-size:.88rem;color:var(--ts-navy)">${esc(f.name)}</span><span style="font-size:.75rem;color:var(--ts-text-muted);margin-left:8px">${f.start.split('-').reverse().join('.')} – ${f.end.split('-').reverse().join('.')}</span></div>
+                <button onclick="_cfDelete('${f.id}')" style="border:none;background:none;cursor:pointer;color:var(--ts-text-muted);font-size:1rem;padding:4px 6px;border-radius:6px" title="Löschen">✕</button>
+              </div>`).join(''):`<div style="font-size:.8rem;color:var(--ts-text-muted)">Noch keine eigenen Ferien eingetragen.</div>`; })()}
+          </div>
+          <button class="btn btn-secondary btn-sm" style="width:auto" onclick="_cfShowAddModal()">＋ Ferien hinzufügen</button>
         </div>
       </div>
 
@@ -304,9 +412,19 @@ function renderProfil(){
           </div>
           <div id="es-ical-msg" class="es-msg" style="display:none"></div>
           <div class="es-btn-row">
-            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esImportICal()">↓ Importieren</button>
+            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esImportICal()">↓ Via URL importieren</button>
           </div>
-          <div class="es-hint">Der Import überschreibt den manuell eingetragenen Stundenplan. Tipp: Unter WebUntis → Kalender → Kalender-Abonnement findest du deine persönliche iCal-URL.</div>
+          <div style="display:flex;align-items:center;gap:.5rem;margin:.5rem 0;color:var(--ts-text-muted);font-size:.8rem">
+            <hr style="flex:1;border:none;border-top:1px solid var(--ts-border)"> oder <hr style="flex:1;border:none;border-top:1px solid var(--ts-border)">
+          </div>
+          <div class="es-field">
+            <label class="es-label">iCal-Datei (.ics) hochladen</label>
+            <input id="es-ical-file" class="input" type="file" accept=".ics,text/calendar" style="padding:6px">
+          </div>
+          <div class="es-btn-row">
+            <button class="btn btn-secondary btn-sm" style="width:auto" onclick="esImportICalFile()">↓ Datei importieren</button>
+          </div>
+          <div class="es-hint">Der Import trägt die erkannten Fächer in deinen Stundenplan ein — unbekannte Fächer werden gemeldet. Tipp: Unter WebUntis → Kalender → Kalender-Abonnement findest du deine persönliche iCal-URL.</div>
         </div>
       </div>
 
@@ -320,7 +438,7 @@ function renderEinstellungen(){
   const planLabel = { free:'Kostenlos', starter:'Starter', pro:'Pro ✦' };
   const planCls   = { free:'free', starter:'starter', pro:'pro' };
   const ownApiActive = hasUserApiKey();
-  const PROVIDER_LABELS = { anthropic: 'Claude (Anthropic)', openai: 'ChatGPT (OpenAI)', gemini: 'Gemini (Google)' };
+  const PROVIDER_LABELS = { anthropic: 'Claude (Anthropic)', openai: 'ChatGPT (OpenAI)', gemini: 'Gemini (Google)', perplexity: 'Perplexity AI' };
 
   document.getElementById('view-einstellungen').innerHTML = `
     <div class="es-page">
@@ -400,13 +518,14 @@ function renderEinstellungen(){
               <option value="anthropic">Claude (Anthropic)</option>
               <option value="openai">ChatGPT (OpenAI)</option>
               <option value="gemini">Gemini (Google)</option>
+              <option value="perplexity">Perplexity AI</option>
             </select>
           </div>
           <div class="es-field" style="margin-bottom:var(--sp-sm)">
             <label class="es-label">API-Schlüssel</label>
             <div style="display:flex;gap:8px;align-items:center">
               <input id="es-user-api-key" class="input" type="password" style="flex:1;font-family:monospace"
-                     placeholder="sk-ant-... / sk-... / AIza..."
+                     placeholder="sk-ant-... / sk-... / AIza... / pplx-..."
                      onkeydown="if(event.key==='Enter')esSaveUserApiKey()">
               <button class="btn btn-primary btn-sm" style="width:auto;white-space:nowrap" onclick="esSaveUserApiKey()">Speichern</button>
             </div>
@@ -457,6 +576,19 @@ function renderEinstellungen(){
       </div>
       `}
 
+
+      <!-- ── Google Kalender Sync ── -->
+      <div class="es-section">
+        <div class="es-section-title">Google Kalender Sync</div>
+        <div class="es-card">
+          <div class="es-toggle-desc" style="margin-bottom:var(--sp-sm)">Übertrage Stundenplan, Termine, Ferien und Feiertage in deinen Google Kalender — du wählst selbst, was synchronisiert wird.</div>
+          <button class="btn btn-secondary btn-sm" style="width:auto;display:inline-flex;align-items:center;gap:8px" onclick="gcalOpenModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Mit Google Kalender synchronisieren
+          </button>
+          <div class="es-hint" style="margin-top:var(--sp-sm)">Achtung: Beim Sync werden Einträge an Google übertragen. Verwende keine Schülernamen in Terminbezeichnungen.</div>
+        </div>
+      </div>
 
       <!-- ── Datensicherung ── -->
       <div class="es-section">
@@ -1154,32 +1286,54 @@ function esRemoveUserApiKey() {
 
 /* ── iCal Import (WebUntis) ── */
 async function esImportICal(){
-  const url = document.getElementById('es-ical-url').value.trim();
+  const url   = document.getElementById('es-ical-url').value.trim();
   const msgEl = document.getElementById('es-ical-msg');
-  const show = (txt, err=true) => {
-    msgEl.textContent = txt;
-    msgEl.className = 'es-msg ' + (err ? 'es-msg--err' : 'es-msg--ok');
-    msgEl.style.display = '';
-  };
+  const show  = (txt, err=true) => { msgEl.textContent=txt; msgEl.className='es-msg '+(err?'es-msg--err':'es-msg--ok'); msgEl.style.display=''; };
   if(!url){ show('Bitte iCal-URL eingeben.'); return; }
   show('Wird geladen …', false);
   try {
-    const resp = await fetch(url);
-    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    const resp = await fetch(TS_API + '/ical-proxy?url=' + encodeURIComponent(url), {
+      headers: { 'Authorization': 'Bearer ' + TS_API_TOKEN }
+    });
+    if(!resp.ok) { const err = await resp.json().catch(()=>({})); throw new Error(err.error || 'HTTP ' + resp.status); }
     const text = await resp.text();
-    const entries = _parseICal(text);
     state.ical_url = url;
-    state.ical_entries = entries;
-    saveState();
-    show(`${entries.length} Termine importiert ✓`, false);
+    _icalApply(text, show);
   } catch(e) {
-    show('Fehler: ' + e.message + ' — Bei CORS-Problemen muss die App auf demselben Server wie WebUntis laufen oder ein Proxy verwendet werden.');
+    show('Fehler: ' + e.message);
   }
+}
+
+function esImportICalFile(){
+  const fileEl = document.getElementById('es-ical-file');
+  const msgEl  = document.getElementById('es-ical-msg');
+  const show   = (txt, err=true) => { msgEl.textContent=txt; msgEl.className='es-msg '+(err?'es-msg--err':'es-msg--ok'); msgEl.style.display=''; };
+  if(!fileEl.files.length){ show('Bitte zuerst eine .ics-Datei auswählen.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => _icalApply(e.target.result, show);
+  reader.onerror = () => show('Datei konnte nicht gelesen werden.');
+  reader.readAsText(fileEl.files[0]);
+}
+
+function _icalApply(text, show) {
+  const entries = _parseICal(text);
+  state.ical_entries = entries;
+  const result = _icalToStundenplan(entries);
+  if(!state.stundenplan) state.stundenplan = {};
+  Object.assign(state.stundenplan, result.stundenplan);
+  saveState();
+  const ok = `${result.imported} Stunde${result.imported!==1?'n':''} in Stundenplan eingetragen ✓`;
+  const warn = result.unmatched.length
+    ? ` · ${result.unmatched.length} Fach/Fächer nicht erkannt: ${result.unmatched.slice(0,4).join(', ')}${result.unmatched.length>4?'…':''} — bitte in Mein Profil anlegen.`
+    : '';
+  show(ok + warn, result.unmatched.length > 0);
 }
 
 function _parseICal(text){
   const events = [];
-  const blocks = text.split('BEGIN:VEVENT');
+  // Unfold line continuations (RFC 5545: lines starting with space/tab are continuations)
+  const unfolded = text.replace(/\r?\n[ \t]/g, '');
+  const blocks = unfolded.split('BEGIN:VEVENT');
   blocks.slice(1).forEach(block => {
     const get = key => { const m = block.match(new RegExp(key + '[^:]*:(.+)')); return m ? m[1].trim() : ''; };
     const dtstart  = get('DTSTART');
@@ -1188,6 +1342,107 @@ function _parseICal(text){
     if(dtstart && summary) events.push({ dtstart, summary, location });
   });
   return events;
+}
+
+function _icalToStundenplan(entries) {
+  const zr      = getZeitraster();
+  const faecher = state.faecher || [];
+  const klassen = state.klassen || [];
+  const toMin   = t => { const [h,m] = t.split(':').map(Number); return h*60+m; };
+
+  function parseDtstart(dtstart) {
+    const m = dtstart.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/);
+    if(!m) return null;
+    if(dtstart.endsWith('Z')) {
+      // UTC → convert to local time so slot matching works correctly
+      const d = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:00Z`);
+      const jsDay = d.getDay();
+      if(jsDay === 0 || jsDay === 6) return null;
+      return { dayOfWeek: jsDay - 1, timeStr: String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') };
+    }
+    // TZID or no timezone info → treat as local time already
+    const jsDay = new Date(+m[1], +m[2]-1, +m[3]).getDay();
+    if(jsDay === 0 || jsDay === 6) return null;
+    return { dayOfWeek: jsDay - 1, timeStr: m[4] + ':' + m[5] };
+  }
+
+  function findSlot(timeStr) {
+    for(let i=0; i<zr.length; i++) if(zr[i].von === timeStr) return i;
+    let best=-1, bestDiff=16;
+    for(let i=0; i<zr.length; i++){
+      const diff = Math.abs(toMin(zr[i].von) - toMin(timeStr));
+      if(diff < bestDiff){ bestDiff=diff; best=i; }
+    }
+    return best;
+  }
+
+  function matchFach(summary) {
+    // WebUntis formats: "Mathematik (10a)", "Ma (10a)", "Ma 10a", "10a Ma", "10a Mathematik"
+    const base  = summary.replace(/\s*\(.*?\)\s*/g, '').trim();
+    const words = base.split(/\s+/);
+    const candidates = [
+      base,
+      words[0],                          // first word: subject or class token
+      words[words.length - 1],           // last word: subject or class token
+      words.slice(0, -1).join(' ').trim(), // all but last
+      words.slice(1).join(' ').trim(),   // all but first
+    ].filter((c, i, arr) => c.length > 1 && arr.indexOf(c) === i);
+
+    // Exact match first (all candidates)
+    for(const cand of candidates){
+      const s = cand.toLowerCase();
+      for(const f of faecher) if(f.name.toLowerCase() === s) return f.id;
+    }
+    // Fuzzy: starts-with / contains
+    for(const cand of candidates){
+      const s = cand.toLowerCase();
+      for(const f of faecher){
+        const fn = f.name.toLowerCase();
+        if(s.startsWith(fn)||fn.startsWith(s)||s.includes(fn)||fn.includes(s)) return f.id;
+      }
+    }
+    return null;
+  }
+
+  function matchKlasse(summary) {
+    const inParens = summary.match(/\(([^)]+)\)/);
+    if(inParens) {
+      const c = inParens[1].trim();
+      for(const k of klassen) if(k.name.toLowerCase()===c.toLowerCase()) return k.id;
+    }
+    // Try every token — class can be first or last word
+    const tokens = summary.replace(/\(.*?\)/g,'').trim().split(/\s+/);
+    for(const token of tokens)
+      for(const k of klassen) if(k.name.toLowerCase()===token.toLowerCase()) return k.id;
+    return null;
+  }
+
+  // Aggregate: for each (day, slot) collect subject occurrence counts
+  const slotMap = {};
+  for(const entry of entries){
+    const parsed = parseDtstart(entry.dtstart);
+    if(!parsed) continue;
+    const { dayOfWeek, timeStr } = parsed;
+    const slotIdx = findSlot(timeStr);
+    if(slotIdx < 0) continue;
+    const key = `${dayOfWeek}-${slotIdx}`;
+    if(!slotMap[key]) slotMap[key] = {};
+    slotMap[key][entry.summary] = (slotMap[key][entry.summary]||0) + 1;
+  }
+
+  const sp = {};
+  const unmatchedSet = new Set();
+  let imported = 0;
+
+  for(const [key, counts] of Object.entries(slotMap)){
+    const topSummary = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+    const fachId = matchFach(topSummary);
+    if(!fachId){ unmatchedSet.add(topSummary.replace(/\s*\(.*?\)/,'').trim()); continue; }
+    sp[key] = { fachId, klasseId: matchKlasse(topSummary) || null };
+    imported++;
+  }
+
+  return { stundenplan: sp, imported, unmatched: [...unmatchedSet] };
 }
 
 /* ── Daten-Export / Import ── */
@@ -1201,18 +1456,41 @@ async function esFullReset(){
   const confirmed2 = confirm('Wirklich alles löschen? Diese Aktion kann NICHT rückgängig gemacht werden!');
   if(!confirmed2) return;
 
+  // Lizenzschlüssel retten — darf den Reset überleben
+  const savedLicenseKey = localStorage.getItem('ts_license_key') || '';
+
   try {
-    // Delete IndexedDB entirely
+    // IDB-Verbindung explizit schließen, damit deleteDatabase nicht blockiert wird
     await new Promise((res, rej) => {
+      // Erst alle Keys einzeln löschen (funktioniert auch wenn deleteDatabase blocked ist)
+      const openReq = indexedDB.open('teachsmarter_v1', 1);
+      openReq.onsuccess = e => {
+        const db = e.target.result;
+        db.onversionchange = () => db.close();
+        const tx = db.transaction('kv', 'readwrite');
+        tx.objectStore('kv').clear();
+        tx.oncomplete = () => { db.close(); res(); };
+        tx.onerror = () => { db.close(); res(); };
+      };
+      openReq.onerror = () => res();
+    });
+    // Danach die DB löschen (jetzt ohne offene Verbindung)
+    await new Promise(res => {
       const r = indexedDB.deleteDatabase('teachsmarter_v1');
       r.onsuccess = () => res();
-      r.onerror   = () => rej(r.error);
-      r.onblocked = () => { console.warn('IDB delete blocked'); res(); };
+      r.onerror   = () => res();
+      r.onblocked = () => res();
     });
   } catch(e){ console.warn('IDB reset error', e); }
 
-  // Clear localStorage fallback keys
-  try { localStorage.clear(); } catch(e){}
+  // Nur Crypto/Session-Keys löschen — Lizenzschlüssel bleibt erhalten
+  try {
+    const keepKeys = ['ts_license_key'];
+    const allKeys  = Object.keys(localStorage);
+    allKeys.forEach(k => { if(!keepKeys.includes(k)) localStorage.removeItem(k); });
+  } catch(e){}
+  // Lizenzschlüssel wiederherstellen falls er dabei verloren gegangen ist
+  if(savedLicenseKey) try { localStorage.setItem('ts_license_key', savedLicenseKey); } catch(e){}
   // Crypto-Session-Key entfernen (sonst wird alter Key nach Reload weiter genutzt)
   try { sessionStorage.clear(); } catch(e){}
   // Backup-Datei löschen — verhindert dass Auto-Restore den Reset sofort rückgängig macht
@@ -1272,6 +1550,8 @@ async function esExportData(){
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
+    localStorage.setItem('ts_last_backup', Date.now());
+    document.getElementById('ts-backup-banner')?.remove();
   } catch(e) {
     alert('Export fehlgeschlagen: ' + e.message);
   }
@@ -1313,7 +1593,7 @@ if('serviceWorker' in navigator){
         await reg.unregister();
       }
     }
-    navigator.serviceWorker.register('./sw.js?v=56', { scope: './' })
+    navigator.serviceWorker.register('./sw.js?v=85', { scope: './' })
       .catch(e => console.warn('SW registration failed:', e.message));
   });
 }
@@ -1343,7 +1623,7 @@ function showLicenseGate(errorMsg) {
           Aktivieren →
         </button>
         <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--ts-border-light);font-size:.85rem;color:var(--ts-text-secondary);text-align:center">
-          Noch kein Schlüssel? <a href="${TS_STRIPE_FOUNDER}" target="_blank" style="color:var(--ts-teal);font-weight:600;text-decoration:none">Founder's Edition kaufen →</a>
+          Noch kein Schlüssel? <a href="https://schulplaner.teachsmarter.de" target="_blank" style="color:var(--ts-teal);font-weight:600;text-decoration:none">Founder's Edition kaufen →</a>
         </div>
       </div>
     </div>`;
@@ -1351,7 +1631,16 @@ function showLicenseGate(errorMsg) {
   document.body.appendChild(gate);
   const input = document.getElementById('license-input');
   input.addEventListener('keydown', e => { if (e.key === 'Enter') activateLicense(); });
-  setTimeout(() => input.focus(), 50);
+
+  // ?key= aus der URL → auto-fill & auto-aktivieren (z.B. aus Willkommens-E-Mail)
+  const urlKey = new URLSearchParams(location.search).get('key');
+  if (urlKey) {
+    input.value = urlKey.trim().toUpperCase();
+    history.replaceState(null, '', location.pathname); // Key aus URL entfernen
+    setTimeout(() => activateLicense(), 300);
+  } else {
+    setTimeout(() => input.focus(), 50);
+  }
 }
 
 async function activateLicense() {
