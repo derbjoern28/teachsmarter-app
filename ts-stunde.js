@@ -29,8 +29,42 @@ function svEscape(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function getMediaDb(){ return mediaCache; }
 async function saveMediaDb(db){ mediaCache=db; await CryptoManager.setItem('ts_material_db',db); }
 
-const MEDIA_TYPE_ICON = {pdf:'📄',image:'🖼️',link:'🔗',video:'🎬',html:'📋','html-tb':'🪟','html-pr':'🎯','html-iv':'⚡',doc:'📝'};
-const MEDIA_TYPE_BG   = {pdf:'#FDECEA',image:'#E8F6F4',link:'#EEF3FB',video:'#FFF3E0',html:'#F3E8FF','html-tb':'#E8F5E9','html-pr':'#EAF0FB','html-iv':'#E8F8F5',doc:'#F5F0EA'};
+const MEDIA_TYPE_ICON = {pdf:'📄',image:'🖼️',link:'🔗',video:'🎬',html:'📋','html-tb':'🪟','html-pr':'🎯','html-iv':'⚡',doc:'📎'};
+const MEDIA_TYPE_BG   = {pdf:'#FDECEA',image:'#E8F6F4',link:'#EEF3FB',video:'#FFF3E0',html:'#F3E8FF','html-tb':'#E8F5E9','html-pr':'#EAF0FB','html-iv':'#E8F8F5',doc:'#F0F0F5'};
+
+function _extIcon(name) {
+  const ext = (name || '').split('.').pop().toLowerCase();
+  return {
+    docx:'📝', doc:'📝', odt:'📝', rtf:'📝',
+    xlsx:'📊', xls:'📊', ods:'📊', csv:'📊',
+    pptx:'🎯', ppt:'🎯', odp:'🎯',
+    ggb:'📐', ggbx:'📐',
+    py:'🐍', ipynb:'🐍',
+    java:'☕', jar:'☕', class:'☕',
+    js:'💻', ts:'💻', css:'💻', php:'💻',
+    lumi:'🎮', h5p:'🎮',
+    zip:'📦', rar:'📦', '7z':'📦',
+    txt:'📄', md:'📄',
+    mp3:'🎵', wav:'🎵', m4a:'🎵', ogg:'🎵',
+  }[ext] || '📎';
+}
+
+function _mediaIcon(item) {
+  const tk = item.type === 'html' && item.isTafelbild ? 'html-tb'
+           : item.type === 'html' && (item.tags||[]).includes('praesentation') ? 'html-pr'
+           : item.type === 'html' && (item.tags||[]).includes('interaktiv') ? 'html-iv'
+           : item.type;
+  return MEDIA_TYPE_ICON[tk] || _extIcon(item.name || '');
+}
+
+function _typeFromFile(file) {
+  if (file.type.startsWith('image/')) return 'image';
+  if (file.type === 'application/pdf') return 'pdf';
+  if (file.type.startsWith('video/')) return 'video';
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  if (['html','htm'].includes(ext)) return 'html';
+  return 'doc';
+}
 
 function openStunde(datum, fachId, klasseId, slotIdx){
   svContext = { datum, fachId, klasseId, slotIdx };
@@ -69,6 +103,7 @@ function renderStundenvorbereitung(){
         Mit KI vorbereiten
         <span class="premium-badge">Premium</span>
       </button>
+      <button class="sv-panel-toggle-btn" onclick="svDuplizierenModal()" style="background:var(--ts-bg);color:var(--ts-text);border:1px solid var(--ts-border)">🗐 Duplizieren</button>
       <button class="sv-panel-toggle-btn" id="sv-panel-toggle-btn" onclick="svTogglePanel()">📚 Material & AB ▶</button>
       <span class="sv-saved" id="sv-saved-badge">Gespeichert ✓</span>
     </div>
@@ -160,7 +195,7 @@ function renderStundenvorbereitung(){
 /* ── Material chips ── */
 function svRenderChips(items){
   if(!items||!items.length) return '';
-  return items.map(m=>`<span class="sv-material-chip" onclick="svChipMenu(event,'${m.id}')">${MEDIA_TYPE_ICON[m.type]||'📎'} ${svEscape(m.name)}</span>`).join('');
+  return items.map(m=>`<span class="sv-material-chip" onclick="svChipMenu(event,'${m.id}')">${_mediaIcon(m)} ${svEscape(m.name)}</span>`).join('');
 }
 
 function svChipMenu(e, id){
@@ -180,6 +215,9 @@ function svChipMenu(e, id){
   menu.innerHTML=`
     <button onclick="svChipOpen('${id}');document.getElementById('sv-chip-menu-overlay').remove()">
       <span>↗</span> Öffnen
+    </button>
+    <button onclick="_mdbShareItem('${id}');document.getElementById('sv-chip-menu-overlay').remove()">
+      <span>📤</span> Teilen (Link + QR)
     </button>
     <div class="sv-chip-menu-divider"></div>
     <button class="danger" onclick="svRemoveMaterial('${id}');document.getElementById('sv-chip-menu-overlay').remove()">
@@ -340,7 +378,7 @@ function svRenderMediaItems(query){
          ondragend="this.classList.remove('dragging')"
          ontouchstart="svMediaTouchStart(event,'${m.id}')"
          onclick="svOpenMedia('${m.id}')">
-      <div class="media-type-icon" style="background:${MEDIA_TYPE_BG[typeKey]||'#f0f0f0'}">${MEDIA_TYPE_ICON[typeKey]||'📎'}</div>
+      <div class="media-type-icon" style="background:${MEDIA_TYPE_BG[typeKey]||'#f0f0f0'}">${_mediaIcon(m)}</div>
       <div class="media-item-info">
         <div class="media-item-name">${svEscape(m.name)}</div>
         <div class="media-item-meta">${meta}</div>
@@ -385,6 +423,9 @@ function svDbItemMenu(e, id){
     </button>
     <button onclick="svAddMaterialToFieldById('${id}');document.getElementById('sv-dbitem-menu-overlay').remove()">
       <span>➕</span> Der Stunde hinzufügen
+    </button>
+    <button onclick="_mdbShareItem('${id}');document.getElementById('sv-dbitem-menu-overlay').remove()">
+      <span>📤</span> Teilen (Link + QR)
     </button>
     <div class="sv-chip-menu-divider"></div>
     <button class="danger" onclick="svDeleteFromDb('${id}');document.getElementById('sv-dbitem-menu-overlay').remove()">
@@ -500,10 +541,7 @@ function svUploadFiles(input){ if(input.files) svHandleFiles(input.files); }
 function svHandleFiles(files){
   const db=getMediaDb();
   Array.from(files).forEach(file=>{
-    const type=file.type.startsWith('image/')?'image':
-               file.type==='application/pdf'?'pdf':
-               (file.name.endsWith('.html')||file.name.endsWith('.htm'))?'html':
-               file.type.startsWith('video/')?'video':'doc';
+    const type=_typeFromFile(file);
     const reader=new FileReader();
     reader.onload=ev=>{
       const item={
@@ -693,19 +731,15 @@ function svAddMedia(){
         <div><label style="${LBL}">Name *</label>
           <input id="svam-name" type="text" placeholder="z.B. Arbeitsblatt Brüche" style="${INP}"></div>
 
-        <div><label style="${LBL}">Format</label>
+        <div><label style="${LBL}">Art</label>
           <select id="svam-type" onchange="svAmToggleType()" style="${INP};background:var(--ts-bg-card)">
             <option value="link">🔗 Link / URL</option>
-            <option value="pdf">📄 PDF</option>
-            <option value="image">🖼️ Bild</option>
-            <option value="video">🎬 Video</option>
-            <option value="html">📋 HTML-Datei</option>
-            <option value="doc">📝 Dokument</option>
+            <option value="file">📁 Datei hochladen</option>
           </select></div>
 
         <div id="svam-url-wrap"><label style="${LBL}">URL *</label>
           <input id="svam-url" type="url" placeholder="https://…" style="${INP}"></div>
-        <div id="svam-file-wrap" style="display:none"><label style="${LBL}">Datei *</label>
+        <div id="svam-file-wrap" style="display:none"><label style="${LBL}">Datei * <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ts-text-muted)">— alle Typen: Word, PDF, GeoGebra, Python, …</span></label>
           <input id="svam-file" type="file" style="font-family:var(--font-body);font-size:.85rem;width:100%"></div>
 
         <div><label style="${LBL}">Fach</label>
@@ -738,7 +772,6 @@ function svSaveNewMedia(){
   const fachId   = document.getElementById('svam-fach')?.value||'';
   const fachTags = fachId ? [fachId] : [];
   const klassenIds = Array.from(document.querySelectorAll('#sv-add-media-modal input[name="svam-klasse"]:checked')).map(cb=>cb.value);
-  const base={id:'media_'+Date.now()+'_'+Math.random().toString(36).slice(2),name,type,fachTags,klassenIds,source:'own',dateAdded:new Date().toISOString()};
   const db=getMediaDb();
   function _svAfterSave(){
     document.getElementById('sv-add-media-modal')?.remove();
@@ -748,13 +781,17 @@ function svSaveNewMedia(){
   }
   if(type==='link'){
     if(!url){ alert('Bitte eine URL eingeben.'); return; }
+    const base={id:'media_'+Date.now()+'_'+Math.random().toString(36).slice(2),name,type:'link',fachTags,klassenIds,source:'own',dateAdded:new Date().toISOString()};
     db.push({...base,url}); saveMediaDb(db);
     _svAfterSave();
   } else {
     if(!fileInput?.files?.length){ alert('Bitte eine Datei auswählen.'); return; }
+    const file=fileInput.files[0];
+    const detectedType=_typeFromFile(file);
+    const base={id:'media_'+Date.now()+'_'+Math.random().toString(36).slice(2),name,type:detectedType,fachTags,klassenIds,source:'own',dateAdded:new Date().toISOString()};
     const reader=new FileReader();
     reader.onload=ev=>{ db.push({...base,dataUrl:ev.target.result}); saveMediaDb(db); _svAfterSave(); };
-    reader.readAsDataURL(fileInput.files[0]);
+    reader.readAsDataURL(file);
   }
 }
 
@@ -762,6 +799,7 @@ function svSaveNewMedia(){
    LESSON CONTEXT MENU
    ════════════════════════════════════════════ */
 let swapSource = null; // { dayIndex, slotIdx }
+let copySource = null; // { datum, dayIndex, slotIdx, fachId, klasseId }
 
 function openLessonMenu(e, datum, fachId, klasseId, slotIdx, dayIndex) {
   e.stopPropagation();
@@ -769,6 +807,12 @@ function openLessonMenu(e, datum, fachId, klasseId, slotIdx, dayIndex) {
   if (swapSource) {
     if (swapSource.dayIndex === dayIndex && swapSource.slotIdx === slotIdx) { cancelSwap(); return; }
     lessonSwapTarget(dayIndex, slotIdx);
+    return;
+  }
+  // If copy mode active → treat click as paste target
+  if (copySource) {
+    if (copySource.dayIndex === dayIndex && copySource.slotIdx === slotIdx) { cancelCopy(); return; }
+    lessonCopyTarget(dayIndex, slotIdx, datum);
     return;
   }
   document.getElementById('lesson-menu-overlay')?.remove();
@@ -797,6 +841,9 @@ function openLessonMenu(e, datum, fachId, klasseId, slotIdx, dayIndex) {
     </button>
     <button onclick="lessonStartSwap(${dayIndex},${slotIdx});${_kloseMenu}">
       ↕ Verschieben (Tauschen)
+    </button>
+    <button onclick="lessonStartCopy('${datum}',${dayIndex},${slotIdx},'${fachId}','${klasseId}');${_kloseMenu}">
+      📋 Kopieren
     </button>
     <button onclick="exportVertretung('${datum}','${fachId}','${klasseId}',${slotIdx});${_kloseMenu}">
       📤 Für Vertretung exportieren
@@ -845,6 +892,39 @@ function lessonSwapTarget(targetDay, targetSlot) {
 
 function cancelSwap() {
   swapSource = null;
+  renderHeute(); renderWoche();
+}
+
+function lessonStartCopy(datum, dayIndex, slotIdx, fachId, klasseId) {
+  copySource = { datum, dayIndex, slotIdx, fachId, klasseId };
+  renderHeute(); renderWoche();
+}
+
+async function lessonCopyTarget(targetDayIndex, targetSlotIdx, targetDatum) {
+  if (!copySource) return;
+  const srcKey = `${copySource.dayIndex}-${copySource.slotIdx}`;
+  const tgtKey = `${targetDayIndex}-${targetSlotIdx}`;
+  if (!state.stundenplan) state.stundenplan = {};
+  // Copy slot assignment
+  const srcEntry = state.stundenplan[srcKey];
+  if (srcEntry) state.stundenplan[tgtKey] = { ...srcEntry };
+  // Copy Stundenvorbereitung content (deep copy)
+  const srcSvKey = svKey(copySource.datum, copySource.fachId, copySource.klasseId, copySource.slotIdx);
+  const tgtFachId = srcEntry ? srcEntry.fachId : copySource.fachId;
+  const tgtKlasseId = srcEntry ? srcEntry.klasseId : copySource.klasseId;
+  const tgtSvKey = svKey(targetDatum, tgtFachId, tgtKlasseId, targetSlotIdx);
+  const srcData = stundenCache[srcSvKey];
+  if (srcData) {
+    stundenCache[tgtSvKey] = JSON.parse(JSON.stringify(srcData));
+    await CryptoManager.setItem('ts_stunden', stundenCache);
+  }
+  saveState();
+  copySource = null;
+  renderHeute(); renderWoche();
+}
+
+function cancelCopy() {
+  copySource = null;
   renderHeute(); renderWoche();
 }
 
@@ -1416,6 +1496,87 @@ function svSaveTafelbildAsMedia(){
   if(btn){ const orig=btn.textContent; btn.textContent='✓ Gespeichert'; btn.style.color='var(--ts-teal)'; setTimeout(()=>{ btn.textContent=orig; btn.style.color=''; },1800); }
 }
 
+/* ── Stundenvorbereitung duplizieren ── */
+function svDuplizierenModal() {
+  if (!svContext) return;
+  const { datum, fachId, klasseId, slotIdx } = svContext;
+  const srcKey = svKey(datum, fachId, klasseId, slotIdx);
+  const srcData = stundenCache[srcKey];
+  if (!srcData || !Object.keys(srcData).filter(k => k !== 'materialItems').length) {
+    _showToast('Diese Stunde hat noch keinen Inhalt zum Duplizieren.', 'error');
+    return;
+  }
+  const fach = getFach(fachId);
+  const srcKlasse = getKlasse(klasseId);
+  const targetKlassen = (state.klassen || []).filter(k => k.id !== klasseId);
+  if (!targetKlassen.length) {
+    _showToast('Keine weiteren Klassen angelegt.', 'error');
+    return;
+  }
+  document.getElementById('sv-dupli-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'sv-dupli-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  modal.innerHTML = `
+    <div style="background:var(--ts-bg-card);border-radius:16px;padding:1.5rem;max-width:360px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.25)">
+      <div style="font-family:var(--font-display);font-size:1.05rem;font-weight:700;margin-bottom:.3rem;color:var(--ts-navy)">🗐 Stunde duplizieren</div>
+      <div style="font-size:.8rem;color:var(--ts-text-muted);margin-bottom:1rem">
+        ${esc(fach ? fach.name : '?')} · ${esc(srcKlasse ? srcKlasse.name : '')} · ${esc(datum)}<br>
+        <span style="font-style:italic">${esc(srcData.thema || '(kein Thema)')}</span>
+      </div>
+      <div style="margin-bottom:.75rem">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:.35rem;color:var(--ts-text)">Zieldatum</div>
+        <input type="date" id="dupli-datum" value="${datum}"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--ts-border);border-radius:8px;font-size:.9rem;background:var(--ts-bg);color:var(--ts-text);box-sizing:border-box">
+        <div style="font-size:.72rem;color:var(--ts-text-muted);margin-top:4px">Gleicher Fach-Zeitslot am Zieldatum wird automatisch gesucht.</div>
+      </div>
+      <div style="font-weight:600;font-size:.85rem;margin-bottom:.5rem;color:var(--ts-text)">In welche Parallelklasse(n) kopieren?</div>
+      <div style="display:flex;flex-direction:column;gap:.35rem;max-height:200px;overflow-y:auto;padding-right:2px">
+        ${targetKlassen.map(k => `
+          <label style="display:flex;align-items:center;gap:.6rem;padding:.45rem .7rem;border-radius:8px;cursor:pointer;border:1.5px solid var(--ts-border);background:var(--ts-bg)">
+            <input type="checkbox" name="dupli-klasse" value="${esc(k.id)}" style="width:16px;height:16px;cursor:pointer;flex-shrink:0">
+            <span style="font-size:.9rem;font-weight:500">${esc(k.name)}</span>
+            ${k.sus ? `<span style="font-size:.75rem;color:var(--ts-text-muted);margin-left:auto">${k.sus} SuS</span>` : ''}
+          </label>`).join('')}
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:.5rem">
+        <button onclick="document.getElementById('sv-dupli-modal').remove()"
+          style="flex:1;padding:10px;border:1.5px solid var(--ts-border);background:var(--ts-bg);border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--ts-text)">Abbrechen</button>
+        <button onclick="svDuplizierenConfirm()"
+          style="flex:2;padding:10px;background:var(--ts-teal);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;touch-action:manipulation">🗐 Duplizieren</button>
+      </div>
+    </div>`;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
+async function svDuplizierenConfirm() {
+  const checks = Array.from(document.querySelectorAll('#sv-dupli-modal input[name="dupli-klasse"]:checked'));
+  if (!checks.length) { _showToast('Bitte mindestens eine Klasse auswählen.', 'error'); return; }
+  const { datum, fachId, klasseId, slotIdx } = svContext;
+  const targetDatum = document.getElementById('dupli-datum')?.value || datum;
+  const srcData = stundenCache[svKey(datum, fachId, klasseId, slotIdx)] || {};
+  const copy = Object.fromEntries(Object.entries(srcData).filter(([k]) => k !== 'materialItems'));
+  const zr = getZeitraster();
+  const tgtDayIndex = (new Date(targetDatum + 'T00:00:00').getDay() + 6) % 7;
+  let saved = 0;
+  checks.forEach(cb => {
+    const tgtKlasseId = cb.value;
+    // Find which slot has this fach+class on the target date
+    let tgtSlotIdx = null;
+    for (let i = 0; i < zr.length; i++) {
+      const lesson = getEffectiveLesson(targetDatum, tgtDayIndex, i);
+      if (lesson && lesson.fachId === fachId && lesson.klasseId === tgtKlasseId) { tgtSlotIdx = i; break; }
+    }
+    // Fallback: same slot index as source
+    stundenCache[svKey(targetDatum, fachId, tgtKlasseId, tgtSlotIdx !== null ? tgtSlotIdx : slotIdx)] = { ...copy };
+    saved++;
+  });
+  await CryptoManager.setItem('ts_stunden', stundenCache);
+  document.getElementById('sv-dupli-modal').remove();
+  _showToast(`Stunde in ${saved} Klasse${saved > 1 ? 'n' : ''} für ${targetDatum} dupliziert ✓`, 'ok');
+}
+
 /* ── Verlaufsplan-Abschnitt wählen & neu generieren ── */
 function svRefreshVerlaufsplan(){
   if(!svContext) return;
@@ -1689,7 +1850,7 @@ function svOpenAbFullscreen(){
 }
 
 function svRenderAbPreview(ab, plain){
-  const aufgaben = (ab.aufgaben||[]).map((a,i)=>{
+  function _renderAufgabe(a, i) {
     if(plain){
       return `
       <div style="margin-bottom:1.2rem">
@@ -1697,7 +1858,7 @@ function svRenderAbPreview(ab, plain){
           <span>Aufgabe ${a.nr||i+1}${a.titel?': '+svEscape(a.titel):''}</span>
           ${a.punkte?`<span style="font-weight:400">/${a.punkte} P.</span>`:''}
         </div>
-        <div style="font-size:.88rem;line-height:1.7">${svEscape(a.inhalt||'').replace(/\n/g,'<br>')}</div>
+        <div style="font-size:.88rem;line-height:1.7">${_abRenderInhalt(a.inhalt||'')}</div>
         ${a.tipp?`<div style="margin-top:.5rem;font-size:.83rem"><em>Tipp: ${svEscape(a.tipp)}</em></div>`:''}
         ${a.zusatz?`<div style="margin-top:.5rem;font-size:.83rem"><strong>Zusatzaufgabe:</strong> ${svEscape(a.zusatz)}</div>`:''}
       </div>`;
@@ -1716,10 +1877,31 @@ function svRenderAbPreview(ab, plain){
         <div style="font-weight:700;font-size:.87rem;color:#1A3C5E">Aufgabe ${a.nr||i+1}${a.titel?': '+svEscape(a.titel):''}</div>
         ${a.punkte?`<span style="background:#EAF4F3;color:#3BA89B;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:20px">${a.punkte} P.</span>`:''}
       </div>
-      <div style="font-size:.88rem;line-height:1.7;color:#2d2d2d">${svEscape(a.inhalt||'').replace(/\n/g,'<br>')}</div>
+      <div style="font-size:.88rem;line-height:1.7;color:#2d2d2d">${_abRenderInhalt(a.inhalt||'')}</div>
       ${tipp}${zusatz}
     </div>`;
-  }).join('');
+  }
+
+  let aufgaben = '';
+  if(ab.aufgaben_niveaus && typeof ab.aufgaben_niveaus === 'object'){
+    const nColors = {
+      basis:    { bg:'#E8F8F5', border:'#27AE60', label:'★ Basis' },
+      standard: { bg:'#EBF5FB', border:'#3498DB', label:'★★ Standard' },
+      experte:  { bg:'#FDEDEC', border:'#E74C3C', label:'★★★ Experte' },
+    };
+    Object.entries(nColors).forEach(([key, nc]) => {
+      const nList = ab.aufgaben_niveaus[key] || [];
+      if(!nList.length) return;
+      const header = plain
+        ? `<div style="font-weight:700;margin-bottom:8px;font-size:.88rem">${nc.label}</div>`
+        : `<div style="border-left:4px solid ${nc.border};padding-left:10px;margin-bottom:10px">
+             <span style="font-size:.85rem;font-weight:700;color:${nc.border};background:${nc.bg};padding:3px 10px;border-radius:0 6px 6px 0;display:inline-block">${nc.label}</span>
+           </div>`;
+      aufgaben += `<div style="margin-bottom:1.2rem">${header}${nList.map((a,i)=>_renderAufgabe({...a,nr:i+1},i)).join('')}</div>`;
+    });
+  } else {
+    aufgaben = (ab.aufgaben||[]).map((a,i)=>_renderAufgabe(a,i)).join('');
+  }
 
   if(plain){
     return `
@@ -1808,7 +1990,7 @@ function svRenderAbForWord(ab){
       </table>`;
   }
 
-  const aufgaben = (ab.aufgaben||[]).map((a,i)=>{
+  function _wordAufgabe(a, i) {
     const nr = a.nr || (i+1);
     const tipp = a.tipp ? stripeBox('#F39C12','#FFF9E6','#f0e0b0',
       `<p style="margin:0;font-size:9pt;color:#7a5500"><b>Tipp:</b> ${E(a.tipp)}</p>`, true) : '';
@@ -1835,12 +2017,25 @@ function svRenderAbForWord(ab){
         </tr>
         <tr>
           <td style="background-color:#ffffff;padding:0 12pt 8pt 12pt;font-size:10pt;line-height:1.6;color:#2d2d2d;vertical-align:top">
-            <p style="margin:0 0 6pt 0">${E(a.inhalt||'').replace(/\n/g,'<br>')}</p>
+            <div style="margin:0 0 6pt 0">${_abRenderInhalt(a.inhalt||'')}</div>
             ${tipp}${zusatz}
           </td>
         </tr>
       </table>`;
-  }).join('\n');
+  }
+
+  let aufgaben = '';
+  if(ab.aufgaben_niveaus && typeof ab.aufgaben_niveaus === 'object'){
+    const nLabels = { basis:'Basis', standard:'Standard', experte:'Experte' };
+    Object.entries(nLabels).forEach(([key, label]) => {
+      const nList = ab.aufgaben_niveaus[key] || [];
+      if(!nList.length) return;
+      aufgaben += `<p style="margin:10pt 0 4pt 0;font-size:11pt;font-weight:bold;color:#1A3C5E">${label}</p>`;
+      aufgaben += nList.map((a,i) => _wordAufgabe({...a,nr:i+1},i)).join('\n');
+    });
+  } else {
+    aufgaben = (ab.aufgaben||[]).map((a,i) => _wordAufgabe(a,i)).join('\n');
+  }
 
   const einfuehrung = ab.einfuehrung ? stripeBox('#c0b090','#f7f5f0','#d0c8b0',
     `<p style="margin:0;font-size:10pt;color:#444;font-style:italic">${E(ab.einfuehrung).replace(/\n/g,'<br>')}</p>`) + '<br>' : '';
@@ -2019,7 +2214,6 @@ function tsShowPinScreen(isFirstTime){
 function tsUpdatePinUI(){
   const subtitle = document.getElementById('pin-subtitle');
   const dots = document.getElementById('pin-dots');
-  const err = document.getElementById('pin-error');
   if(!subtitle) return;
   const labels = {
     'enter':'PIN eingeben',
@@ -2027,7 +2221,7 @@ function tsUpdatePinUI(){
     'setup-confirm':'PIN bestätigen'
   };
   subtitle.textContent = labels[_pinStep] || '';
-  if(err) err.textContent = '';
+  // Fehler NICHT hier löschen — wird in tsPinKey beim nächsten Tastendruck gelöscht
   if(dots){
     dots.innerHTML = Array.from({length:4}, (_,i) =>
       '<div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--ts-teal);background:' +
@@ -2038,6 +2232,9 @@ function tsUpdatePinUI(){
 
 function tsPinKey(k){
   if(_pinBuffer.length >= 4) return;
+  // Fehlermeldung beim ersten neuen Tastendruck löschen
+  const errEl = document.getElementById('pin-error');
+  if(errEl) errEl.textContent = '';
   _pinBuffer += k;
   tsUpdatePinUI();
   if(_pinBuffer.length === 4) setTimeout(tsPinSubmit, 120);
@@ -2079,18 +2276,35 @@ async function tsPinSubmit(){
       if(err) err.textContent='PINs stimmen nicht überein – erneut eingeben';
       tsUpdatePinUI(); return;
     }
-    await CryptoManager.init(pin);
-    await CryptoManager.storeVerify();
-    await CryptoManager.saveSession();
-    initApp(); return;
+    try {
+      await CryptoManager.init(pin);
+      await CryptoManager.storeVerify();
+      await CryptoManager.saveSession();
+      initApp();
+    } catch(e) {
+      console.error('PIN-Setup fehlgeschlagen:', e);
+      _pinFirst=''; _pinStep='setup-first';
+      const err=document.getElementById('pin-error');
+      if(err) err.textContent='Fehler beim Einrichten – bitte erneut versuchen';
+      tsUpdatePinUI();
+    }
+    return;
   }
-  const ok = await CryptoManager.verifyPin(pin);
+  let ok = false;
+  try { ok = await CryptoManager.verifyPin(pin); } catch(e) { console.error('verifyPin error', e); }
   if(!ok){
     const err=document.getElementById('pin-error');
     if(err) err.textContent='Falscher PIN';
     tsUpdatePinUI(); return;
   }
-  await CryptoManager.init(pin);
-  await CryptoManager.saveSession();
-  initApp();
+  try {
+    await CryptoManager.init(pin);
+    await CryptoManager.saveSession();
+    initApp();
+  } catch(e) {
+    console.error('PIN-Login fehlgeschlagen:', e);
+    const err=document.getElementById('pin-error');
+    if(err) err.textContent='Fehler beim Einloggen – bitte erneut versuchen';
+    tsUpdatePinUI();
+  }
 }

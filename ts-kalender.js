@@ -150,7 +150,16 @@ function renderHeute() {
       const slotStart = vonH*60+vonM, slotEnd = bisH*60+bisM;
       // Pause between consecutive lessons
       if (lastLessonEnd >= 0 && slotStart - lastLessonEnd >= 5) {
-        html += `<div class="tl-pause"><span class="tl-pause-label">☕ ${slotStart - lastLessonEnd} Min. Pause</span></div>`;
+        const _pH = String(Math.floor(lastLessonEnd/60)).padStart(2,'0');
+        const _pM = String(lastLessonEnd%60).padStart(2,'0');
+        const _pKey = `${viewDateStr}_${_pH}:${_pM}`;
+        const _hasAufs = !!(state.aufsichten && state.aufsichten[_pKey]);
+        html += `<div class="tl-pause tl-pause-aufsicht-row" onclick="toggleAufsicht('${viewDateStr}','${_pH}:${_pM}')">
+          <span class="tl-pause-label">☕ ${slotStart - lastLessonEnd} Min. Pause</span>
+          ${_hasAufs
+            ? '<span class="tl-aufsicht-badge">🦺 Aufsicht</span>'
+            : '<span class="tl-aufsicht-hint">＋ Aufsicht</span>'}
+        </div>`;
       }
       lastLessonEnd = slotEnd;
       const isNow = isActualToday && currentMinutes >= slotStart && currentMinutes < slotEnd;
@@ -182,10 +191,12 @@ function renderHeute() {
             </div>
           </div>`;
         } else {
-          html += `<div class="tl-item ${timeClass}${swapSource&&swapSource.dayIndex===dayIndex&&swapSource.slotIdx===lesson.index?' swap-selected':''}">
+          const _isSwapSrc = swapSource&&swapSource.dayIndex===dayIndex&&swapSource.slotIdx===lesson.index;
+          const _isCopySrc = copySource&&copySource.dayIndex===dayIndex&&copySource.slotIdx===lesson.index;
+          html += `<div class="tl-item ${timeClass}${_isSwapSrc?' swap-selected':_isCopySrc?' copy-selected':''}">
             <div class="tl-time">${lesson.slot.von}<br>${lesson.slot.bis}</div>
             <div class="tl-dot"></div>
-            <div class="tl-card${swapSource&&!(swapSource.dayIndex===dayIndex&&swapSource.slotIdx===lesson.index)?' swap-target':''}"
+            <div class="tl-card${swapSource&&!_isSwapSrc?' swap-target':copySource&&!_isCopySrc?' copy-target':''}"
               onclick="openLessonMenu(event,'${viewDateStr}','${lesson.entry.fachId}','${lesson.entry.klasseId}',${lesson.index},${dayIndex})">
               <div class="tl-bar" style="background:${fach?fach.color:'#ccc'}"></div>
               <div class="tl-body">
@@ -195,7 +206,7 @@ function renderHeute() {
                 ${_thema?`<div class="tl-sv-thema">📖 ${_thema}</div>`:''}
                 ${lesson.entry._isOverride&&lesson.entry.isVertretung?'<span class="tl-badge vtg-badge">🔄 Vertretung</span>':''}
                 ${isNow?'<span class="tl-badge" style="background:var(--ts-teal-subtle);color:var(--ts-teal-dark)">▶ Jetzt</span>':''}
-                ${swapSource?'<span class="tl-badge" style="background:var(--ts-teal);color:#fff">Hier tauschen →</span>':''}
+                ${swapSource&&!_isSwapSrc?'<span class="tl-badge" style="background:var(--ts-teal);color:#fff">Hier tauschen →</span>':copySource&&!_isCopySrc?'<span class="tl-badge" style="background:#E8A44A;color:#fff">Hier einfügen →</span>':''}
               </div>
             </div>
           </div>`;
@@ -204,9 +215,9 @@ function renderHeute() {
         html += `<div class="tl-item ${timeClass}">
           <div class="tl-time">${lesson.slot.von}<br>${lesson.slot.bis}</div>
           <div class="tl-dot"></div>
-          <div class="tl-card${swapSource?' swap-target':''}" style="border-style:dashed;opacity:.55;cursor:${swapSource?'pointer':'pointer'}"
-            onclick="${swapSource?`lessonSwapTarget(${dayIndex},${lesson.index})`:`openStundeOverrideModal('${viewDateStr}',${dayIndex},${lesson.index},'','')`}">
-            <div class="tl-body"><div class="tl-fach" style="color:var(--ts-text-muted)">${swapSource?'Hierher verschieben':'＋ Stunde erstellen'}</div></div>
+          <div class="tl-card${swapSource?' swap-target':copySource?' copy-target':''}" style="border-style:dashed;opacity:.55;cursor:pointer"
+            onclick="${swapSource?`lessonSwapTarget(${dayIndex},${lesson.index})`:copySource?`lessonCopyTarget(${dayIndex},${lesson.index},'${viewDateStr}')`:`openStundeOverrideModal('${viewDateStr}',${dayIndex},${lesson.index},'','')`}">
+            <div class="tl-body"><div class="tl-fach" style="color:var(--ts-text-muted)">${swapSource?'Hierher verschieben':copySource?'Hierher einfügen':'＋ Stunde erstellen'}</div></div>
           </div>
         </div>`;
       }
@@ -237,6 +248,8 @@ function renderHeute() {
 
   if (swapSource) {
     html += `<div style="text-align:center;margin-top:var(--sp-md)"><button class="btn btn-secondary btn-sm" style="width:auto;color:var(--ts-error)" onclick="cancelSwap()">Verschieben abbrechen</button></div>`;
+  } else if (copySource) {
+    html += `<div style="text-align:center;margin-top:var(--sp-md)"><button class="btn btn-secondary btn-sm" style="width:auto;color:var(--ts-error)" onclick="cancelCopy()">Kopieren abbrechen</button></div>`;
   } else {
     html += `<div style="text-align:center;margin-top:var(--sp-lg)"><button class="btn btn-secondary btn-sm" style="width:auto" onclick="openEventModal('${viewDateStr}')">+ Termin hinzufügen</button></div>`;
   }
@@ -399,7 +412,9 @@ function renderWoche() {
           const _wthema = (typeof stundenCache!=='undefined'&&stundenCache[_wsvk])?stundenCache[_wsvk].thema:'';
           const isSwapSel = swapSource && swapSource.dayIndex===d && swapSource.slotIdx===s;
           const isSwapTgt = swapSource && !isSwapSel;
-          html += `<div class="woche-cell filled${todayClass}${isSwapSel?' swap-selected':isSwapTgt?' swap-target':''}"
+          const isCopySel = copySource && copySource.dayIndex===d && copySource.slotIdx===s;
+          const isCopyTgt = copySource && !isCopySel;
+          html += `<div class="woche-cell filled${todayClass}${isSwapSel?' swap-selected':isCopySel?' copy-selected':isSwapTgt?' swap-target':isCopyTgt?' copy-target':''}"
             onclick="openLessonMenu(event,'${dateStr(dayDate)}','${entry.fachId}','${entry.klasseId}',${s},${d})"
             style="background:${fach?fach.color:'#999'}">
             <div class="wc-fach">${fach?fach.name:'?'}</div>
@@ -415,10 +430,11 @@ function renderWoche() {
           </div>`;
         } else {
           const isSwapTgt = !!swapSource;
-          html += `<div class="woche-cell empty${todayClass}${isSwapTgt?' swap-target':''}"
-            onclick="${isSwapTgt?`lessonSwapTarget(${d},${s})`:`openStundeOverrideModal('${dateStr(dayDate)}',${d},${s},'','')`}"
+          const isCopyTgtEmpty = !!copySource;
+          html += `<div class="woche-cell empty${todayClass}${isSwapTgt?' swap-target':isCopyTgtEmpty?' copy-target':''}"
+            onclick="${isSwapTgt?`lessonSwapTarget(${d},${s})`:isCopyTgtEmpty?`lessonCopyTarget(${d},${s},'${dateStr(dayDate)}')`:`openStundeOverrideModal('${dateStr(dayDate)}',${d},${s},'','')`}"
             style="cursor:pointer">
-            ${isSwapTgt?'<div style="font-size:.65rem;color:var(--ts-teal);text-align:center;padding-top:4px">↕</div>':'<div style="font-size:.65rem;color:var(--ts-border-light);text-align:center;padding-top:4px">＋</div>'}
+            ${isSwapTgt?'<div style="font-size:.65rem;color:var(--ts-teal);text-align:center;padding-top:4px">↕</div>':isCopyTgtEmpty?'<div style="font-size:.65rem;color:#E8A44A;text-align:center;padding-top:4px">📋</div>':'<div style="font-size:.65rem;color:var(--ts-border-light);text-align:center;padding-top:4px">＋</div>'}
           </div>`;
         }
       }
@@ -582,6 +598,19 @@ function saveNote(key, val){
     const badge = document.getElementById('ns-'+key);
     if(badge){badge.classList.add('visible');setTimeout(()=>badge.classList.remove('visible'),1500)}
   }, 600);
+}
+
+/* ── Pausenaufsicht ── */
+function toggleAufsicht(datum, pauseTime) {
+  if (!state.aufsichten) state.aufsichten = {};
+  const key = `${datum}_${pauseTime}`;
+  if (state.aufsichten[key]) {
+    delete state.aufsichten[key];
+  } else {
+    state.aufsichten[key] = {};
+  }
+  saveState();
+  renderHeute();
 }
 
 
